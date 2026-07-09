@@ -23,8 +23,13 @@ docs/rulebook/
     pages-06-07.jpeg
     pages-08-09.jpeg
     pages-10-11.jpeg
+    pages-12-13.jpeg
+    pages-14-15.jpeg
+    pages-16-17.jpeg
+    pages-18-19.jpeg
+    pages-20-21.jpeg
   pages/             faithful Spanish transcription, one file per page
-    page-01.md ... page-11.md
+    page-01.md ... page-21.md
 ```
 
 The camera captured the booklet as two-page spreads, so most scans hold two
@@ -38,8 +43,12 @@ pages; each `pages/page-NN.md` notes which half of which scan it transcribes.
   described in text and, where useful, redrawn as ASCII / Markdown tables.
 - Transcriptions aim to be **literal** (typos and all), so that any later
   English translation or rules interpretation can be traced back to the source.
-- Game-term abbreviations from the rulebook (RM, DL, PA, and the ability codes
-  RB, A, RC, D, RG, V, PC, PL, PA, DL) are kept as-is.
+- Game-term abbreviations from the rulebook are kept as-is:
+  - **Pitch zones:** RM (remate cercano), DL (disparo lejano), PA (pases altos)
+  - **Outfield abilities:** PC, PL, RG, A, RB (básicas); V, PA, F, D, RC, LF, RM,
+    DL (avanzadas)
+  - **Goalkeeper:** CO (colocación), RF (reflejos), SA (salida por alto),
+    SP (salida a los pies)
 
 ## Pages
 
@@ -56,9 +65,21 @@ pages; each `pages/page-NN.md` notes which half of which scan it transcribes.
 | 9 | [scan](scans/pages-08-09.jpeg) | [text](pages/page-09.md) | Robo de balón; **Regates**: regate |
 | 10 | [scan](scans/pages-10-11.jpeg) | [text](pages/page-10.md) | **Remates**: remate en el área; disparo lejano |
 | 11 | [scan](scans/pages-10-11.jpeg) | [text](pages/page-11.md) | **Portero** (RF, CO, saques, cesiones); modalidad de juego básico |
+| 12 | [scan](scans/pages-12-13.jpeg) | [text](pages/page-12.md) | Basic-mode limits; **¡MUY importante!** (turn/movement restrictions) |
+| 13 | [scan](scans/pages-12-13.jpeg) | [text](pages/page-13.md) | **¡Y finalmente el partido!** — line-ups; nomenclatura; graphic legend |
+| 14 | [scan](scans/pages-14-15.jpeg) | [text](pages/page-14.md) | Worked example match — turns 1–3 (plays 1–23) |
+| 15 | [scan](scans/pages-14-15.jpeg) | [text](pages/page-15.md) | Worked example match — turns 4–7 (plays 24–41) |
+| 16 | [scan](scans/pages-16-17.jpeg) | [text](pages/page-16.md) | Worked example match — turn 8 to the goal (plays 42–53) |
+| 17 | [scan](scans/pages-16-17.jpeg) | [text](pages/page-17.md) | Board diagrams **Figura 1–5** (described; positions in scan) |
+| 18 | [scan](scans/pages-18-19.jpeg) | [text](pages/page-18.md) | **Juego avanzado**; características avanzadas: desmarque, velocidad |
+| 19 | [scan](scans/pages-18-19.jpeg) | [text](pages/page-19.md) | Velocidad (cont.); **pase alto** |
+| 20 | [scan](scans/pages-20-21.jpeg) | [text](pages/page-20.md) | Remate de cabeza; anticipación a un remate de cabeza |
+| 21 | [scan](scans/pages-20-21.jpeg) | [text](pages/page-21.md) | Anticipación (cont.); **Faltas** (start of the foul table) |
 
-_Pages 1–11 (the **Juego Básico**) are transcribed. The **Juego Avanzado** and
-the worked example match referenced in the intro have not been photographed yet._
+_Pages 1–21 are transcribed: the full **Juego Básico** (1–13), the worked
+example match with its diagrams (14–17), and the start of the **Juego Avanzado**
+(18–21). The advanced section continues past page 21 — the **Faltas** result
+table breaks off mid-list, so at least page 22 onward is not yet photographed._
 
 ## The dice mechanic at a glance
 
