@@ -117,11 +117,9 @@ resolution doesn't allow a fully reliable reading:
 - **p14–16** — the die values in the worked example match (small superscripts).
 - **p17, p25, p26** — exact piece coordinates in the board diagrams (Figuras 1–9).
 - **p23, p29** — heavily hand-underlined paragraphs.
-- **p30** — TABLA 1 & TABLA 2. Now captured with **sharp macro close-ups**
-  (`tabla-1-closeup.png`, `tabla-2-closeup.png`). **TABLA 1 is verified**
-  (self-consistent with the page-31 worked example). TABLA 2 reads cleanly except
-  for confirming the **stacked defender+keeper cells** on the shot rows
-  (RM/DL/RC) — see the open questions in `VERIFICATION.md`.
+- **p30** — TABLA 1 & TABLA 2 are **fully verified** from sharp macro close-ups
+  (`tabla-1-closeup.png`, `tabla-2-closeup.png`) and confirmed by the booklet
+  owner. TABLA 1 is also self-consistent with the page-31 worked example.
 
 The **índice (p32–33)** is fully legible and cross-checks every page number
 above, so the overall structure and pagination are confirmed.

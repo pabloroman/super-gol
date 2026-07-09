@@ -62,19 +62,21 @@ cada grupo con sub-columnas **Antes** y **Después** (del remate). Filas:
 sin marcaje).
 
 En las celdas de remates (RM/DL/RC) conviven la respuesta del **defensor** (RB
-y/o F) y la del **portero** (SP y/o PEN antes; RF / CO después). Lectura:
+y/o F) y la del **portero** (SP y/o PEN antes; RF / CO después):
 
 | Acción | Nº | MH · Antes | MH · Después | MZ · Antes | MZ · Después | SM · Antes | SM · Después |
 |--------|:--:|-----------|-------------|-----------|-------------|-----------|-------------|
 | RG | 2 / 1 / 1 | RB y/o F | F o PEN | RB y/o F | F o PEN | – | – |
 | V  | 2 / 1 / 1 | RB y/o F | F o PEN | RB y/o F | F o PEN | – | – |
 | RM | 2 / 1 / 1 | RB y/o F · SP y/o PEN | RF | RB y/o F · SP y/o PEN | RF | RB y/o F · SP y/o PEN | RF |
-| DL | 2 / 1 / 1 | RB y/o F | CO | RB y/o F | CO | RB y/o F | CO |
+| DL | 2 / 1 / 1 | RB y/o F · SP y/o PEN | CO | RB y/o F · SP y/o PEN | CO | RB y/o F · SP y/o PEN | CO |
 | RC | 2 / 1 / 1 | SA | RF | SA | RF | SA | RF |
 
-> ⚠️ **TABLA 2 — pendiente de una última confirmación humana.** Los encabezados,
-> las filas y los `Nº` se leen con claridad en el primer plano. Lo que queda por
-> confirmar es la **estructura de celdas apiladas** en los remates: si en cada
-> casilla de RM/DL/RC conviven de verdad la opción del defensor (RB y/o F) y la
-> del portero (SP y/o PEN / RF / CO), y el reparto exacto entre "Antes" y
-> "Después". Verificar contra `scans/tabla-2-closeup.png`.
+Interpretación (confirmada): en los remates, **Antes** del disparo el defensor
+puede robar el balón o hacer falta (`RB y/o F`) y el portero puede salir a los
+pies o hacer penalty (`SP y/o PEN`); **Después** del disparo actúa el portero,
+con reflejos (`RF`, en RM y RC) o colocación (`CO`, en DL). En **RC** (remate de
+cabeza) la única acción "Antes" es la salida por alto del portero (`SA`).
+
+_Ambas tablas verificadas contra los primeros planos
+`scans/tabla-1-closeup.png` y `scans/tabla-2-closeup.png`._

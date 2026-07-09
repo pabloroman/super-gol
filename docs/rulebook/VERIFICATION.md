@@ -32,19 +32,17 @@ now high-confidence. The full transcription lives in
 even self-consistent with the page-31 worked example: PC passer-SM Nº = 0 +
 receiver-MH Nº = 2 → "máximo entre 0 y 2 = 2" ✓).
 
-**The only thing still open is TABLA 2's stacked cells.** For the shots
-(RM / DL / RC), each marking cell appears to hold **two** responses — the
-outfield defender's (`RB y/o F`) and the goalkeeper's (`SP y/o PEN` before the
-shot; `RF` / `CO` after). Please confirm against `scans/tabla-2-closeup.png`:
+**TABLA 2 is now verified too** (confirmed by the booklet owner). For the shots
+(RM / DL / RC), each marking cell holds **two** responses — the outfield
+defender's (`RB y/o F`) and the goalkeeper's (`SP y/o PEN` before the shot;
+`RF` / `CO` after). Confirmed:
 
-1. In each **RM/DL/RC** cell, do both the defender option and the keeper option
-   really coexist, as in page-30.md?
-2. Is the **Antes / Después** split right — keeper `SP y/o PEN` *before* the
-   shot, and `RF` (RM/RC) or `CO` (DL) *after*?
-3. **RC** row: is the "Antes" really just `SA`, with no `RB y/o F`?
+1. ✓ In each RM/DL/RC cell the defender option and the keeper option coexist.
+2. ✓ Antes = defender `RB y/o F` + keeper `SP y/o PEN`; Después = keeper `RF`
+   (RM/RC) or `CO` (DL).
+3. ✓ RC "Antes" is just `SA` (keeper salida por alto), no `RB y/o F`.
 
-Everything else in both tables (headers, rows, all `Nº` counts, and all of
-TABLA 1) reads cleanly from the close-ups.
+**Both tables are fully verified.** See [`pages/page-30.md`](pages/page-30.md).
 
 ---
 
