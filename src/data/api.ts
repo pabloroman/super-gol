@@ -1,0 +1,108 @@
+import { requireSupabase } from '@/lib/supabase'
+import type {
+  Card,
+  CollectionEntry,
+  Pack,
+  Profile,
+  Squad,
+  SquadSlot,
+} from '@/lib/types'
+
+// ---------- profile / wallet ----------
+export async function fetchProfile(): Promise<Profile | null> {
+  const sb = requireSupabase()
+  const { data: auth } = await sb.auth.getUser()
+  if (!auth.user) return null
+  const { data, error } = await sb
+    .from('profiles')
+    .select('id, username, coins')
+    .eq('id', auth.user.id)
+    .maybeSingle()
+  if (error) throw new Error(error.message)
+  return data
+}
+
+// ---------- catalog ----------
+export async function fetchCatalog(): Promise<Card[]> {
+  const { data, error } = await requireSupabase()
+    .from('cards')
+    .select('*')
+    .order('cost', { ascending: false })
+  if (error) throw new Error(error.message)
+  return data as Card[]
+}
+
+// ---------- collection ----------
+export async function fetchCollection(): Promise<CollectionEntry[]> {
+  const { data, error } = await requireSupabase()
+    .from('user_cards')
+    .select('quantity, card:cards(*)')
+    .gt('quantity', 0)
+  if (error) throw new Error(error.message)
+  // Supabase returns the joined card as an object under `card`.
+  return (data as unknown as { quantity: number; card: Card }[]).map((row) => ({
+    quantity: row.quantity,
+    card: row.card,
+  }))
+}
+
+// ---------- squad ----------
+export async function fetchActiveSquad(): Promise<Squad | null> {
+  const sb = requireSupabase()
+  const { data: squad, error } = await sb
+    .from('squads')
+    .select('id, name, formation, total_cost')
+    .order('is_active', { ascending: false })
+    .limit(1)
+    .maybeSingle()
+  if (error) throw new Error(error.message)
+  if (!squad) return null
+
+  const { data: slots, error: slotErr } = await sb
+    .from('squad_slots')
+    .select('card_id, slot, is_starter')
+    .eq('squad_id', squad.id)
+    .order('slot', { ascending: true })
+  if (slotErr) throw new Error(slotErr.message)
+
+  return { ...squad, slots: (slots ?? []) as SquadSlot[] }
+}
+
+export async function saveSquad(
+  name: string,
+  formation: string,
+  starters: string[],
+  bench: string[],
+): Promise<number> {
+  const { data, error } = await requireSupabase().rpc('save_squad', {
+    p_name: name,
+    p_formation: formation,
+    p_starters: starters,
+    p_bench: bench,
+  })
+  if (error) throw new Error(error.message)
+  return data as number
+}
+
+// ---------- store ----------
+export async function fetchPacks(): Promise<Pack[]> {
+  const { data, error } = await requireSupabase()
+    .from('packs')
+    .select('*')
+    .order('sort_order', { ascending: true })
+  if (error) throw new Error(error.message)
+  return data as Pack[]
+}
+
+export interface PackResult {
+  coins: number
+  cards: string[]
+}
+
+export async function openPack(packId: string): Promise<PackResult> {
+  const { data, error } = await requireSupabase().rpc('open_pack', {
+    p_pack_id: packId,
+  })
+  if (error) throw new Error(error.message)
+  return data as PackResult
+}
