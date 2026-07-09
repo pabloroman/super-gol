@@ -101,7 +101,15 @@ Avanzado** (18–29) — advanced abilities, fouls, penalties, offside, corners,
 substitutions, injuries and the **official tournament regulation** — and the two
 master reference tables (30–31).
 
-### Where the scans need a sharper re-shoot
+### Verification worklist
+
+Since no sharper scans are available, the uncertain spots are collected into a
+single review checklist — **[`VERIFICATION.md`](VERIFICATION.md)** — with the
+current reading laid out so a human review only has to confirm or correct each
+item. Priority 1 (the TABLA 1/2 grid) is the only thing that materially blocks
+the game engine.
+
+### Where the reading is uncertain
 
 A few pages are transcribed but flagged **verify-against-scan** because the photo
 resolution doesn't allow a fully reliable reading:
