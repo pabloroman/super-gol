@@ -28,8 +28,13 @@ docs/rulebook/
     pages-16-17.jpeg
     pages-18-19.jpeg
     pages-20-21.jpeg
+    pages-22-23.jpeg
+    pages-24-25.jpeg
+    pages-26-27.jpeg
+    pages-28-29.jpeg
+    pages-30-31.jpeg
   pages/             faithful Spanish transcription, one file per page
-    page-01.md ... page-21.md
+    page-01.md ... page-31.md
 ```
 
 The camera captured the booklet as two-page spreads, so most scans hold two
@@ -75,11 +80,34 @@ pages; each `pages/page-NN.md` notes which half of which scan it transcribes.
 | 19 | [scan](scans/pages-18-19.jpeg) | [text](pages/page-19.md) | Velocidad (cont.); **pase alto** |
 | 20 | [scan](scans/pages-20-21.jpeg) | [text](pages/page-20.md) | Remate de cabeza; anticipación a un remate de cabeza |
 | 21 | [scan](scans/pages-20-21.jpeg) | [text](pages/page-21.md) | Anticipación (cont.); **Faltas** (start of the foul table) |
+| 22 | [scan](scans/pages-22-23.jpeg) | [text](pages/page-22.md) | Foul result table (cards); **¿Cómo se saca la falta?** |
+| 23 | [scan](scans/pages-22-23.jpeg) | [text](pages/page-23.md) | Libres directos (LF); **Penalty**; advanced goalkeeper |
+| 24 | [scan](scans/pages-24-25.jpeg) | [text](pages/page-24.md) | **Salida a los pies (SP)**; **salida por alto (SA)**; relevo con portero |
+| 25 | [scan](scans/pages-24-25.jpeg) | [text](pages/page-25.md) | Relevo-portero result; example **Figura 6–7** |
+| 26 | [scan](scans/pages-26-27.jpeg) | [text](pages/page-26.md) | Example **Figura 8–9** (goal) |
+| 27 | [scan](scans/pages-26-27.jpeg) | [text](pages/page-27.md) | **Reglas avanzadas**: fuera de juego, córner, fuera de banda |
+| 28 | [scan](scans/pages-28-29.jpeg) | [text](pages/page-28.md) | Movimiento propio del balón; fuera de gol; cambios; lesiones |
+| 29 | [scan](scans/pages-28-29.jpeg) | [text](pages/page-29.md) | **Reglamento oficial del torneo** (100 pts, demarcación); curiosidades |
+| 30 | [scan](scans/pages-30-31.jpeg) | [text](pages/page-30.md) | **TABLA 1 & TABLA 2** — master reference tables (verify vs scan) |
+| 31 | [scan](scans/pages-30-31.jpeg) | [text](pages/page-31.md) | **Cómo leer las tablas**; worked table examples |
 
-_Pages 1–21 are transcribed: the full **Juego Básico** (1–13), the worked
-example match with its diagrams (14–17), and the start of the **Juego Avanzado**
-(18–21). The advanced section continues past page 21 — the **Faltas** result
-table breaks off mid-list, so at least page 22 onward is not yet photographed._
+_**The full booklet (pages 1–31) is now transcribed.**_ It covers the complete
+**Juego Básico** (1–13) with a worked example match (14–17), the complete **Juego
+Avanzado** (18–29) — advanced abilities, fouls, penalties, offside, corners,
+substitutions, injuries and the **official tournament regulation** — and the two
+master reference tables (30–31).
+
+### Where the scans need a sharper re-shoot
+
+A few pages are transcribed but flagged **verify-against-scan** because the photo
+resolution doesn't allow a fully reliable reading:
+
+- **p14–16** — the die values in the worked example match (small superscripts).
+- **p17, p25, p26** — exact piece coordinates in the board diagrams (Figuras 1–9).
+- **p23, p29** — heavily hand-underlined paragraphs.
+- **p30** — TABLA 1 & TABLA 2. **These are the highest-value pages for the engine
+  and the least legible.** A close, straight-on photo of each table would let
+  them be digitised cell-by-cell.
 
 ## The dice mechanic at a glance
 
@@ -91,4 +119,18 @@ Every contested action rolls to reach **≥ 10** from a sum. Rule of thumb:
 `X` is the acting player's ability for that action (PC, PL, RG, A, RB, RM, DL…).
 The goalkeeper saves on `d6 + d6 + RF` (from RM) or `d6 + d6 + CO` (from DL),
 stopping the shot on a total of 10, 11 or 12. This is the core of the real
-`play_match` engine that will replace the current placeholder.
+`play_match` engine that will replace the current placeholder. **TABLA 1 & 2**
+(pages 30–31) are the complete lookup for "how many dice + which defensive
+responses" per action and marking type — the definitive spec for the engine,
+pending a sharper re-shoot.
+
+### Rules that confirm the app's design
+
+The **Reglamento oficial del torneo** (page 29) independently confirms two
+constraints already baked into the codebase:
+
+- **100-point squad cap** — "un máximo de **100 puntos** (suma de las fichas de
+  los 16 jugadores)", matching `save_squad`'s cap and the README's 11+5 ≤ 100.
+- **Demarcación** — a card's abilities only apply in its pitch zone (except
+  LF/RM/DL/RC), matching the per-card pitch-zone grid.
+- **3 extranjeros per team** and **3 substitutions**, for later features.
