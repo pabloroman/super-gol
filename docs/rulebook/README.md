@@ -33,8 +33,10 @@ docs/rulebook/
     pages-26-27.jpeg
     pages-28-29.jpeg
     pages-30-31.jpeg
+    pages-30-31-alt.jpeg  second photo of the tables page (same resolution)
+    pages-32-33.jpeg      índice (table of contents)
   pages/             faithful Spanish transcription, one file per page
-    page-01.md ... page-31.md
+    page-01.md ... page-33.md
 ```
 
 The camera captured the booklet as two-page spreads, so most scans hold two
@@ -90,8 +92,10 @@ pages; each `pages/page-NN.md` notes which half of which scan it transcribes.
 | 29 | [scan](scans/pages-28-29.jpeg) | [text](pages/page-29.md) | **Reglamento oficial del torneo** (100 pts, demarcación); curiosidades |
 | 30 | [scan](scans/pages-30-31.jpeg) | [text](pages/page-30.md) | **TABLA 1 & TABLA 2** — master reference tables (verify vs scan) |
 | 31 | [scan](scans/pages-30-31.jpeg) | [text](pages/page-31.md) | **Cómo leer las tablas**; worked table examples |
+| 32 | [scan](scans/pages-32-33.jpeg) | [text](pages/page-32.md) | **Índice** (1/2) — confirms page numbers |
+| 33 | [scan](scans/pages-32-33.jpeg) | [text](pages/page-33.md) | **Índice** (2/2) |
 
-_**The full booklet (pages 1–31) is now transcribed.**_ It covers the complete
+_**The full booklet (all 33 pages) is now transcribed.**_ It covers the complete
 **Juego Básico** (1–13) with a worked example match (14–17), the complete **Juego
 Avanzado** (18–29) — advanced abilities, fouls, penalties, offside, corners,
 substitutions, injuries and the **official tournament regulation** — and the two
@@ -106,8 +110,13 @@ resolution doesn't allow a fully reliable reading:
 - **p17, p25, p26** — exact piece coordinates in the board diagrams (Figuras 1–9).
 - **p23, p29** — heavily hand-underlined paragraphs.
 - **p30** — TABLA 1 & TABLA 2. **These are the highest-value pages for the engine
-  and the least legible.** A close, straight-on photo of each table would let
-  them be digitised cell-by-cell.
+  and the least legible.** Two photos exist (`pages-30-31.jpeg` and
+  `pages-30-31-alt.jpeg`) but both are at normal page distance, so the small
+  table cells still can't be read reliably. A **macro / close-up of each table on
+  its own** is the one re-shoot that would materially help.
+
+The **índice (p32–33)** is fully legible and cross-checks every page number
+above, so the overall structure and pagination are confirmed.
 
 ## The dice mechanic at a glance
 
