@@ -25,45 +25,26 @@ penalty, and no need to be able to move".
 
 ## ★ Priority 1 — TABLA 1 & TABLA 2 (page 30)
 
-This is the master combat-resolution matrix and the least legible page. Please
-verify **every cell**. Current best reading:
+**Update:** sharp macro close-ups now exist
+(`scans/tabla-1-closeup.png`, `scans/tabla-2-closeup.png`), so the reading is
+now high-confidence. The full transcription lives in
+[`pages/page-30.md`](pages/page-30.md). **TABLA 1 is considered verified** (it is
+even self-consistent with the page-31 worked example: PC passer-SM Nº = 0 +
+receiver-MH Nº = 2 → "máximo entre 0 y 2 = 2" ✓).
 
-### TABLA 1 — POSEEDOR DEL BALÓN
+**The only thing still open is TABLA 2's stacked cells.** For the shots
+(RM / DL / RC), each marking cell appears to hold **two** responses — the
+outfield defender's (`RB y/o F`) and the goalkeeper's (`SP y/o PEN` before the
+shot; `RF` / `CO` after). Please confirm against `scans/tabla-2-closeup.png`:
 
-| Jugada | Nº (MH) | MH | Nº (MZ) | MZ | Nº (SM) | SM |
-|--------|:---:|----|:---:|----|:---:|----|
-| PD | – | – | – | – | – | – |
-| PC | 2 | RB y/o F (\*) | 1 | RB y/o F (\*) | 1 | RB y/o F (\*) |
-| PL | 2 | F (\*) | 1 | F (\*) | 1 | F (\*) |
-| RG | 2 | RB y/o PEN | 1 | F o PEN | 1 | F o PEN |
-| V  | 2 | RB y/o F | 1 | F o PEN | 1 | F o PEN |
-| PA | 2 | RB y/o F (\*) | 1 | F (\*) | 1 | F (\*) |
+1. In each **RM/DL/RC** cell, do both the defender option and the keeper option
+   really coexist, as in page-30.md?
+2. Is the **Antes / Después** split right — keeper `SP y/o PEN` *before* the
+   shot, and `RF` (RM/RC) or `CO` (DL) *after*?
+3. **RC** row: is the "Antes" really just `SA`, with no `RB y/o F`?
 
-### TABLA 1 — RECEPTOR DEL BALÓN
-
-| Jugada | Nº (MH) | MH | Nº (MZ) | MZ | Nº (SM) | SM |
-|--------|:---:|----|:---:|----|:---:|----|
-| PD | – | RB | – | RB | – | – |
-| PC | 2 | A/F o RB | 1 | A/F o RB | – | – |
-| PL | 2 | RB/F (\*) | 1 | RB/F (\*) | – | – |
-| RM | 2 | RC | 1 | RC | 1 | RC |
-| DL | 2 | RB/F (\*) | 1 | CO | 1 | CO |
-| PA | 2 | SA | 1 | SA | 1 | SA |
-
-### TABLA 2 (Antes / Después del remate)
-
-| Jugada | MH · Antes | MH · Después | MZ · Antes | MZ · Después | SM · Antes |
-|--------|----|----|----|----|----|
-| RG (Nº 2) | RB y/o F | F o PEN | RB y/o F | F o PEN | — |
-| V  (Nº 2) | RB y/o F | F o PEN | RB y/o F | F o PEN | — |
-| RM (Nº 2) | SP y/o PEN | RF | SP y/o PEN | RF | RF |
-| DL (Nº 2) | RB y/o F | CO | RB y/o F | CO | CO |
-| RC (Nº 2) | RB y/o F | RF | RB y/o F | SA | RF |
-
-> ⚠️ Row/column headers and the `Nº` (dice count) columns are the most reliable
-> part; the response cells are the least certain. If the whole grid is too hard
-> to read, even just confirming the **Nº columns** (how many dice per action ×
-> marking) would unblock most of the engine.
+Everything else in both tables (headers, rows, all `Nº` counts, and all of
+TABLA 1) reads cleanly from the close-ups.
 
 ---
 

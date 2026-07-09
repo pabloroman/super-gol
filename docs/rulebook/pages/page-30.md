@@ -1,26 +1,19 @@
 # Página 30 — Tablas de referencia (TABLA 1 y TABLA 2)
 
-> Escaneo original:
-> [`../scans/pages-30-31.jpeg`](../scans/pages-30-31.jpeg) (página izquierda).
->
-> ⚠️ **IMPORTANTE:** Esta página son dos tablas-resumen muy densas y de letra
-> pequeña. La reconstrucción de abajo captura la **estructura** y las celdas más
-> legibles, pero **muchos valores individuales no se leen con fiabilidad a esta
-> resolución**. Antes de codificar estas tablas en el motor de juego, **hay que
-> re-fotografiar esta página de cerca y verificar celda por celda** contra
-> `scans/pages-30-31.jpeg`. La leyenda para interpretarlas está en la página 31.
-
----
-
-**Super GOL** · Instrucciones
+> Escaneos originales:
+> [`../scans/pages-30-31.jpeg`](../scans/pages-30-31.jpeg) (página completa) y los
+> **primeros planos nítidos** de cada tabla:
+> [`../scans/tabla-1-closeup.png`](../scans/tabla-1-closeup.png) ·
+> [`../scans/tabla-2-closeup.png`](../scans/tabla-2-closeup.png).
 
 Leyenda de columnas (ver pág. 31):
 
 - **Nº:** número de dados que hay que lanzar.
 - **MH:** marcaje al hombre · **MZ:** marcaje en zona · **SM:** sin marcaje.
 - Contenido de las celdas = acciones que puede intentar el defensor / portero:
-  **RB** (robo de balón), **F** (falta), **PEN** (penalty), **A** (anticipación),
-  **CO**, **RF**, **SP**, **SA**, **RC**…
+  **RB** robo de balón · **F** falta · **PEN** penalty · **A** anticipación ·
+  **RC** remate/despeje de cabeza · **CO** colocación · **RF** reflejos ·
+  **SA** salida por alto · **SP** salida a los pies.
 
 Notas al pie de la TABLA 1:
 
@@ -28,52 +21,60 @@ Notas al pie de la TABLA 1:
   acciones indicadas.
 - **(\*)** SP y/o penalty, y no se necesita poder mover.
 
-## TABLA 1
+---
 
-Dividida en dos mitades — **POSEEDOR DEL BALÓN** y **RECEPTOR DEL BALÓN** — cada
-una con las columnas `Nº | MH | Nº | MZ | Nº | SM`. Filas por tipo de jugada
-(PD, PC, PL, RG, V, PA…).
+## TABLA 1 — Pases
 
-Lectura aproximada (⚠️ verificar):
+Dividida en **POSEEDOR DEL BALÓN** (el que pasa) y **RECEPTOR DEL BALÓN** (el que
+recibe), cada una con columnas `Nº | MH | Nº | MZ | Nº | SM`. Filas por tipo de
+pase: **PD, PC, PL, PA**.
+
+**Cómo se combina** (confirmado por el ejemplo de la pág. 31): el número de dados
+que se lanzan es el **máximo** entre el `Nº` del poseedor (según su marcaje) y el
+`Nº` del receptor (según el suyo). Ejemplo: PC de un pasador SM → receptor MH ⇒
+`máximo(0, 2) = 2` dados.
 
 ### POSEEDOR DEL BALÓN
 
-| Jugada | Nº | MH | Nº | MZ | Nº | SM |
-|--------|----|----|----|----|----|----|
+| Pase | Nº (MH) | MH | Nº (MZ) | MZ | Nº (SM) | SM |
+|------|:---:|----|:---:|----|:---:|----|
 | PD | – | – | – | – | – | – |
-| PC | 2 | RB y/o F (\*) | 1 | RB y/o F (\*) | 1 | RB y/o F (\*) |
-| PL | 2 | F (\*) | 1 | F (\*) | 1 | F (\*) |
-| RG | 2 | RB y/o PEN | 1 | F o PEN | 1 | F o PEN |
-| V | 2 | RB y/o F | 1 | F o PEN | 1 | F o PEN |
-| PA | 2 | RB y/o F (\*) | 1 | F (\*) | 1 | F (\*) |
+| PC | 2 | RB y/o F (\*) | 1 | RB y/o F (\*) | 0 | RB o F |
+| PL | 2 | RB y/o F (\*) | 1 | RB y/o F (\*) | 1 | RB o F (\*) |
+| PA | 2 | RB y/o F (\*) | 1 | RB y/o F (\*) | 1 | RB o F |
 
 ### RECEPTOR DEL BALÓN
 
-| Jugada | Nº | MH | Nº | MZ | Nº | SM |
-|--------|----|----|----|----|----|----|
-| PD | – | RB | – | RB | – | – |
-| PC | 2 | A/F o RB | 1 | A/F o RB | – | – |
-| PL | 2 | RB/F (\*) | 1 | RB/F (\*) | – | – |
-| RM | 2 | RC | 1 | RC | 1 | RC |
-| DL | 2 | RB/F (\*) | 1 | CO | 1 | CO |
-| PA | 2 | SA | 1 | SA | 1 | SA |
+| Pase | Nº (MH) | MH | Nº (MZ) | MZ | Nº (SM) | SM |
+|------|:---:|----|:---:|----|:---:|----|
+| PD | – | – | – | – | – | (\*) |
+| PC | 2 | A/F o RB | 1 | A/F o RB | 0 | (\*) |
+| PL | 2 | RB/F (\*) | 1 | RB/F (\*) | 1 | (\*) |
+| PA | 2 | RC | 1 | RC | 1 | SA |
 
-## TABLA 2
+---
 
-Encabezados: **MARCAJE HOMBRE | MARCAJE ZONA | SIN MARCAJE**, cada uno con
-sub-columnas **Antes / Después** (del remate). Filas: RG, V, RM, DL, RC.
+## TABLA 2 — Regate, velocidad y remates
 
-Lectura aproximada (⚠️ verificar):
+Columnas agrupadas en **MARCAJE HOMBRE**, **MARCAJE ZONA** y **SIN MARCAJE**,
+cada grupo con sub-columnas **Antes** y **Después** (del remate). Filas:
+**RG, V, RM, DL, RC** (todas con `Nº = 2` bajo marcaje al hombre, `1` bajo zona /
+sin marcaje).
 
-| | MH Antes | MH Después | MZ Antes | MZ Después | SM Antes |
-|--|----------|-----------|----------|-----------|----------|
-| RG 2 | RB y/o F | F o PEN | RB y/o F | F o PEN | Antes |
-| V 2 | RB y/o F | Fo PEN | RB y/o F | Fo PEN | |
-| RM 2 | SP y/o PEN | RF | SP y/o PEN | RF | RF |
-| DL 2 | RB y/o F | CO | RB y/o F | CO | CO |
-| RC 2 | RB y/o F | RF | RB y/o F | SA | RF |
+En las celdas de remates (RM/DL/RC) conviven la respuesta del **defensor** (RB
+y/o F) y la del **portero** (SP y/o PEN antes; RF / CO después). Lectura:
 
-> Las tres tablas de arriba son la mejor lectura posible del escaneo actual y
-> **no deben tomarse como definitivas**. Una foto nítida y de frente de la página
-> 30 (idealmente cada tabla por separado) permitiría transcribirlas con
-> exactitud.
+| Acción | Nº | MH · Antes | MH · Después | MZ · Antes | MZ · Después | SM · Antes | SM · Después |
+|--------|:--:|-----------|-------------|-----------|-------------|-----------|-------------|
+| RG | 2 / 1 / 1 | RB y/o F | F o PEN | RB y/o F | F o PEN | – | – |
+| V  | 2 / 1 / 1 | RB y/o F | F o PEN | RB y/o F | F o PEN | – | – |
+| RM | 2 / 1 / 1 | RB y/o F · SP y/o PEN | RF | RB y/o F · SP y/o PEN | RF | RB y/o F · SP y/o PEN | RF |
+| DL | 2 / 1 / 1 | RB y/o F | CO | RB y/o F | CO | RB y/o F | CO |
+| RC | 2 / 1 / 1 | SA | RF | SA | RF | SA | RF |
+
+> ⚠️ **TABLA 2 — pendiente de una última confirmación humana.** Los encabezados,
+> las filas y los `Nº` se leen con claridad en el primer plano. Lo que queda por
+> confirmar es la **estructura de celdas apiladas** en los remates: si en cada
+> casilla de RM/DL/RC conviven de verdad la opción del defensor (RB y/o F) y la
+> del portero (SP y/o PEN / RF / CO), y el reparto exacto entre "Antes" y
+> "Después". Verificar contra `scans/tabla-2-closeup.png`.
