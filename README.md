@@ -42,11 +42,22 @@ Postgres function that the client can call but not forge:
 
 ## The match engine is pluggable
 
-Match resolution currently lives in `play_match` as a **placeholder** (squad
-strength → scoreline with weighted randomness). The real Super Gol rules
-(the `d6 + ability + pitch-zone` simulation) will drop in behind the same
-interface — see `src/game/engine.ts` — most likely as a Supabase Edge Function
-sharing a TypeScript engine module. **No screen changes when that lands.**
+The **authoritative** resolver still lives in `play_match` as a **placeholder**
+(squad strength → scoreline with weighted randomness) — it runs server-side so
+coins can't be forged.
+
+The **real basic-game rules** now exist as a concrete engine in
+`src/game/engine/`: a pure, dependency-free, seeded, deterministic TypeScript
+module implementing the *Juego Básico* — the `d6 + ability + marcaje` contest
+(TABLA 1 & TABLA 2), keeper saves, and the win-by-two-goals ending — faithful to
+`docs/rulebook/`. It uses a zone-abstracted board (an advancement band behind a
+`Pitch` interface) so a full 6×5 board can drop in later. Unit tests live in
+`src/game/engine/__tests__/` (`npm run test`).
+
+It is exposed as `localMatchEngine` behind the existing `MatchEngine` interface
+(`src/game/engine.ts`) and selected only when `VITE_LOCAL_ENGINE=1` — it is **not**
+trusted for coins. **Next step:** deploy the *same* module inside a Supabase Edge
+Function so the real engine becomes authoritative, with **no screen changes**.
 
 ## Getting started
 
@@ -76,7 +87,8 @@ supabase/
 src/
   lib/        supabase client, domain types
   data/       repositories over Supabase
-  game/       abilities, squad rules (100-pt cap), match engine interface
+  game/       abilities, ratings, squad rules (100-pt cap), match engine
+    engine/   pure basic-game rules simulation (+ __tests__)
   auth/       AuthProvider (session + profile)
   ui/         BottomNav, CardTile
   screens/    Login, Home, Play, Collection, Store, SquadBuilder
@@ -88,9 +100,13 @@ Foundation is in place: auth, wallet, collection, 100-point squad builder,
 store/pack-opening, and a playable loop with a placeholder match. Validated
 end-to-end (schema, RLS, RPC guard rails).
 
-**Next:** enter the real 55-card *juego básico* + the exact ability scale, then
-replace `play_match` with the real dice-and-ability engine. Human-vs-human PvP
-(async first) comes after that.
+The real basic-game dice-and-ability engine now exists and is unit-tested in
+`src/game/engine/` (see "The match engine is pluggable").
+
+**Next:** deploy that engine module in a Supabase Edge Function so it becomes the
+authoritative resolver (replacing the `play_match` placeholder), and enter the
+real 55-card *juego básico* + the exact ability scale. Human-vs-human PvP (async
+first) comes after that.
 
 > **Seed note:** the catalog ships the 7 cards decoded from original photos plus
 > clearly-labelled placeholder base players, so a new account can field a legal

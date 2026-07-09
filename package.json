@@ -9,6 +9,8 @@
     "build": "tsc -b && vite build",
     "preview": "vite preview",
     "typecheck": "tsc -b --noEmit",
+    "test": "vitest run",
+    "test:watch": "vitest",
     "lint": "eslint .",
     "db:reset": "supabase db reset",
     "db:push": "supabase db push"
@@ -29,6 +31,7 @@
     "tailwindcss": "^3.4.17",
     "typescript": "~5.7.2",
     "vite": "^6.0.5",
-    "vite-plugin-pwa": "^0.21.1"
+    "vite-plugin-pwa": "^0.21.1",
+    "vitest": "^2.1.9"
   }
 }

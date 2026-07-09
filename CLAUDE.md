@@ -1,0 +1,85 @@
+# CLAUDE.md — project guide for AI assistants
+
+Super Gol is a mobile-first PWA recreation of the 1995 Spanish football card game
+*Super Gol* (Naipes Heraclio Fournier). Collect cards → build a squad → compete →
+earn coins → open packs. Stack: Vite + React 19 + TypeScript + Tailwind, Supabase
+(Postgres + Auth + RLS) with server-authoritative game logic.
+
+## Language policy — Spanish terminology always leads
+
+This is the most important convention in the project.
+
+- **The Spanish rulebook terminology is canonical and always leads.** The domain
+  vocabulary comes from the original rulebook transcribed in `docs/rulebook/`.
+  Use those exact terms as the source of truth for names, keys, and identifiers:
+  - Ability ratings by their Spanish abbreviations: **PC** (pase corto), **PL**
+    (pase largo), **RG** (regate), **A** (anticipación), **RB** (robo de balón),
+    **RM** (remate en el área), **DL** (disparo lejano), plus the goalkeeper
+    ratings **RF** (reflejos) and **CO** (colocación). Full labels live in
+    `src/game/abilities.ts` (`ABILITY_META`) in Spanish.
+  - Marcaje (marking) states: **MH** (marcaje al hombre), **MZ** (marcaje en
+    zona), **SM** (sin marcaje), **LIBRE** (libre de marcaje).
+  - Action names: pase directo/corto/largo/al hueco, regate, remate, disparo
+    lejano, anticipación, robo de balón.
+  - Any future translation is a secondary layer and must **never** override or
+    rename these canonical Spanish terms.
+- **Code and developer-facing text (this file, comments, commit messages,
+  identifiers) are written in English.** Domain terms embedded in code keep their
+  Spanish form (e.g. `Marcaje`, `carrierMark`, ability keys `pc`/`rm`/`rf`).
+- **The product UI is Spanish-only today.** There is no i18n framework and no
+  English translation of the app. Bilingual **ES/EN** localization is a recorded
+  future goal in which **Spanish leads** — the match engine already funnels all
+  chronicle text through a single Spanish renderer (`src/game/engine/format-es.ts`)
+  so adding a `format-en.ts` later needs no engine change.
+
+## The rulebook is the source of truth for game rules
+
+`docs/rulebook/` holds a faithful, verified transcription of the original paper
+instructions (`pages/page-01.md`…`page-33.md`), the original scans, the master
+resolution charts **TABLA 1 & TABLA 2** (`pages/page-30.md`), and a
+`VERIFICATION.md` worklist. When a rule is ambiguous in code, the transcription —
+and the scans it is based on — decide it. The **Juego Básico** (basic game) spans
+pages 1–13; everything from page 18 on is **Juego Avanzado** and out of scope for
+the current engine.
+
+## Match engine architecture
+
+- The engine lives in `src/game/engine/` as a **pure, dependency-free, seeded,
+  deterministic** TypeScript module (no React/DOM/Node/Supabase imports). Same
+  `{ home, away, difficulty, seed }` → identical `MatchOutcome`.
+- It implements the **basic game** with a **zone-abstracted** positional model:
+  the dice math, marcaje transitions, keeper saves and win-by-two-goals
+  termination are rule-faithful, but board position is abstracted to an
+  advancement band (`OWN → MID → DL → RM`) behind the `Pitch` interface in
+  `pitch.ts`, so a real 6×5 board can drop in later. The core contest resolver
+  (TABLA 1/2 as data) is `dice.ts`.
+- **Authority:** `serverMatchEngine` in `src/game/engine.ts` (the Postgres
+  `play_match` RPC) stays the authoritative path that awards coins. The Postgres
+  function is still a placeholder. `localMatchEngine` runs the real rules
+  client-side but is **not** trusted for coins and is selected only when
+  `VITE_LOCAL_ENGINE=1`. The intended next step is to deploy the identical
+  `src/game/engine/` module inside a **Supabase Edge Function** so the real engine
+  becomes authoritative — without touching any screen.
+- Missing ability ratings count as **0** (rulebook page 6); always read ratings
+  through `abilityValue` in `src/game/ratings.ts`, never index `abilities[key]`.
+
+## Conventions
+
+- Import via the `@/` alias (`@/*` → `src/*`); use `import type` for type-only
+  imports.
+- Client types in `src/lib/types.ts` **mirror the SQL schema**
+  (`supabase/migrations/0001_schema.sql`). `abilities`/`zone_grid` are freeform
+  `jsonb`, so `Abilities` is a `Partial<Record<AbilityKey, number>>`.
+- The economy is **server-authoritative**: currency, pack pulls and match results
+  go through `SECURITY DEFINER` Postgres functions
+  (`supabase/migrations/0003_functions.sql`); clients can call but not forge them.
+  RLS lets clients read only their own rows.
+- Screens (`src/screens/`) call the repository layer (`src/data/api.ts`), which
+  wraps Supabase — screens never touch the client directly.
+
+## Commands
+
+- `npm run dev` — dev server
+- `npm run typecheck` — `tsc -b --noEmit` (also checks tests)
+- `npm run test` — Vitest run (engine unit tests in `src/game/engine/__tests__/`)
+- `npm run build` — typecheck + production build
