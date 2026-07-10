@@ -1,5 +1,40 @@
-import { useState, type FormEvent } from 'react'
+import { useEffect, useState, type FormEvent } from 'react'
 import { requireSupabase } from '@/lib/supabase'
+
+/**
+ * Where Supabase should send the user after they confirm their email. We pass
+ * this explicitly on every auth call so the app — not the dashboard Site URL —
+ * decides the landing origin. Combined with supabase-js `detectSessionInUrl`
+ * (on by default), a successful confirmation lands back here and logs the user
+ * in automatically. If this is omitted, Supabase falls back to the project's
+ * Site URL, which is easy to leave pointing at a protected preview domain.
+ */
+function emailRedirectTo(): string | undefined {
+  if (typeof window === 'undefined') return undefined
+  return `${window.location.origin}/`
+}
+
+/**
+ * Read an auth error handed back in the URL hash, e.g.
+ * `#error=access_denied&error_code=otp_expired&error_description=...`.
+ * Supabase appends this when an email link is invalid or expired. We surface it
+ * (and strip it from the URL) so the user gets a Spanish explanation and a
+ * resend option instead of a bare login form.
+ */
+function readHashError(): { code: string | null; description: string | null } | null {
+  if (typeof window === 'undefined') return null
+  const hash = window.location.hash.replace(/^#/, '')
+  if (!hash) return null
+  const params = new URLSearchParams(hash)
+  if (!params.get('error') && !params.get('error_code')) return null
+  const result = {
+    code: params.get('error_code'),
+    description: params.get('error_description'),
+  }
+  // Clean the hash so a refresh doesn't re-show the error.
+  window.history.replaceState(null, '', window.location.pathname + window.location.search)
+  return result
+}
 
 export function Login() {
   const [mode, setMode] = useState<'signin' | 'signup'>('signin')
@@ -9,19 +44,35 @@ export function Login() {
   const [busy, setBusy] = useState(false)
   const [message, setMessage] = useState<string | null>(null)
   const [error, setError] = useState<string | null>(null)
+  const [expiredLink, setExpiredLink] = useState(false)
+
+  useEffect(() => {
+    const hashError = readHashError()
+    if (!hashError) return
+    if (hashError.code === 'otp_expired' || hashError.code === 'access_denied') {
+      setExpiredLink(true)
+      setError('El enlace de confirmación no es válido o ha caducado. Introduce tu correo y te enviamos uno nuevo.')
+    } else {
+      setError(hashError.description ?? 'No se pudo completar la confirmación.')
+    }
+  }, [])
 
   async function submit(e: FormEvent) {
     e.preventDefault()
     setBusy(true)
     setError(null)
     setMessage(null)
+    setExpiredLink(false)
     const sb = requireSupabase()
     try {
       if (mode === 'signup') {
         const { data, error } = await sb.auth.signUp({
           email,
           password,
-          options: { data: { username: username || 'Entrenador' } },
+          options: {
+            data: { username: username || 'Entrenador' },
+            emailRedirectTo: emailRedirectTo(),
+          },
         })
         if (error) throw error
         if (!data.session) {
@@ -33,6 +84,31 @@ export function Login() {
       }
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Algo ha fallado')
+    } finally {
+      setBusy(false)
+    }
+  }
+
+  async function resendConfirmation() {
+    if (!email) {
+      setError('Introduce tu correo para reenviar la confirmación.')
+      return
+    }
+    setBusy(true)
+    setError(null)
+    setMessage(null)
+    const sb = requireSupabase()
+    try {
+      const { error } = await sb.auth.resend({
+        type: 'signup',
+        email,
+        options: { emailRedirectTo: emailRedirectTo() },
+      })
+      if (error) throw error
+      setExpiredLink(false)
+      setMessage('Te hemos enviado un nuevo correo de confirmación. Ábrelo pronto: el enlace caduca.')
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'No se pudo reenviar el correo')
     } finally {
       setBusy(false)
     }
@@ -77,6 +153,17 @@ export function Login() {
 
         {error && <p className="text-sm text-red-400">{error}</p>}
         {message && <p className="text-sm text-grass-400">{message}</p>}
+
+        {expiredLink && (
+          <button
+            type="button"
+            onClick={() => void resendConfirmation()}
+            disabled={busy}
+            className="text-sm font-semibold text-grass-400 hover:text-grass-300 disabled:opacity-50"
+          >
+            Reenviar correo de confirmación
+          </button>
+        )}
 
         <button type="submit" className="btn-primary mt-1" disabled={busy}>
           {busy ? '…' : mode === 'signup' ? 'Crear cuenta' : 'Entrar'}

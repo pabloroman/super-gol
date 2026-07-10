@@ -100,6 +100,30 @@ The app is a static Vite SPA, so any static host works; Vercel is the smoothest.
 Because the anon key is server-guarded by RLS and the economy runs through
 `SECURITY DEFINER` functions, shipping it to the browser is expected and safe.
 
+### Email confirmation & auth redirects
+
+Sign-up sends a confirmation email; the link must land back on the deployed app.
+Two settings live outside the repo and, if wrong, produce a link that bounces to
+`vercel.com/login` (a Vercel login wall) or reports `otp_expired`:
+
+1. **Vercel Deployment Protection.** The generated `*-<team>.vercel.app` preview
+   domains have **Vercel Authentication** on by default, so any request — including
+   the Supabase redirect — is intercepted and sent to `vercel.com/login?next=…`.
+   Turn it off for Production (Project → Settings → Deployment Protection), or use
+   a **public custom domain**, so the redirect reaches the app instead of a login
+   wall.
+2. **Supabase URL configuration** (Authentication → URL Configuration). Set **Site
+   URL** and add **Redirect URLs** to the *public* production origin — never a
+   protection-gated preview domain. The client also passes `emailRedirectTo`
+   (`${window.location.origin}/`) on sign-up and resend, so confirmation returns to
+   whatever origin the user signed up from; that origin must be in the allow-list.
+
+`otp_expired` on the *first* click usually means an email link-scanner prefetched
+the single-use `{{ .ConfirmationURL }}` and burned the token. Mitigate by raising
+the OTP expiry (Authentication → Email) and/or switching the email template to the
+`token_hash` confirm flow. The login screen also detects the `otp_expired` /
+`access_denied` hash Supabase appends and offers a **one-click resend**.
+
 ## Project layout
 
 ```
