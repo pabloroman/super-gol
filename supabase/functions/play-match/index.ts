@@ -33,19 +33,45 @@ function seedFrom(...parts) {
 }
 
 // src/game/engine/pitch.ts
-var ORDER = ["OWN", "MID", "DL", "RM"];
-function makePitch(band) {
-  const idx = ORDER.indexOf(band);
+var COLS = 6;
+var ROWS = 5;
+var ZONE_MAP = [
+  ["PA", "RM", "RM", "RM", "RM", "PA"],
+  // row 0 — home's own box
+  ["PA", "DL", "DL", "DL", "DL", "PA"],
+  // row 1
+  ["PA", "MID", "MID", "MID", "MID", "PA"],
+  // row 2 — midfield
+  ["PA", "DL", "DL", "DL", "DL", "PA"],
+  // row 3
+  ["PA", "RM", "RM", "RM", "RM", "PA"]
+  // row 4 — away's box (home's target)
+];
+function zoneAt(cell) {
+  return ZONE_MAP[cell.row][cell.col];
+}
+var clamp = (v, lo, hi) => Math.max(lo, Math.min(hi, v));
+function makePitch(cell, attacker) {
+  const dir = attacker === "home" ? 1 : -1;
+  const goalRow = attacker === "home" ? ROWS - 1 : 0;
+  const zone = zoneAt(cell);
   return {
-    band,
-    canShootRM: () => band === "RM",
-    canShootDL: () => band === "DL" || band === "RM",
-    step: (dir) => makePitch(ORDER[Math.max(0, Math.min(ORDER.length - 1, idx + dir))]),
-    toGoal: () => ORDER.length - 1 - idx
+    cell,
+    zone,
+    attacker,
+    canShootRM: () => zone === "RM",
+    canShootDL: () => zone === "DL",
+    step: (d) => makePitch({ col: cell.col, row: clamp(cell.row + dir * d, 0, ROWS - 1) }, attacker),
+    toLane: (col) => makePitch({ col: clamp(col, 0, COLS - 1), row: cell.row }, attacker),
+    toGoal: () => Math.abs(goalRow - cell.row)
   };
 }
-function initialPitch() {
-  return makePitch("MID");
+var CENTRE_LANE = 2;
+function initialPitch(attacker) {
+  return makePitch({ col: CENTRE_LANE, row: 2 }, attacker);
+}
+function laneFor(index) {
+  return 1 + (index % 4 + 4) % 4;
 }
 
 // src/game/ratings.ts
@@ -150,15 +176,15 @@ function tuning(difficulty) {
 function marked(mark) {
   return mark === "MH" || mark === "MZ";
 }
-function chooseAttack(rng, band, mark, carrier, difficulty) {
+function chooseAttack(rng, pitch, mark, carrier, difficulty) {
   const t = tuning(difficulty);
   const dl = abilityValue(carrier, "dl");
   const rg = abilityValue(carrier, "rg");
-  if (band === "RM") {
+  if (pitch.canShootRM()) {
     if (mark === "MH" && rng.chance(0.35 + rg * 0.08)) return { kind: "regate" };
     return { kind: "shot", action: "RM" };
   }
-  if (band === "DL") {
+  if (pitch.canShootDL()) {
     const shootWeight = t.finishing + dl * 0.1;
     if (mark === "MH" && rng.chance(0.3 + rg * 0.08)) return { kind: "regate" };
     if (rng.chance(Math.min(0.85, shootWeight))) return { kind: "shot", action: "DL" };
@@ -191,8 +217,8 @@ function chooseInterrupt(rng, receiverMark, difficulty) {
 }
 
 // src/game/engine/events.ts
-function ev(type, side, params = {}) {
-  return { type, side, params };
+function ev(type, side, params = {}, cell) {
+  return { type, side, params: cell ? { ...params, cell } : params };
 }
 function evContest(type, side, opts) {
   return {
@@ -205,7 +231,8 @@ function evContest(type, side, opts) {
       marcaje: opts.marcaje,
       dice: opts.contest.dice,
       total: opts.contest.total,
-      success: opts.contest.success
+      success: opts.contest.success,
+      cell: opts.cell
     }
   };
 }
@@ -249,7 +276,8 @@ function applyChoice(state, rng, events, choice) {
           player: state.carrier.name,
           ability: "rg",
           marcaje: state.carrierMark,
-          contest
+          contest,
+          cell: state.pitch.cell
         })
       );
       const outcome = afterRegate(contest.success);
@@ -269,7 +297,8 @@ function applyChoice(state, rng, events, choice) {
           evContest("turnover", atkSide, {
             player: state.carrier.name,
             ability: type === "PL" ? "pl" : "pc",
-            contest
+            contest,
+            cell: state.pitch.cell
           })
         );
         flip(state);
@@ -277,14 +306,20 @@ function applyChoice(state, rng, events, choice) {
       }
       state.carrier = receiver;
       state.carrierMark = receiverMark;
-      state.pitch = state.pitch.step(1);
+      state.pitch = state.pitch.step(1).toLane(laneFor(squadOf(state, atkSide).outfield.indexOf(receiver)));
       if (choice.kind === "pase" && (receiverMark === "MZ" || receiverMark === "MH")) {
         const decision = chooseInterrupt(rng, receiverMark, state.difficulty);
         if (decision === "anticipacion") {
           const contestA = resolveAnticipacion(rng, defenderBest(defSquad, "a"));
           const res = afterAnticipacion(contestA.success);
           if (res.possession === "defender") {
-            events.push(evContest("interception", other(atkSide), { ability: "a", contest: contestA }));
+            events.push(
+              evContest("interception", other(atkSide), {
+                ability: "a",
+                contest: contestA,
+                cell: state.pitch.cell
+              })
+            );
             flip(state);
             return "turnover";
           }
@@ -293,7 +328,13 @@ function applyChoice(state, rng, events, choice) {
           const contestR = resolveRobo(rng, defenderBest(defSquad, "rb"));
           const res = afterRobo(contestR.success);
           if (res.possession === "defender") {
-            events.push(evContest("steal", other(atkSide), { ability: "rb", contest: contestR }));
+            events.push(
+              evContest("steal", other(atkSide), {
+                ability: "rb",
+                contest: contestR,
+                cell: state.pitch.cell
+              })
+            );
             flip(state);
             return "turnover";
           }
@@ -312,7 +353,8 @@ function applyChoice(state, rng, events, choice) {
             player: state.carrier.name,
             ability: action === "RM" ? "rm" : "dl",
             marcaje: state.carrierMark,
-            contest
+            contest,
+            cell: state.pitch.cell
           })
         );
         flip(state);
@@ -326,7 +368,8 @@ function applyChoice(state, rng, events, choice) {
           evContest("goal", atkSide, {
             player: state.carrier.name,
             ability: action === "RM" ? "rm" : "dl",
-            contest
+            contest,
+            cell: state.pitch.cell
           })
         );
         return "goal";
@@ -335,7 +378,8 @@ function applyChoice(state, rng, events, choice) {
         evContest("save", other(atkSide), {
           player: keeper.name,
           ability: action === "RM" ? "rf" : "co",
-          contest: saveContest
+          contest: saveContest,
+          cell: state.pitch.cell
         })
       );
       flip(state);
@@ -348,16 +392,16 @@ function flip(state) {
 }
 function runPossession(state, rng, events, kickoff) {
   const squad = squadOf(state, state.attacker);
-  state.pitch = initialPitch();
+  state.pitch = initialPitch(state.attacker);
   state.carrier = rng.pick(squad.outfield);
   state.carrierMark = "SM";
   state.minute = Math.min(120, state.minute + rng.int(4) + 1);
   if (kickoff) {
-    events.push(ev("kickoff", state.attacker, { player: state.carrier.name }));
+    events.push(ev("kickoff", state.attacker, { player: state.carrier.name }, state.pitch.cell));
     state.carrier = pickOther(rng, squad.outfield, state.carrier);
   }
   for (let budget = JUGADA_BUDGET; budget > 0; budget--) {
-    const choice = chooseAttack(rng, state.pitch.band, state.carrierMark, state.carrier, state.difficulty);
+    const choice = chooseAttack(rng, state.pitch, state.carrierMark, state.carrier, state.difficulty);
     const outcome = applyChoice(state, rng, events, choice);
     if (outcome === "goal") {
       if (state.attacker === "home") state.gf++;
@@ -533,7 +577,7 @@ function simulateMatch(input) {
     difficulty: input.difficulty,
     attacker: "home",
     // the human squad kicks off
-    pitch: initialPitch(),
+    pitch: initialPitch("home"),
     carrier: input.home.outfield[0],
     carrierMark: "SM",
     gf: 0,

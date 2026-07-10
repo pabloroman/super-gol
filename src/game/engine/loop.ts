@@ -1,6 +1,6 @@
 import type { Rng } from './rng'
 import type { EngineCard, EngineSquad, Marcaje, Side, Difficulty } from './types'
-import { initialPitch, type Pitch } from './pitch'
+import { initialPitch, laneFor, type Pitch } from './pitch'
 import { abilityValue, keeperStats } from '@/game/ratings'
 import { resolvePase, resolvePaseHueco, resolveRegate, resolveShot } from './actions'
 import { resolveAnticipacion, resolveRobo } from './interrupt'
@@ -90,6 +90,7 @@ function applyChoice(
           ability: 'rg',
           marcaje: state.carrierMark,
           contest,
+          cell: state.pitch.cell,
         }),
       )
       const outcome = afterRegate(contest.success)
@@ -116,16 +117,20 @@ function applyChoice(
             player: state.carrier.name,
             ability: type === 'PL' ? 'pl' : 'pc',
             contest,
+            cell: state.pitch.cell,
           }),
         )
         flip(state)
         return 'turnover'
       }
 
-      // Completed pass: the ball moves forward to the receiver.
+      // Completed pass: the ball moves forward to the receiver, who takes up a new
+      // lane (visual only — interior lanes share a zone, so gating is unchanged).
       state.carrier = receiver
       state.carrierMark = receiverMark
-      state.pitch = state.pitch.step(1)
+      state.pitch = state.pitch
+        .step(1)
+        .toLane(laneFor(squadOf(state, atkSide).outfield.indexOf(receiver)))
 
       // A marked receiver can be interrupted (only zonal → anticipación, only
       // man → robo; rulebook pages 8–9).
@@ -135,7 +140,13 @@ function applyChoice(
           const contestA = resolveAnticipacion(rng, defenderBest(defSquad, 'a'))
           const res = afterAnticipacion(contestA.success)
           if (res.possession === 'defender') {
-            events.push(evContest('interception', other(atkSide), { ability: 'a', contest: contestA }))
+            events.push(
+              evContest('interception', other(atkSide), {
+                ability: 'a',
+                contest: contestA,
+                cell: state.pitch.cell,
+              }),
+            )
             flip(state)
             return 'turnover'
           }
@@ -144,7 +155,13 @@ function applyChoice(
           const contestR = resolveRobo(rng, defenderBest(defSquad, 'rb'))
           const res = afterRobo(contestR.success)
           if (res.possession === 'defender') {
-            events.push(evContest('steal', other(atkSide), { ability: 'rb', contest: contestR }))
+            events.push(
+              evContest('steal', other(atkSide), {
+                ability: 'rb',
+                contest: contestR,
+                cell: state.pitch.cell,
+              }),
+            )
             flip(state)
             return 'turnover'
           }
@@ -166,6 +183,7 @@ function applyChoice(
             ability: action === 'RM' ? 'rm' : 'dl',
             marcaje: state.carrierMark,
             contest,
+            cell: state.pitch.cell,
           }),
         )
         flip(state)
@@ -181,6 +199,7 @@ function applyChoice(
             player: state.carrier.name,
             ability: action === 'RM' ? 'rm' : 'dl',
             contest,
+            cell: state.pitch.cell,
           }),
         )
         return 'goal'
@@ -190,6 +209,7 @@ function applyChoice(
           player: keeper.name,
           ability: action === 'RM' ? 'rf' : 'co',
           contest: saveContest,
+          cell: state.pitch.cell,
         }),
       )
       flip(state)
@@ -211,19 +231,19 @@ function runPossession(
   kickoff: boolean,
 ): PossessionResult {
   const squad = squadOf(state, state.attacker)
-  state.pitch = initialPitch()
+  state.pitch = initialPitch(state.attacker)
   state.carrier = rng.pick(squad.outfield)
   state.carrierMark = 'SM'
   state.minute = Math.min(120, state.minute + rng.int(4) + 1)
 
   if (kickoff) {
-    events.push(ev('kickoff', state.attacker, { player: state.carrier.name }))
+    events.push(ev('kickoff', state.attacker, { player: state.carrier.name }, state.pitch.cell))
     // Mandatory pase directo to the adjacent player (automatic, page 12).
     state.carrier = pickOther(rng, squad.outfield, state.carrier)
   }
 
   for (let budget = JUGADA_BUDGET; budget > 0; budget--) {
-    const choice = chooseAttack(rng, state.pitch.band, state.carrierMark, state.carrier, state.difficulty)
+    const choice = chooseAttack(rng, state.pitch, state.carrierMark, state.carrier, state.difficulty)
     const outcome = applyChoice(state, rng, events, choice)
     if (outcome === 'goal') {
       if (state.attacker === 'home') state.gf++

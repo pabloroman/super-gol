@@ -94,6 +94,9 @@ export interface MatchEventParams {
   total?: number
   success?: boolean
   marcaje?: string
+  // Absolute board coordinates of the ball carrier when the event fired (col 0–5,
+  // row 0–4; home defends row 0). Lets the crónica be replayed on the visual pitch.
+  cell?: { col: number; row: number }
 }
 
 export interface MatchEvent {

@@ -30,7 +30,7 @@ export function simulateMatch(input: MatchInput): MatchOutcome {
     away: input.away,
     difficulty: input.difficulty,
     attacker: 'home', // the human squad kicks off
-    pitch: initialPitch(),
+    pitch: initialPitch('home'),
     carrier: input.home.outfield[0],
     carrierMark: 'SM',
     gf: 0,
