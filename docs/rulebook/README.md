@@ -148,4 +148,7 @@ constraints already baked into the codebase:
   los 16 jugadores)", matching `save_squad`'s cap and the README's 11+5 ≤ 100.
 - **Demarcación** — a card's abilities only apply in its pitch zone (except
   LF/RM/DL/RC), matching the per-card pitch-zone grid.
-- **3 extranjeros per team** and **3 substitutions**, for later features.
+- **No foreign-player limit.** The tournament's *3-extranjeros-per-team* cap
+  (page 29) is deliberately not implemented; Super Gol imposes no cap on foreign
+  players, matching the basic game (page 12). **3 substitutions** remain noted
+  for later features.
