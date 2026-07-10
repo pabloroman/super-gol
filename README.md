@@ -77,6 +77,28 @@ supabase db reset
 npm run dev
 ```
 
+## Deploying the frontend (Vercel)
+
+The app is a static Vite SPA, so any static host works; Vercel is the smoothest.
+
+1. **Import the repo** in Vercel. The framework preset auto-detects as *Vite* —
+   `vercel.json` pins the build command (`npm run build`) and output dir (`dist`)
+   so no manual configuration is needed.
+2. **Add the environment variables** (Project → Settings → Environment Variables),
+   the same two from `.env.example`:
+   - `VITE_SUPABASE_URL`
+   - `VITE_SUPABASE_ANON_KEY`
+
+   These are baked in at build time (they're `VITE_`-prefixed), so a redeploy is
+   needed after changing them. Leave `VITE_LOCAL_ENGINE` unset in production — the
+   authoritative `play-match` Edge Function must own coin payouts.
+3. **Deploy.** `vercel.json` rewrites all non-asset routes to `index.html`, so
+   client-side routes (`/play`, `/squad`, `/collection`, `/store`) survive a hard
+   refresh and deep link instead of 404-ing.
+
+Because the anon key is server-guarded by RLS and the economy runs through
+`SECURITY DEFINER` functions, shipping it to the browser is expected and safe.
+
 ## Project layout
 
 ```
