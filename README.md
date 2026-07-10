@@ -52,9 +52,10 @@ zone-abstracted board (an advancement band behind a `Pitch` interface) so a full
 (`npm run test`).
 
 That **same module** is the authoritative resolver: the `play-match` **Supabase
-Edge Function** (`supabase/functions/play-match/`) imports it unchanged (via the
-`@/` import map in its `deno.json`), runs the match server-side, and commits the
-result through the `service_role`-only `record_match` function — so the browser
+Edge Function** bundles it in (`npm run build:function` inlines the engine into the
+self-contained `supabase/functions/play-match/index.ts`), runs the match
+server-side, and commits the result through the `service_role`-only `record_match`
+function — so the browser
 can trigger a match but can't forge the result or the coins. The client calls it
 through `serverMatchEngine` behind the `MatchEngine` interface
 (`src/game/engine.ts`). The identical rules also run client-side as
