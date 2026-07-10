@@ -109,7 +109,8 @@ supabase/
     0003_functions.sql   signup trigger + open_pack / save_squad
     0004_match_engine.sql  record_match (service-role) + drops play_match placeholder
   functions/
-    play-match/          Edge Function: runs src/game/engine/ as authoritative resolver
+    play-match/index.ts  self-contained Edge Function (engine bundled in) — DEPLOYED
+    _src/play-match.ts   readable source; `npm run build:function` bundles it → index.ts
   seed.sql               cards (decoded from originals) + packs
 src/
   lib/        supabase client, domain types
@@ -128,9 +129,22 @@ store/pack-opening, and a playable loop. The real basic-game dice-and-ability
 engine (`src/game/engine/`, unit-tested) is now the **authoritative** resolver via
 the `play-match` Edge Function — the `play_match` placeholder is gone.
 
-To deploy the resolver: `supabase db push` (applies `0004_match_engine.sql`) then
-`supabase functions deploy play-match`. Locally, `supabase start` +
-`supabase functions serve play-match`.
+### Deploying the resolver
+
+The Edge Function is committed **self-contained** (`supabase/functions/play-match/index.ts`
+has the engine bundled in, so it needs nothing outside itself). Two paths:
+
+- **With the CLI:** `supabase db push` (applies `0004_match_engine.sql`) then
+  `supabase functions deploy play-match`. Locally: `supabase start` +
+  `supabase functions serve play-match`.
+- **Browser only (no local machine):** apply `supabase/migrations/0004_match_engine.sql`
+  in the Dashboard **SQL Editor**, and let the `.github/workflows/deploy-play-match.yml`
+  GitHub Action deploy the function on push (set the `SUPABASE_ACCESS_TOKEN` secret and
+  `SUPABASE_PROJECT_REF` variable in the repo's GitHub settings — see the workflow header).
+
+To change the resolver, edit `supabase/functions/_src/play-match.ts` and run
+`npm run build:function` (or let the Action rebuild it); never hand-edit the generated
+`index.ts`.
 
 **Next:** enter the real 55-card *juego básico* + the exact ability scale (the
 100-point cap only bites once real star cards exist), then close the engine's

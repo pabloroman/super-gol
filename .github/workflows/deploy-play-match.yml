@@ -1,0 +1,48 @@
+name: Deploy play-match Edge Function
+
+# Deploys the authoritative match resolver to Supabase.
+#
+# One-time setup (all in a browser):
+#   1. Supabase Dashboard → Account → Access Tokens → generate a token.
+#   2. GitHub repo → Settings → Secrets and variables → Actions:
+#        - New repository secret   SUPABASE_ACCESS_TOKEN  = <the token>
+#        - New repository variable SUPABASE_PROJECT_REF   = <your project ref>
+#      (the project ref is the subdomain of your project URL / Project Settings → General).
+#
+# It regenerates the self-contained bundle from source, then deploys, so the
+# committed index.ts can never drift from the engine.
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'supabase/functions/**'
+      - 'supabase/functions/_src/**'
+      - 'src/game/**'
+      - 'src/lib/types.ts'
+      - '.github/workflows/deploy-play-match.yml'
+  workflow_dispatch: {}
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    env:
+      SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - run: npm ci
+
+      # Rebuild the self-contained function bundle from the canonical engine source.
+      - run: npm run build:function
+
+      - uses: supabase/setup-cli@v1
+        with:
+          version: latest
+
+      - run: supabase functions deploy play-match --project-ref "${{ vars.SUPABASE_PROJECT_REF }}"
