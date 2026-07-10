@@ -8,7 +8,7 @@ import type { MatchInput } from './types'
 
 export type { MatchInput, EngineCard, EngineSquad } from './types'
 
-/** Coin rewards mirror the placeholder `play_match` (win / draw / loss). */
+/** Coin rewards mirror `record_match` in the DB (win / draw / loss). */
 const REWARD: Record<MatchResultKind, number> = { win: 100, draw: 40, loss: 10 }
 
 function resultFor(gf: number, ga: number): MatchResultKind {

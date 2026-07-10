@@ -27,3 +27,8 @@ enable_signup = true
 enable_signup = true
 # Set false so local sign-ups log in immediately without email confirmation.
 enable_confirmations = false
+
+# Authoritative match resolver. Runs the real basic-game engine (src/game/engine/)
+# in Deno and commits the result via the service-role-only record_match function.
+[functions.play-match]
+verify_jwt = true

@@ -1,6 +1,5 @@
 import type { Rng } from './rng'
-import type { Difficulty } from '@/game/engine'
-import type { EngineCard, EngineSquad, Marcaje, Side } from './types'
+import type { EngineCard, EngineSquad, Marcaje, Side, Difficulty } from './types'
 import { initialPitch, type Pitch } from './pitch'
 import { abilityValue, keeperStats } from '@/game/ratings'
 import { resolvePase, resolvePaseHueco, resolveRegate, resolveShot } from './actions'

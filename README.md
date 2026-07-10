@@ -27,7 +27,7 @@ game's cards and rules.
 |-------|--------|
 | Frontend | Vite + React 19 + TypeScript, Tailwind, installable PWA (mobile-first) |
 | Backend | **Supabase** — Postgres, Auth, Row Level Security |
-| Game logic | Postgres RPCs (`SECURITY DEFINER`) — server-authoritative economy & results |
+| Game logic | Postgres RPCs (`SECURITY DEFINER`) + a Deno Edge Function — server-authoritative economy & results |
 
 ### Why server-authoritative?
 
@@ -38,26 +38,28 @@ Postgres function that the client can call but not forge:
 
 - `open_pack(pack_id)` — charge coins, roll cards by rarity weights, grant them.
 - `save_squad(...)` — validate ownership, 11+5 counts, and the 100-point cap.
-- `play_match(difficulty)` — resolve a match and award coins.
+- `record_match(...)` — commit a resolved match (award coins, record history).
+  Locked to `service_role`; only the `play-match` Edge Function may call it.
 
-## The match engine is pluggable
+## The match engine is authoritative
 
-The **authoritative** resolver still lives in `play_match` as a **placeholder**
-(squad strength → scoreline with weighted randomness) — it runs server-side so
-coins can't be forged.
+The **real basic-game rules** live as a concrete engine in `src/game/engine/`: a
+pure, dependency-free, seeded, deterministic TypeScript module implementing the
+*Juego Básico* — the `d6 + ability + marcaje` contest (TABLA 1 & TABLA 2), keeper
+saves, and the win-by-two-goals ending — faithful to `docs/rulebook/`. It uses a
+zone-abstracted board (an advancement band behind a `Pitch` interface) so a full
+6×5 board can drop in later. Unit tests live in `src/game/engine/__tests__/`
+(`npm run test`).
 
-The **real basic-game rules** now exist as a concrete engine in
-`src/game/engine/`: a pure, dependency-free, seeded, deterministic TypeScript
-module implementing the *Juego Básico* — the `d6 + ability + marcaje` contest
-(TABLA 1 & TABLA 2), keeper saves, and the win-by-two-goals ending — faithful to
-`docs/rulebook/`. It uses a zone-abstracted board (an advancement band behind a
-`Pitch` interface) so a full 6×5 board can drop in later. Unit tests live in
-`src/game/engine/__tests__/` (`npm run test`).
-
-It is exposed as `localMatchEngine` behind the existing `MatchEngine` interface
-(`src/game/engine.ts`) and selected only when `VITE_LOCAL_ENGINE=1` — it is **not**
-trusted for coins. **Next step:** deploy the *same* module inside a Supabase Edge
-Function so the real engine becomes authoritative, with **no screen changes**.
+That **same module** is the authoritative resolver: the `play-match` **Supabase
+Edge Function** (`supabase/functions/play-match/`) imports it unchanged (via the
+`@/` import map in its `deno.json`), runs the match server-side, and commits the
+result through the `service_role`-only `record_match` function — so the browser
+can trigger a match but can't forge the result or the coins. The client calls it
+through `serverMatchEngine` behind the `MatchEngine` interface
+(`src/game/engine.ts`). The identical rules also run client-side as
+`localMatchEngine` for previewing without a deployed function
+(`VITE_LOCAL_ENGINE=1`) — that path is **not** trusted for coins.
 
 ## Getting started
 
@@ -82,7 +84,10 @@ supabase/
   migrations/
     0001_schema.sql      tables & enums
     0002_rls.sql         row-level security
-    0003_functions.sql   signup trigger + open_pack / save_squad / play_match
+    0003_functions.sql   signup trigger + open_pack / save_squad
+    0004_match_engine.sql  record_match (service-role) + drops play_match placeholder
+  functions/
+    play-match/          Edge Function: runs src/game/engine/ as authoritative resolver
   seed.sql               cards (decoded from originals) + packs
 src/
   lib/        supabase client, domain types
@@ -97,16 +102,18 @@ src/
 ## Status & next steps
 
 Foundation is in place: auth, wallet, collection, 100-point squad builder,
-store/pack-opening, and a playable loop with a placeholder match. Validated
-end-to-end (schema, RLS, RPC guard rails).
+store/pack-opening, and a playable loop. The real basic-game dice-and-ability
+engine (`src/game/engine/`, unit-tested) is now the **authoritative** resolver via
+the `play-match` Edge Function — the `play_match` placeholder is gone.
 
-The real basic-game dice-and-ability engine now exists and is unit-tested in
-`src/game/engine/` (see "The match engine is pluggable").
+To deploy the resolver: `supabase db push` (applies `0004_match_engine.sql`) then
+`supabase functions deploy play-match`. Locally, `supabase start` +
+`supabase functions serve play-match`.
 
-**Next:** deploy that engine module in a Supabase Edge Function so it becomes the
-authoritative resolver (replacing the `play_match` placeholder), and enter the
-real 55-card *juego básico* + the exact ability scale. Human-vs-human PvP (async
-first) comes after that.
+**Next:** enter the real 55-card *juego básico* + the exact ability scale (the
+100-point cap only bites once real star cards exist), then close the engine's
+remaining basic-game gaps (pase alto → remate de cabeza, fouls/penalties).
+Human-vs-human PvP (async first) comes after that.
 
 > **Seed note:** the catalog ships the 7 cards decoded from original photos plus
 > clearly-labelled placeholder base players, so a new account can field a legal

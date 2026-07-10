@@ -53,13 +53,18 @@ the current engine.
   advancement band (`OWN → MID → DL → RM`) behind the `Pitch` interface in
   `pitch.ts`, so a real 6×5 board can drop in later. The core contest resolver
   (TABLA 1/2 as data) is `dice.ts`.
-- **Authority:** `serverMatchEngine` in `src/game/engine.ts` (the Postgres
-  `play_match` RPC) stays the authoritative path that awards coins. The Postgres
-  function is still a placeholder. `localMatchEngine` runs the real rules
-  client-side but is **not** trusted for coins and is selected only when
-  `VITE_LOCAL_ENGINE=1`. The intended next step is to deploy the identical
-  `src/game/engine/` module inside a **Supabase Edge Function** so the real engine
-  becomes authoritative — without touching any screen.
+- **Authority:** `serverMatchEngine` in `src/game/engine.ts` invokes the
+  **`play-match` Supabase Edge Function** (`supabase/functions/play-match/`), which
+  runs the identical `src/game/engine/` module server-side (imported unchanged via
+  the `@/` import map in its `deno.json`) and commits the result through the
+  `record_match` `SECURITY DEFINER` function. `record_match` is revoked from the
+  `anon`/`authenticated` roles and granted only to `service_role`, so the browser
+  can trigger a match but never forge the scoreline or the coins it pays.
+  `localMatchEngine` runs the same rules client-side but is **not** trusted for
+  coins — it is a preview path, selected only when `VITE_LOCAL_ENGINE=1`. Because
+  the engine module owns its own `Difficulty` type and depends only on the pure
+  `ratings.ts`/`abilities.ts` helpers, the same files run in the browser and in
+  Deno with no per-target forks.
 - Missing ability ratings count as **0** (rulebook page 6); always read ratings
   through `abilityValue` in `src/game/ratings.ts`, never index `abilities[key]`.
 
