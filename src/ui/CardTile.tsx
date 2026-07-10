@@ -1,3 +1,4 @@
+import { useState } from 'react'
 import type { Card, Rarity } from '@/lib/types'
 import { ABILITY_META, ABILITY_ORDER } from '@/game/abilities'
 
@@ -11,6 +12,29 @@ const RARITY_LABEL: Record<Rarity, string> = {
   comun: 'Común',
   frecuente: 'Frecuente',
   rara: 'Rara',
+}
+
+/** Player portrait with a silhouette fallback when there's no photo (or it fails to load). */
+function PlayerPhoto({ card }: { card: Card }) {
+  const [failed, setFailed] = useState(false)
+  const show = card.image_url && !failed
+  return (
+    <div className="h-11 w-11 shrink-0 overflow-hidden rounded-full bg-white/10 ring-2 ring-white/15">
+      {show ? (
+        <img
+          src={card.image_url!}
+          alt={card.name}
+          loading="lazy"
+          onError={() => setFailed(true)}
+          className="h-full w-full object-cover"
+        />
+      ) : (
+        <div className="flex h-full w-full items-center justify-center font-display text-lg font-bold text-slate-400">
+          {card.name.slice(0, 1)}
+        </div>
+      )}
+    </div>
+  )
 }
 
 /** A miniature pitch-zone grid (green = effective). */
@@ -51,11 +75,14 @@ export function CardTile({
       } ${selected ? 'outline outline-2 outline-grass-400' : ''}`}
     >
       <div className="flex items-start justify-between">
-        <div className="min-w-0">
-          <div className="truncate font-display text-lg font-bold uppercase tracking-wide">
-            {card.name}
+        <div className="flex min-w-0 items-center gap-2">
+          <PlayerPhoto card={card} />
+          <div className="min-w-0">
+            <div className="truncate font-display text-lg font-bold uppercase tracking-wide">
+              {card.name}
+            </div>
+            <div className="truncate text-xs text-slate-400">{card.club}</div>
           </div>
-          <div className="truncate text-xs text-slate-400">{card.club}</div>
         </div>
         <div className="ml-2 flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-black text-sm font-bold text-white ring-2 ring-white/20">
           {card.cost}
