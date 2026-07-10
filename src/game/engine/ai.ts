@@ -1,6 +1,6 @@
 import type { Rng } from './rng'
 import type { EngineCard, Marcaje, Difficulty } from './types'
-import type { Band } from './pitch'
+import type { Pitch } from './pitch'
 import { abilityValue } from '@/game/ratings'
 
 /**
@@ -39,10 +39,10 @@ function marked(mark: Marcaje): boolean {
   return mark === 'MH' || mark === 'MZ'
 }
 
-/** The attacker's next jugada given the ball's band and the carrier's marcaje. */
+/** The attacker's next jugada given the ball's cell/zone and the carrier's marcaje. */
 export function chooseAttack(
   rng: Rng,
-  band: Band,
+  pitch: Pitch,
   mark: Marcaje,
   carrier: EngineCard,
   difficulty: Difficulty,
@@ -52,13 +52,13 @@ export function chooseAttack(
   const rg = abilityValue(carrier, 'rg')
 
   // In the box: shoot, unless man-marked and a dribble looks worthwhile first.
-  if (band === 'RM') {
+  if (pitch.canShootRM()) {
     if (mark === 'MH' && rng.chance(0.35 + rg * 0.08)) return { kind: 'regate' }
     return { kind: 'shot', action: 'RM' }
   }
 
-  // From long range: weigh a shot against working closer.
-  if (band === 'DL') {
+  // From the long-shot ring: weigh a shot against working closer.
+  if (pitch.canShootDL()) {
     const shootWeight = t.finishing + dl * 0.1
     if (mark === 'MH' && rng.chance(0.3 + rg * 0.08)) return { kind: 'regate' }
     if (rng.chance(Math.min(0.85, shootWeight))) return { kind: 'shot', action: 'DL' }
@@ -66,7 +66,7 @@ export function chooseAttack(
     return advanceChoice(rng, mark, carrier)
   }
 
-  // Build-up (OWN / MID): dribble out of a man-mark, else pass/advance forward.
+  // Build-up (midfield / wings): dribble out of a man-mark, else pass/advance.
   if (mark === 'MH' && rng.chance(0.3 + rg * 0.08)) return { kind: 'regate' }
   return advanceChoice(rng, mark, carrier)
 }

@@ -1,6 +1,7 @@
 import type { MatchEventType, MatchEventParams, AbilityKey } from '@/lib/types'
 import type { Side, Marcaje } from './types'
 import type { Contest } from './dice'
+import type { Cell } from './pitch'
 
 /**
  * Structured chronicle events. The loop emits these (without a minute); the
@@ -18,8 +19,9 @@ export function ev(
   type: MatchEventType,
   side: Side,
   params: MatchEventParams = {},
+  cell?: Cell,
 ): EngineEvent {
-  return { type, side, params }
+  return { type, side, params: cell ? { ...params, cell } : params }
 }
 
 /** Convenience for events that carry a contest roll. */
@@ -32,6 +34,7 @@ export function evContest(
     ability?: AbilityKey
     marcaje?: Marcaje
     contest: Contest
+    cell?: Cell
   },
 ): EngineEvent {
   return {
@@ -45,6 +48,7 @@ export function evContest(
       dice: opts.contest.dice,
       total: opts.contest.total,
       success: opts.contest.success,
+      cell: opts.cell,
     },
   }
 }

@@ -1,7 +1,8 @@
-import { useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { useAuth } from '@/auth/AuthProvider'
 import { matchEngine, DIFFICULTIES, type Difficulty } from '@/game/engine'
 import type { MatchOutcome } from '@/lib/types'
+import { PitchBoard } from '@/ui/PitchBoard'
 
 const RESULT_COPY = {
   win: { title: '¡Victoria!', color: 'text-grass-400' },
@@ -9,11 +10,18 @@ const RESULT_COPY = {
   loss: { title: 'Derrota', color: 'text-red-400' },
 }
 
+/** Milliseconds each event holds on screen during an auto-replay. */
+const REPLAY_MS = 1100
+
 export function Play() {
   const { refreshProfile } = useAuth()
   const [busy, setBusy] = useState(false)
   const [outcome, setOutcome] = useState<MatchOutcome | null>(null)
   const [error, setError] = useState<string | null>(null)
+  // Index of the crónica event the replay is currently showing.
+  const [step, setStep] = useState(0)
+  const [playing, setPlaying] = useState(false)
+  const activeRef = useRef<HTMLLIElement | null>(null)
 
   async function play(difficulty: Difficulty) {
     setBusy(true)
@@ -30,8 +38,48 @@ export function Play() {
     }
   }
 
+  // A fresh outcome: rest on the final event, playback stopped.
+  useEffect(() => {
+    if (outcome) setStep(Math.max(0, outcome.log.length - 1))
+    setPlaying(false)
+  }, [outcome])
+
+  // Auto-advance the replay one event at a time.
+  useEffect(() => {
+    if (!playing || !outcome) return
+    if (step >= outcome.log.length - 1) {
+      setPlaying(false)
+      return
+    }
+    const id = setTimeout(() => setStep((s) => s + 1), REPLAY_MS)
+    return () => clearTimeout(id)
+  }, [playing, step, outcome])
+
+  // Keep the highlighted crónica line in view as the replay advances.
+  useEffect(() => {
+    activeRef.current?.scrollIntoView({ block: 'nearest' })
+  }, [step])
+
   if (outcome) {
     const copy = RESULT_COPY[outcome.result]
+    // The ball sits on the most recent event that carried a cell.
+    let ball: MatchOutcome['log'][number] | undefined
+    for (let i = step; i >= 0; i--) {
+      if (outcome.log[i]?.params?.cell) {
+        ball = outcome.log[i]
+        break
+      }
+    }
+    const atEnd = step >= outcome.log.length - 1
+
+    function replayControl() {
+      if (playing) setPlaying(false)
+      else if (atEnd) {
+        setStep(0)
+        setPlaying(true)
+      } else setPlaying(true)
+    }
+
     return (
       <div className="flex flex-col gap-4">
         <div className="card-surface p-6 text-center">
@@ -48,18 +96,46 @@ export function Play() {
         </div>
 
         <div className="card-surface p-4">
+          <div className="mb-3 flex items-center justify-between">
+            <h3 className="text-xs font-semibold uppercase tracking-wide text-slate-400">
+              El campo
+            </h3>
+            <button
+              className="btn-ghost px-3 py-1.5 text-sm"
+              onClick={replayControl}
+            >
+              {playing ? '⏸ Pausa' : atEnd ? '↻ Repetición' : '▶ Reanudar'}
+            </button>
+          </div>
+          <PitchBoard cell={ball?.params?.cell} side={ball?.side} />
+        </div>
+
+        <div className="card-surface p-4">
           <h3 className="mb-2 text-xs font-semibold uppercase tracking-wide text-slate-400">
             Crónica
           </h3>
-          <ul className="space-y-1 text-sm">
-            {outcome.log.map((e, i) => (
-              <li key={i} className="flex gap-2 text-slate-300">
-                <span className="w-8 shrink-0 tabular-nums text-slate-500">
-                  {e.minute}'
-                </span>
-                <span>{e.text}</span>
-              </li>
-            ))}
+          <ul className="max-h-72 space-y-1 overflow-y-auto text-sm">
+            {outcome.log.map((e, i) => {
+              const active = i === step
+              return (
+                <li
+                  key={i}
+                  ref={active ? activeRef : null}
+                  onClick={() => {
+                    setPlaying(false)
+                    setStep(i)
+                  }}
+                  className={`flex cursor-pointer gap-2 rounded px-1 transition ${
+                    active ? 'bg-white/10 text-slate-100' : 'text-slate-300'
+                  }`}
+                >
+                  <span className="w-8 shrink-0 tabular-nums text-slate-500">
+                    {e.minute}'
+                  </span>
+                  <span>{e.text}</span>
+                </li>
+              )
+            })}
           </ul>
         </div>
 

@@ -75,6 +75,20 @@ describe('simulateMatch', () => {
     expect(decided).toBeGreaterThan(0)
   })
 
+  it('stamps in-bounds board cells on events for the visual replay', () => {
+    const away = generateOpponent('normal', createRng(777))
+    const out = simulateMatch({ home: squad('Casa', 3), away, difficulty: 'normal', seed: 42 })
+    const withCells = out.log.filter((e) => e.params?.cell)
+    expect(withCells.length).toBeGreaterThan(0)
+    for (const e of withCells) {
+      const { col, row } = e.params!.cell!
+      expect(col).toBeGreaterThanOrEqual(0)
+      expect(col).toBeLessThan(6)
+      expect(row).toBeGreaterThanOrEqual(0)
+      expect(row).toBeLessThan(5)
+    }
+  })
+
   it('scales with difficulty: a strong squad wins more against easy than hard', () => {
     const count = (difficulty: 'easy' | 'hard') => {
       let wins = 0
