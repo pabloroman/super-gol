@@ -3,10 +3,18 @@
 export type Rarity = 'comun' | 'frecuente' | 'rara'
 export type MatchResultKind = 'win' | 'loss' | 'draw'
 
+// Ability keys use the Spanish rulebook abbreviations (see docs/rulebook). The
+// first ten are the historical outfield ratings; the basic-game engine also
+// needs `rm` (remate en el área) and the two goalkeeper ratings `rf` (reflejos)
+// and `co` (colocación) — see docs/rulebook/pages/page-10.md and page-11.md.
 export type AbilityKey =
   | 'rb' | 'a' | 'rc' | 'd' | 'rg' | 'v' | 'pc' | 'pl' | 'pa' | 'dl'
+  | 'rm' | 'rf' | 'co'
 
-export type Abilities = Record<AbilityKey, number>
+// Card ability blobs come from freeform `jsonb`, so a given card may not carry
+// every key. A missing rating counts as zero (rulebook page 6) — always read
+// through `abilityValue` in src/game/ratings.ts, never index this directly.
+export type Abilities = Partial<Record<AbilityKey, number>>
 
 export interface Card {
   id: string
@@ -63,10 +71,37 @@ export interface Squad {
   slots: SquadSlot[]
 }
 
+// Structured chronicle vocabulary. The engine emits these so the crónica can be
+// re-rendered in another language later; `text` holds the Spanish rendering and
+// stays populated for back-compat with screens that read it directly.
+export type MatchEventType =
+  | 'kickoff'
+  | 'pass'
+  | 'dribble'
+  | 'shot'
+  | 'interception'
+  | 'steal'
+  | 'save'
+  | 'goal'
+  | 'turnover'
+  | 'fulltime'
+
+export interface MatchEventParams {
+  player?: string
+  target?: string
+  ability?: AbilityKey
+  dice?: number[]
+  total?: number
+  success?: boolean
+  marcaje?: string
+}
+
 export interface MatchEvent {
   minute: number
   side: 'home' | 'away'
   text: string
+  type?: MatchEventType
+  params?: MatchEventParams
 }
 
 export interface MatchOutcome {
