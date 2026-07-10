@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { useAuth } from '@/auth/AuthProvider'
-import { serverMatchEngine, DIFFICULTIES, type Difficulty } from '@/game/engine'
+import { matchEngine, DIFFICULTIES, type Difficulty } from '@/game/engine'
 import type { MatchOutcome } from '@/lib/types'
 
 const RESULT_COPY = {
@@ -20,7 +20,7 @@ export function Play() {
     setError(null)
     setOutcome(null)
     try {
-      const result = await serverMatchEngine.play(difficulty)
+      const result = await matchEngine.play(difficulty)
       setOutcome(result)
       await refreshProfile()
     } catch (err) {

@@ -1,0 +1,7 @@
+{
+  "imports": {
+    "@/": "../../../src/",
+    "@supabase/supabase-js": "npm:@supabase/supabase-js@2.47.10"
+  },
+  "unstable": ["sloppy-imports"]
+}

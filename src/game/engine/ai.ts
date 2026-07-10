@@ -1,6 +1,5 @@
 import type { Rng } from './rng'
-import type { Difficulty } from '@/game/engine'
-import type { EngineCard, Marcaje } from './types'
+import type { EngineCard, Marcaje, Difficulty } from './types'
 import type { Band } from './pitch'
 import { abilityValue } from '@/game/ratings'
 

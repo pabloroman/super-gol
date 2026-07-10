@@ -1,12 +1,18 @@
 import type { Abilities } from '@/lib/types'
-import type { Difficulty } from '@/game/engine'
 
 /**
  * Engine-local domain types. The pure engine deliberately does NOT depend on the
- * database `Card` shape — the adapter in `src/game/engine.ts` maps `Card` down to
+ * database `Card` shape — the adapter in `./squad` maps `Card` down to
  * `EngineCard`. That keeps this module free of Supabase/React so the same files
  * can run inside a Supabase Edge Function later.
  */
+
+/**
+ * Opponent tier. Lives here (not in `@/game/engine`) so the whole engine module
+ * stays free of any import that reaches back into browser code — that is what
+ * lets the identical files run inside a Supabase Edge Function.
+ */
+export type Difficulty = 'easy' | 'normal' | 'hard'
 
 /** A player as the engine sees it: a name and its ratings. */
 export interface EngineCard {

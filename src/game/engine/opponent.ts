@@ -1,9 +1,8 @@
 import type { Rng } from './rng'
-import type { Difficulty } from '@/game/engine'
-import type { EngineCard, EngineSquad } from './types'
+import type { EngineCard, EngineSquad, Difficulty } from './types'
 import type { Abilities, AbilityKey } from '@/lib/types'
 
-/** AI opponent names, matching the placeholder `play_match` opponents. */
+/** AI opponent names, shown in the crónica and match history. */
 export const OPPONENT_NAMES: Record<Difficulty, string> = {
   easy: 'CF Domingueros',
   normal: 'Atlético Medio',
