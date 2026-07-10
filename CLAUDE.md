@@ -86,9 +86,31 @@ the current engine.
 - Screens (`src/screens/`) call the repository layer (`src/data/api.ts`), which
   wraps Supabase — screens never touch the client directly.
 
+## Card catalog pipeline (real players)
+
+The seasonal LaLiga catalog is **generated**, not hand-written. `scripts/cards/`
+reads a vendored snapshot of the [virtua-fc](https://github.com/pabloroman/virtua-fc)
+project's `data/2025/ESP1/teams.json` (Transfermarkt rosters + market value) and
+emits `supabase/migrations/0006_cards_laliga_2025.sql`. Because the source has no
+ability breakdown, factors are **inferred**: market value + age → a single
+overall (`valuation.ts`, a faithful port of virtua-fc's `PlayerValuationService`)
+→ the thirteen Super Gol factors via per-position priority templates
+(`factors.ts` / `positions.ts`), on the rulebook's 0–3 scale. Photos hotlink
+virtua-fc's own public CDN: `photos.ts` maps each Transfermarkt id → SofaScore id
+and stores the direct `assets.virtuafc.com/players/{sofascoreId}.webp` URL in
+`image_url` (identical on every environment, so it's baked straight into the
+migration). `CardTile` renders it with a silhouette fallback.
+
+- `npm run build:cards` — regenerate the catalog SQL (offline; no credentials).
+  Never hand-edit the generated migration — edit `scripts/cards/` and re-run.
+  Refresh a season by re-vendoring the two JSON snapshots under
+  `scripts/cards/data/`.
+
 ## Commands
 
 - `npm run dev` — dev server
 - `npm run typecheck` — `tsc -b --noEmit` (also checks tests)
-- `npm run test` — Vitest run (engine unit tests in `src/game/engine/__tests__/`)
+- `npm run test` — Vitest run (engine unit tests in `src/game/engine/__tests__/`,
+  catalog inference tests in `scripts/cards/__tests__/`)
 - `npm run build` — typecheck + production build
+- `npm run build:cards` — regenerate the LaLiga catalog migration (see above)
