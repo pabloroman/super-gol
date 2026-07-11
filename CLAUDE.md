@@ -88,29 +88,47 @@ the current engine.
 
 ## Card catalog pipeline (real players)
 
-The seasonal LaLiga catalog is **generated**, not hand-written. `scripts/cards/`
-reads a vendored snapshot of the [virtua-fc](https://github.com/pabloroman/virtua-fc)
+The seasonal LaLiga catalog is **generated**, not hand-written. The pure
+inference core lives in **`src/cards/`** (shared by the app and the generator,
+like `src/game/engine/`); the offline generator in **`scripts/cards/`** reads a
+vendored snapshot of the [virtua-fc](https://github.com/pabloroman/virtua-fc)
 project's `data/2025/ESP1/teams.json` (Transfermarkt rosters + market value) and
-emits `supabase/migrations/0006_cards_laliga_2025.sql`. Because the source has no
+emits `supabase/migrations/0005_cards_laliga_2025.sql`. Because the source has no
 ability breakdown, factors are **inferred**: market value + age → a single
-overall (`valuation.ts`, a faithful port of virtua-fc's `PlayerValuationService`)
-→ the thirteen Super Gol factors via per-position priority templates
-(`factors.ts` / `positions.ts`), on the rulebook's 0–3 scale. Photos hotlink
-virtua-fc's own public CDN: `photos.ts` maps each Transfermarkt id → SofaScore id
-and stores the direct `assets.virtuafc.com/players/{sofascoreId}.webp` URL in
-`image_url` (identical on every environment, so it's baked straight into the
-migration). `CardTile` renders it with a silhouette fallback.
+overall (`src/cards/valuation.ts`, a faithful port of virtua-fc's
+`PlayerValuationService`) → the thirteen Super Gol factors via per-position
+priority templates (`src/cards/factors.ts` / `positions.ts`), on the rulebook's
+0–3 scale. `scripts/cards/rows.ts` wires these into card rows for both emitters.
+Photos hotlink virtua-fc's own public CDN: `photos.ts` maps each Transfermarkt id
+→ SofaScore id and stores the direct `assets.virtuafc.com/players/{sofascoreId}.webp`
+URL in `image_url` (identical on every environment, so it's baked straight into
+the migration). `CardTile` renders it with a silhouette fallback.
 
 - `npm run build:cards` — regenerate the catalog SQL (offline; no credentials).
-  Never hand-edit the generated migration — edit `scripts/cards/` and re-run.
-  Refresh a season by re-vendoring the two JSON snapshots under
+  Never hand-edit the generated migration — edit `scripts/cards/` + `src/cards/`
+  and re-run. Refresh a season by re-vendoring the two JSON snapshots under
   `scripts/cards/data/`.
+- `npm run export:cards:csv` — emit `scripts/cards/data/laliga-2025-cards.csv`,
+  the same catalog in the admin importer's column shape.
+
+## Admin catalog UI
+
+Admins (a `profiles.is_admin` flag, set only in the DB) get an in-app screen
+(`src/screens/Admin.tsx`, gated in `App.tsx`'s TopBar) to **edit individual
+cards** and **import a full-card CSV**. Writes go through the SECURITY DEFINER
+RPCs `admin_upsert_cards` / `admin_delete_card` (`0006_admin_cards.sql`), which
+verify `is_admin` server-side — same posture as the economy RPCs; `cards` RLS is
+unchanged. CSV parsing/serialization is `src/cards/csv.ts` (one column per field
++ one per ability; `zone_grid` derived from `position`). **Once cards are edited
+in-app the DB is the source of truth** — `0005` is just the initial seed, and a
+`db reset` would revert admin edits.
 
 ## Commands
 
 - `npm run dev` — dev server
 - `npm run typecheck` — `tsc -b --noEmit` (also checks tests)
-- `npm run test` — Vitest run (engine unit tests in `src/game/engine/__tests__/`,
-  catalog inference tests in `scripts/cards/__tests__/`)
+- `npm run test` — Vitest run (engine tests in `src/game/engine/__tests__/`,
+  catalog inference + CSV tests in `src/cards/__tests__/`)
 - `npm run build` — typecheck + production build
 - `npm run build:cards` — regenerate the LaLiga catalog migration (see above)
+- `npm run export:cards:csv` — regenerate the importable catalog CSV
