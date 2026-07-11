@@ -73,7 +73,7 @@ describe('factor invariants', () => {
           expect(v).toBeGreaterThanOrEqual(0)
           expect(v).toBeLessThanOrEqual(3)
         }
-        expect(card.zone_grid).toHaveLength(4)
+        expect(card.zone_grid).toHaveLength(6)
         for (const row of card.zone_grid) {
           expect(row).toHaveLength(5)
           for (const cell of row) expect(typeof cell).toBe('boolean')
