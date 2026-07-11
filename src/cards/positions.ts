@@ -3,7 +3,7 @@
 // that define the role. factors.ts spends a budget (scaled by overall) down this
 // list, so a role's signature factors are the ones a strong player maxes out.
 
-import type { AbilityKey } from '../../src/lib/types'
+import type { AbilityKey } from '../lib/types'
 
 export type PositionGroup = 'GK' | 'DF' | 'MF' | 'FW'
 

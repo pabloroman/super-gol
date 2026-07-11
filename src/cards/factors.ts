@@ -9,7 +9,7 @@
 // ceiling matches the decoded originals in supabase/seed.sql and the rulebook's
 // small factor range (a single die + factor clears the TABLA thresholds).
 
-import type { Abilities, AbilityKey, Rarity } from '../../src/lib/types'
+import type { Abilities, AbilityKey, Rarity } from '../lib/types'
 import { roleProfile, ZONE_GRIDS, type RoleProfile } from './positions'
 
 const OUTFIELD_KEYS: AbilityKey[] = ['rb', 'a', 'rc', 'd', 'rg', 'v', 'pc', 'pl', 'pa', 'dl', 'rm']
