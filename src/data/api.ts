@@ -15,7 +15,7 @@ export async function fetchProfile(): Promise<Profile | null> {
   if (!auth.user) return null
   const { data, error } = await sb
     .from('profiles')
-    .select('id, username, coins')
+    .select('id, username, coins, is_admin')
     .eq('id', auth.user.id)
     .maybeSingle()
   if (error) throw new Error(error.message)
@@ -105,4 +105,21 @@ export async function openPack(packId: string): Promise<PackResult> {
   })
   if (error) throw new Error(error.message)
   return data as PackResult
+}
+
+// ---------- admin (card catalog) ----------
+// Both go through SECURITY DEFINER RPCs that verify the caller's profiles.is_admin
+// server-side, matching the save_squad/open_pack pattern — the browser can call
+// but cannot forge admin rights.
+export async function adminUpsertCards(cards: Card[]): Promise<number> {
+  const { data, error } = await requireSupabase().rpc('admin_upsert_cards', {
+    p_cards: cards,
+  })
+  if (error) throw new Error(error.message)
+  return data as number
+}
+
+export async function adminDeleteCard(id: string): Promise<void> {
+  const { error } = await requireSupabase().rpc('admin_delete_card', { p_id: id })
+  if (error) throw new Error(error.message)
 }

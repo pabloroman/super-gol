@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import type { AbilityKey } from '../../../src/lib/types'
+import type { AbilityKey } from '../../lib/types'
 import { ageAt, marketValueToOverall, parseMarketValue } from '../valuation'
 import { buildAbilities, costFor, deriveCard, rarityFor } from '../factors'
 import { roleProfile } from '../positions'
@@ -66,7 +66,6 @@ describe('ageAt', () => {
 describe('factor invariants', () => {
   it('produces integer factors in [0,3] and well-formed grids for every role and overall', () => {
     for (const pos of POSITIONS) {
-      const profile = roleProfile(pos)
       for (let ov = 50; ov <= 95; ov++) {
         const card = deriveCard(pos, ov)
         for (const v of Object.values(card.abilities)) {

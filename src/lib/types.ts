@@ -40,6 +40,7 @@ export interface Profile {
   id: string
   username: string | null
   coins: number
+  is_admin: boolean
 }
 
 export interface CollectionEntry {
