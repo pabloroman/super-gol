@@ -47,30 +47,38 @@ export function roleProfile(position: string | null | undefined): RoleProfile {
 const T = true
 const F = false
 
-/** boolean[4][5] effectiveness grids by group (row 0 = own goal, row 3 = attack). */
+/** boolean[6][5] effectiveness grids by group (row 0 = attack (top), row 5 = own goal (bottom)). */
 export const ZONE_GRIDS: Record<PositionGroup, boolean[][]> = {
   GK: [
+    [F, F, F, F, F],
+    [F, F, F, F, F],
+    [F, F, F, F, F],
+    [F, F, F, F, F],
+    [F, F, F, F, F],
     [F, F, T, F, F],
-    [F, F, F, F, F],
-    [F, F, F, F, F],
-    [F, F, F, F, F],
   ],
   DF: [
     [F, F, F, F, F],
+    [F, F, F, F, F],
+    [F, F, F, F, F],
+    [F, T, T, T, F],
     [T, T, T, T, T],
     [F, T, T, T, F],
-    [F, F, F, F, F],
   ],
   MF: [
     [F, F, F, F, F],
     [F, T, T, T, F],
     [T, T, T, T, T],
+    [T, T, T, T, T],
     [F, T, T, T, F],
+    [F, F, F, F, F],
   ],
   FW: [
-    [F, F, F, F, F],
-    [F, F, F, F, F],
     [F, T, T, T, F],
     [T, T, T, T, T],
+    [F, T, T, T, F],
+    [F, F, F, F, F],
+    [F, F, F, F, F],
+    [F, F, F, F, F],
   ],
 }
