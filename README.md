@@ -71,9 +71,11 @@ npm install
 # 2. Configure env
 cp .env.example .env      # then fill VITE_SUPABASE_URL / VITE_SUPABASE_ANON_KEY
 
-# 3. Apply schema + seed (Supabase CLI, needs Docker), or paste the SQL
-#    from supabase/migrations + supabase/seed.sql into the SQL editor.
-supabase db reset
+# 3. Apply schema + seed. Use the Supabase CLI (needs Docker) so the
+#    supabase_migrations.schema_migrations ledger is recorded — do NOT paste
+#    the SQL by hand, or the GitHub integration loses track of what's applied.
+supabase db reset            # local
+# For a hosted project: supabase link --project-ref <ref> && supabase db push
 
 npm run dev
 ```
@@ -154,22 +156,31 @@ store/pack-opening, and a playable loop. The real basic-game dice-and-ability
 engine (`src/game/engine/`, unit-tested) is now the **authoritative** resolver via
 the `play-match` Edge Function — the `play_match` placeholder is gone.
 
-### Deploying the resolver
+### Deploying (migrations + resolver)
 
-The Edge Function is committed **self-contained** (`supabase/functions/play-match/index.ts`
-has the engine bundled in, so it needs nothing outside itself). Two paths:
+Deployment is automatic through the **Supabase GitHub integration** (branching):
+merging to `main` applies any new `supabase/migrations/**` **and** deploys the
+`play-match` Edge Function (declared in `config.toml` as `[functions.play-match]`).
+There is no bespoke deploy workflow to maintain.
 
-- **With the CLI:** `supabase db push` (applies `0004_match_engine.sql`) then
-  `supabase functions deploy play-match`. Locally: `supabase start` +
-  `supabase functions serve play-match`.
-- **Browser only (no local machine):** apply `supabase/migrations/0004_match_engine.sql`
-  in the Dashboard **SQL Editor**, and let the `.github/workflows/deploy-play-match.yml`
-  GitHub Action deploy the function on push (set the `SUPABASE_ACCESS_TOKEN` secret and
-  `SUPABASE_PROJECT_REF` variable in the repo's GitHub settings — see the workflow header).
+- **Migrations** are tracked in `supabase_migrations.schema_migrations` on each
+  database. The integration applies only files whose version isn't already
+  recorded there. **This is why you must apply migrations with the CLI
+  (`supabase db push`), never by pasting SQL** — a hand-applied schema leaves the
+  ledger empty, and the integration then can't tell what's applied. If a project
+  was ever set up by pasting SQL, bootstrap the ledger once by recording the
+  already-applied versions in `supabase_migrations.schema_migrations`.
+- **Turn on the required check.** In the Supabase integration settings enable the
+  migration status check and make it a **required check** on `main` (GitHub →
+  Settings → Branches) so a PR with a failing migration can't merge green and
+  silently no-op on production.
 
-To change the resolver, edit `supabase/functions/_src/play-match.ts` and run
-`npm run build:function` (or let the Action rebuild it); never hand-edit the generated
-`index.ts`.
+The Edge Function is committed **self-contained**
+(`supabase/functions/play-match/index.ts` has the engine bundled in). To change the
+resolver, edit `supabase/functions/_src/play-match.ts` and run
+`npm run build:function`, then commit the regenerated `index.ts` (the integration
+deploys the committed file); never hand-edit `index.ts`. Locally you can still run
+`supabase start` + `supabase functions serve play-match`.
 
 **Next:** enter the real 55-card *juego básico* + the exact ability scale (the
 100-point cap only bites once real star cards exist), then close the engine's

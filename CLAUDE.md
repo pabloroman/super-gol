@@ -85,6 +85,13 @@ the current engine.
   RLS lets clients read only their own rows.
 - Screens (`src/screens/`) call the repository layer (`src/data/api.ts`), which
   wraps Supabase — screens never touch the client directly.
+- **Migrations deploy via the Supabase GitHub integration** on merge to `main`
+  (it also deploys `play-match` from `config.toml`, so there's no separate deploy
+  workflow). It tracks applied files in `supabase_migrations.schema_migrations`, so
+  **always apply migrations with `supabase db push` / `db reset`, never by pasting
+  SQL into the editor** — a hand-applied schema leaves the ledger empty and the
+  integration can't reconcile what's applied (new migrations then silently fail to
+  apply). New migrations must have a version above the highest already recorded.
 
 ## Card catalog pipeline (real players)
 
