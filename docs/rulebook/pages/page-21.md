@@ -44,5 +44,3 @@ _(…viene de la página 20: Anticipación a un remate de cabeza)_
   **DADO 1 + DADO 2 + F** (del defensor) pueden ocurrir diferentes situaciones.
   Si la suma va de:
   - **2–4:** Tarjeta roja (expulsión: se retira al infractor del campo)
-    _(la tabla de resultados de la falta continúa en la página 22, aún no
-    fotografiada)_

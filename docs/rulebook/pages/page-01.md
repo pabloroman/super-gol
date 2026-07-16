@@ -2,8 +2,6 @@
 
 > Transcripción literal del texto en español. Escaneo original:
 > [`../scans/page-01.jpeg`](../scans/page-01.jpeg).
->
-> _Nota manuscrita en la parte superior del escaneo: «1 turno cada jugador»._
 
 ---
 
@@ -38,26 +36,35 @@ habilitadas especialmente para los porteros. Existen zonas especiales, que son:
 
 ### Diagrama del campo
 
-Cuadrícula de 6×5 casillas, con dos casillas de portería (una a cada lado) y las
-zonas especiales rotuladas. Reconstrucción aproximada según el escaneo:
+Cuadrícula de **5 columnas × 6 filas** (las 30 casillas), con una casilla de
+portería **arriba y otra abajo** — cada equipo ataca hacia la portería contraria:
 
 ```
-                    ┌────┬────┬────┬────┬────┬────┐
-                    │ PA │ RM │ RM │ RM │ RM │ PA │
-              ┌─────┼────┼────┼────┼────┼────┼────┼─────┐
-              │     │ PA │ DL │ PA │ PA │ DL │ PA │     │
-              │Port.├────┼────┼────┼────┼────┼────┤Port.│
-              │     │ PA │ DL │ DL │ DL │ DL │ PA │     │
-              └─────┼────┼────┼────┼────┼────┼────┼─────┘
-                    │ PA │ DL │ PA │ PA │ DL │ PA │
-                    ├────┼────┼────┼────┼────┼────┤
-                    │ PA │ RM │ RM │ RM │ RM │ PA │
-                    └────┴────┴────┴────┴────┴────┘
+                     ┌────────┐
+                     │Portería│
+                     └────────┘
+   ┌────────┬────────┬────────┬────────┬────────┐
+   │   PA   │   RM   │   RM   │   RM   │   PA   │
+   ├────────┼────────┼────────┼────────┼────────┤
+   │   PA   │ PA+DL  │   DL   │ PA+DL  │   PA   │
+   ├────────┼────────┼────────┼────────┼────────┤
+   │        │        │        │        │        │
+   ├────────┼────────┼────────┼────────┼────────┤
+   │        │        │        │        │        │
+   ├────────┼────────┼────────┼────────┼────────┤
+   │   PA   │ PA+DL  │   DL   │ PA+DL  │   PA   │
+   ├────────┼────────┼────────┼────────┼────────┤
+   │   PA   │   RM   │   RM   │   RM   │   PA   │
+   └────────┴────────┴────────┴────────┴────────┘
+                     ┌────────┐
+                     │Portería│
+                     └────────┘
 ```
 
-> _El diagrama es una reconstrucción a partir del escaneo; la disposición exacta
-> de las zonas RM / DL / PA debe verificarse contra la foto original
-> (`scans/page-01.jpeg`) y corregirse si difiere._
+`PA+DL` son las casillas que llevan **los dos** rótulos (PA sobre DL): son zona de
+pases altos **y** de disparo lejano a la vez. Las dos filas centrales no llevan
+rótulo: son casillas de juego normal. Las dos casillas de portería son las «dos
+habilitadas especialmente para los porteros», adicionales a las 30.
 
 ---
 

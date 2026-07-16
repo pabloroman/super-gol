@@ -15,13 +15,13 @@ Se juega con reglamento básico.
 
 | # | Alineación equipo blanco | Alineación equipo negro |
 |---|--------------------------|-------------------------|
-| 1 | ARLANEDO | ZUBIZARRETA |
+| 1 | ABLANEDO | ZUBIZARRETA |
 | 2 | OTERO | JAIME |
 | 3 | NACHO | LARRAZABAL |
 | 4 | TOCORNAL | KARANKA |
 | 5 | CAMARASA | SOLOZÁBAL |
 | 6 | RAFA PAZ | VIZCAÍNO |
-| 7 | BIELICA | FRANCISCO |
+| 7 | BJELICA | FRANCISCO |
 | 8 | MICHEL | BAKERO |
 | 9 | ESCAICH | KIKO |
 | 10 | BARBARÁ | GARITANO |
@@ -29,10 +29,10 @@ Se juega con reglamento básico.
 
 ### NOMENCLATURA
 
-- **✓ :** Conseguido
+- **! :** Conseguido
 - **? :** Fallado
 - **-->:** Pasa a…
-- **M. H.:** Marca al hombre
+- **M.H.:** Marca al hombre
 - **D1:** dado 1 · **D2:** dado 2
 - **PD:** Pase directo · **A:** Anticipación · **RB:** Robo de balón ·
   **RG:** Regate · **PC:** Pase corto · **PL:** Pase largo ·

@@ -46,6 +46,3 @@ _(continuación de la colocación inicial)_
   último de puerta.
 - Si se marca un gol, se tendrán que recolocar los jugadores siguiendo las
   reglas descritas en "colocación inicial de jugadores en el campo".
-
-> _Algunos fragmentos de la mitad inferior de esta página están subrayados a
-> mano y son de lectura difícil; verificar contra `scans/pages-04-05.jpeg`._

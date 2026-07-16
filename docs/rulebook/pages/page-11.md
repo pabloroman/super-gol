@@ -44,6 +44,3 @@ estará obligado a jugar con "el pie", lo que supondrá que:
 
 Las características básicas de los jugadores sirven en todo el campo (se juega sin
 demarcación).
-
-> _Fin de las páginas fotografiadas hasta ahora (pág. 11). El JUEGO AVANZADO y el
-> partido de ejemplo mencionados en la introducción aún no se han digitalizado._

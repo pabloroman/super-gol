@@ -3,7 +3,10 @@
 > Transcripción literal del texto en español. Escaneo original:
 > [`../scans/pages-16-17.jpeg`](../scans/pages-16-17.jpeg) (página izquierda).
 >
-> ⚠️ **Valores de dados de lectura difícil; verificar contra el escaneo.**
+> **Errata del folleto:** los nombres de los dos porteros están cambiados en la
+> crónica (véase la página 15). En la jugada 44, «Ablanedo» es en realidad
+> **Zubizarreta** (negro 1); en la 53, «Zubizarreta» es **Ablanedo** (blanco 1).
+> Se transcribe tal cual está impreso.
 
 ---
 
@@ -23,12 +26,13 @@ Bjelica ELIGE IR (a) C4 con el balón
 46. Bakero --> a Vizcaíno **(PD)**
 47. Vizcaíno --> a Kiko **(PD)**
 48. Kiko y Francisco intercambian posiciones, cogiendo el balón Francisco
-    **(RELEVO CON BALÓN)** **(Figura 5)**
+    **(RELEVO CON BALÓN)** 
+    **(Figura 5)**
 49. Rafa Paz va a C2
 50. Francisco --> a Kiko **PC !** (5 + D1: 2 + 3)
     Tocornal **A ?** (D1: 6 + D2: 1 + 2)
 51. Kiko va a D1 con el balón
-52. Camarasa va a D1 **(M. H. a Kiko)**
+52. Camarasa va a D1 **(M.H. a Kiko)**
     Camarasa **RB ?** (D1: 2 + D2: 2 + 3)
     Kiko ELIGE IR A C1 con el balón
 53. Kiko chuta a gol **RM !** (5 + D1: 4 + 2)

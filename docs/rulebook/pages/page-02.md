@@ -18,19 +18,24 @@ en rojo en el campo (salvo excepciones) (supondremos que se ataca hacia arriba).
 
 ### Anatomía de la carta (diagrama)
 
-La carta de ejemplo muestra:
+La carta de ejemplo (Julen Guerrero, Athletic Club) lleva siete llamadas:
 
-- **Nombre:** GUERRERO — dorsal **15**
-- **Escudo del club** (arriba a la derecha)
-- **Datos** (nombre completo, procedencia/nacionalidad, peso, etc. — texto en
-  letra muy pequeña, apenas legible en el escaneo)
-- **Ficha** — _(En rojo si es extranjero)_
-- **Factores** — fila de características con sus valores (RC, PA, PC, A, RG, DL,
-  RB, PL, D… en una rejilla en la parte inferior de la carta)
-- **Demarcación** — casilla/zona del campo por la que se mueve el jugador
+- **Nombre:** GUERRERO — en la banda superior.
+- **Escudo del club** — arriba a la derecha.
+- **Datos** — el bloque de texto pequeño junto a la ficha: «Julen Guerrero López ·
+  Portugalete (Vizcaya) · 07/01/74 - 1,79, 71 kg».
+- **Ficha** — el número **15** dentro del círculo, abajo a la izquierda.
+  _(En rojo si es extranjero.)_
+- **Factores** — la fila de casillas del borde inferior, cada una con una
+  característica y su valor. Cada carta sólo lleva las características «de las
+  que está dotado» el jugador, así que la fila varía de una carta a otra.
+- **Demarcación** — la rejilla de abajo a la derecha: un mini-campo de **5
+  columnas × 6 filas** con la zona del jugador en rojo. En esta carta son las
+  **tres filas de arriba** (la mitad de ataque, ya que «se ataca hacia arriba»).
 
-> _Los valores numéricos de los factores de la carta de ejemplo no se leen con
-> claridad en el escaneo; verificar contra `scans/pages-02-03.jpeg`._
+La **ficha** es el valor en puntos del jugador: el reglamento del torneo (página
+29) limita el equipo de 16 jugadores a «un máximo de 100 puntos (suma de las
+fichas de los 16 jugadores)», y el juego básico (página 12) no la utiliza.
 
 ## Relación de características:
 

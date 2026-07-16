@@ -14,13 +14,13 @@
 ### Libres directos desde fuera del área
 
 Si la falta fue cometida en la zona de **DL** y se quiere chutar a gol, se
-entiende que el equipo atacante pide "barrera", y por tanto el defensor tendrá
-opción de mover primero para colocar un jugador (si no lo hubiera ya situado), y
-para desplazar al agresor a otra casilla. Esta "barrera" consiste en colocar un
-jugador entre la casilla donde se cometió la falta y la del portero. Habiendo
-barrera, para dirigir el balón a puerta se lanzarán dos dados, habiendo de
-conseguir como mínimo un 10 mediante la suma: **DADO 1 + DADO 2 + LF**. Si por
-negligencia del defensor no hay barrera, se lanzará un dado, habiendo de
+entiende que el equipo atacante pide "pasos", y por tanto el defensor tendrá
+opción de mover primero la "barrera" (si no lo hubiera ya situado), y para
+desplazar al agresor a otra casilla. Esta "barrera" consiste en colocar un
+jugador entre la casilla donde se cometió la falta y la del portero, y obliga
+al lanzador a utilizar dos dados, habiendo de conseguir como mínimo un 10
+mediante la suma: **DADO 1 + DADO 2 + LF** para dirigir el balón a puerta.
+Si por negligencia del defensor no hay barrera se lanzará un dado, habiendo de
 conseguir como mínimo un 10 mediante la suma: **DADO 1 + 5 + LF**.
 
 ### Penalty:
