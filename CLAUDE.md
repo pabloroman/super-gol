@@ -88,7 +88,7 @@ the current engine.
 - **Migrations deploy via the Supabase GitHub integration** on merge to `main`
   (it also deploys `play-match` from `config.toml`, so there's no separate deploy
   workflow). It tracks applied files in `supabase_migrations.schema_migrations`, so
-  **always apply migrations with `supabase db push` / `db reset`, never by pasting
+  **always apply migrations with `npm run db:push` / `db:reset`, never by pasting
   SQL into the editor** — a hand-applied schema leaves the ledger empty and the
   integration can't reconcile what's applied (new migrations then silently fail to
   apply). New migrations must have a version above the highest already recorded.
@@ -133,6 +133,9 @@ in-app the DB is the source of truth** — `0005` is just the initial seed, and 
 ## Commands
 
 - `npm run dev` — dev server
+- `npx supabase start` / `stop` / `status` — local Supabase stack (needs Docker).
+  The CLI is a devDependency, so it needs the `npx` prefix. `start` applies all
+  migrations + `seed.sql`; point the app at it with a `.env.local` override.
 - `npm run typecheck` — `tsc -b --noEmit` (also checks tests)
 - `npm run test` — Vitest run (engine tests in `src/game/engine/__tests__/`,
   catalog inference + CSV tests in `src/cards/__tests__/`)

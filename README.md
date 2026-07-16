@@ -64,21 +64,42 @@ through `serverMatchEngine` behind the `MatchEngine` interface
 
 ## Getting started
 
+Needs [Docker](https://docs.docker.com/desktop/) (or Rancher/Podman/OrbStack)
+running. The Supabase CLI is a devDependency — run it with `npx supabase`.
+
 ```bash
 npm install
-
-# 1. Create a Supabase project at supabase.com
-# 2. Configure env
-cp .env.example .env      # then fill VITE_SUPABASE_URL / VITE_SUPABASE_ANON_KEY
-
-# 3. Apply schema + seed. Use the Supabase CLI (needs Docker) so the
-#    supabase_migrations.schema_migrations ledger is recorded — do NOT paste
-#    the SQL by hand, or the GitHub integration loses track of what's applied.
-supabase db reset            # local
-# For a hosted project: supabase link --project-ref <ref> && supabase db push
-
-npm run dev
+npx supabase start        # applies all migrations + seed.sql; prints URLs & keys
 ```
+
+Point the app at the local stack with `.env.local` (gitignored; Vite loads it
+ahead of `.env`, so remote credentials in `.env` stay intact — delete it to
+switch back):
+
+```bash
+VITE_SUPABASE_URL=http://127.0.0.1:54321
+VITE_SUPABASE_ANON_KEY=<anon key from `npx supabase start`>
+```
+
+```bash
+npm run dev               # app    → http://localhost:5173
+                          # Studio → http://localhost:54323
+```
+
+| Command | |
+|---|---|
+| `npx supabase status` | reprint URLs & keys |
+| `npx supabase stop` | stop the stack |
+| `npm run db:reset` | re-apply migrations + seed (wipes local data) |
+
+`config.toml`'s `db.major_version` **must match the remote** (`SHOW
+server_version;` there) — local otherwise tests a different Postgres than
+production.
+
+For a hosted project instead: `npx supabase link --project-ref <ref> && npm run
+db:push`. Always apply migrations with the CLI, never by pasting SQL — a
+hand-applied schema leaves the `supabase_migrations.schema_migrations` ledger
+empty and the GitHub integration loses track of what's applied.
 
 ## Deploying the frontend (Vercel)
 
@@ -166,7 +187,7 @@ There is no bespoke deploy workflow to maintain.
 - **Migrations** are tracked in `supabase_migrations.schema_migrations` on each
   database. The integration applies only files whose version isn't already
   recorded there. **This is why you must apply migrations with the CLI
-  (`supabase db push`), never by pasting SQL** — a hand-applied schema leaves the
+  (`npm run db:push`), never by pasting SQL** — a hand-applied schema leaves the
   ledger empty, and the integration then can't tell what's applied. If a project
   was ever set up by pasting SQL, bootstrap the ledger once by recording the
   already-applied versions in `supabase_migrations.schema_migrations`.
@@ -179,8 +200,9 @@ The Edge Function is committed **self-contained**
 (`supabase/functions/play-match/index.ts` has the engine bundled in). To change the
 resolver, edit `supabase/functions/_src/play-match.ts` and run
 `npm run build:function`, then commit the regenerated `index.ts` (the integration
-deploys the committed file); never hand-edit `index.ts`. Locally you can still run
-`supabase start` + `supabase functions serve play-match`.
+deploys the committed file); never hand-edit `index.ts`. Locally, `npx supabase
+start` serves the **generated** `index.ts`, so rerun `npm run build:function`
+after any `src/game/engine/` change or the local function stays stale.
 
 **Next:** enter the real 55-card *juego básico* + the exact ability scale (the
 100-point cap only bites once real star cards exist), then close the engine's
