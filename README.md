@@ -67,30 +67,49 @@ through `serverMatchEngine` behind the `MatchEngine` interface
 Needs [Docker](https://docs.docker.com/desktop/) (or Rancher/Podman/OrbStack)
 running. The Supabase CLI is a devDependency — run it with `npx supabase`.
 
+**1. Backend.** Applies every migration + `seed.sql`, then prints the URLs and
+keys:
+
 ```bash
 npm install
-npx supabase start        # applies all migrations + seed.sql; prints URLs & keys
+npx supabase start
 ```
 
-Point the app at the local stack with `.env.local` (gitignored; Vite loads it
-ahead of `.env`, so remote credentials in `.env` stay intact — delete it to
-switch back):
+**2. Env.** Point the app at the local stack with `.env.local` (gitignored; Vite
+loads it ahead of `.env`, so remote credentials in `.env` stay intact — delete it
+to switch back):
 
 ```bash
 VITE_SUPABASE_URL=http://127.0.0.1:54321
-VITE_SUPABASE_ANON_KEY=<anon key from `npx supabase start`>
+VITE_SUPABASE_ANON_KEY=<publishable key from the start output>
 ```
 
+**3. Frontend**, in a second terminal:
+
 ```bash
-npm run dev               # app    → http://localhost:5173
-                          # Studio → http://localhost:54323
+npm run dev
 ```
+
+Both are long-running processes and **both must be up**: `supabase start` serves
+no app, and `npm run dev` has no backend without it. A dev server that was never
+started looks exactly like a broken app — `localhost:5173` simply refuses the
+connection.
+
+| | |
+|---|---|
+| App | http://localhost:5173 |
+| Studio | http://localhost:54323 |
+| API | http://127.0.0.1:54321 |
 
 | Command | |
 |---|---|
 | `npx supabase status` | reprint URLs & keys |
 | `npx supabase stop` | stop the stack |
-| `npm run db:reset` | re-apply migrations + seed (wipes local data) |
+| `npm run db:reset` | re-apply migrations + seed (wipes local data, incl. accounts) |
+
+Local accounts are separate from production — a fresh stack has no users, so
+sign up in-app. `enable_confirmations = false` locally, so sign-up logs you
+straight in; the mail catcher is at http://localhost:54324.
 
 `config.toml`'s `db.major_version` **must match the remote** (`SHOW
 server_version;` there) — local otherwise tests a different Postgres than
