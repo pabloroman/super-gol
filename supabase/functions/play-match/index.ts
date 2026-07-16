@@ -33,19 +33,21 @@ function seedFrom(...parts) {
 }
 
 // src/game/engine/pitch.ts
-var COLS = 6;
-var ROWS = 5;
+var COLS = 5;
+var ROWS = 6;
 var ZONE_MAP = [
-  ["PA", "RM", "RM", "RM", "RM", "PA"],
-  // row 0 — home's own box
-  ["PA", "DL", "DL", "DL", "DL", "PA"],
-  // row 1
-  ["PA", "MID", "MID", "MID", "MID", "PA"],
-  // row 2 — midfield
-  ["PA", "DL", "DL", "DL", "DL", "PA"],
-  // row 3
-  ["PA", "RM", "RM", "RM", "RM", "PA"]
-  // row 4 — away's box (home's target)
+  ["PA", "RM", "RM", "RM", "PA"],
+  // row 0 — home's own box (away's target)
+  ["PA", "DL", "DL", "DL", "PA"],
+  // row 1 — DL ring
+  ["MID", "MID", "MID", "MID", "MID"],
+  // row 2 — midfield build-up
+  ["MID", "MID", "MID", "MID", "MID"],
+  // row 3 — midfield build-up
+  ["PA", "DL", "DL", "DL", "PA"],
+  // row 4 — DL ring
+  ["PA", "RM", "RM", "RM", "PA"]
+  // row 5 — away's box (home's target)
 ];
 function zoneAt(cell) {
   return ZONE_MAP[cell.row][cell.col];
@@ -68,10 +70,11 @@ function makePitch(cell, attacker) {
 }
 var CENTRE_LANE = 2;
 function initialPitch(attacker) {
-  return makePitch({ col: CENTRE_LANE, row: 2 }, attacker);
+  const startRow = attacker === "home" ? 2 : 3;
+  return makePitch({ col: CENTRE_LANE, row: startRow }, attacker);
 }
 function laneFor(index) {
-  return 1 + (index % 4 + 4) % 4;
+  return 1 + (index % 3 + 3) % 3;
 }
 
 // src/game/ratings.ts

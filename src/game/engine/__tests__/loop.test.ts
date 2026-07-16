@@ -83,9 +83,9 @@ describe('simulateMatch', () => {
     for (const e of withCells) {
       const { col, row } = e.params!.cell!
       expect(col).toBeGreaterThanOrEqual(0)
-      expect(col).toBeLessThan(6)
+      expect(col).toBeLessThan(5)
       expect(row).toBeGreaterThanOrEqual(0)
-      expect(row).toBeLessThan(5)
+      expect(row).toBeLessThan(6)
     }
   })
 

@@ -32,6 +32,10 @@ export interface Card {
   rarity: Rarity
   is_starter: boolean
   abilities: Abilities
+  // Demarcación grid, 5 cols × 6 rows (row/col matching the board in
+  // src/game/engine/pitch.ts). ADVANCED GAME ONLY: the basic game is played «sin
+  // demarcación» (rulebook page 11), so this has NO effect on the match engine — it
+  // is derived from `position` and carried for the future advanced game.
   zone_grid: boolean[][]
   image_url: string | null
 }
@@ -95,8 +99,8 @@ export interface MatchEventParams {
   total?: number
   success?: boolean
   marcaje?: string
-  // Absolute board coordinates of the ball carrier when the event fired (col 0–5,
-  // row 0–4; home defends row 0). Lets the crónica be replayed on the visual pitch.
+  // Absolute board coordinates of the ball carrier when the event fired (col 0–4,
+  // row 0–5; home defends row 0). Lets the crónica be replayed on the visual pitch.
   cell?: { col: number; row: number }
 }
 

@@ -2,7 +2,7 @@ import type { Side } from '@/game/engine/types'
 import { COLS, ROWS, ZONE_MAP, type Zone } from '@/game/engine/pitch'
 
 /**
- * The real 6×5 board (rulebook page 1), rendered with the away goal at the top and
+ * The real 5×6 board (rulebook page 1), rendered with the away goal at the top and
  * the home goal at the bottom so the human squad attacks upward. Cells are tinted by
  * zone (RM / DL / PA / midfield) and a ball marker sits on the carrier's cell so the
  * crónica can be replayed on the correct grid.
@@ -21,8 +21,8 @@ const ZONE_LABEL: Partial<Record<Zone, string>> = {
   PA: 'PA',
 }
 
-// Goal mouth spans the interior columns (the RM box width).
-const GOAL_COLS = [1, 2, 3, 4]
+// Goal mouth spans the interior columns (the RM box width: the three central cells).
+const GOAL_COLS = [1, 2, 3]
 
 // Display rows top→bottom: away goal (row 4) first, home goal (row 0) last.
 const DISPLAY_ROWS = Array.from({ length: ROWS }, (_, i) => ROWS - 1 - i)
@@ -30,7 +30,7 @@ const ALL_COLS = Array.from({ length: COLS }, (_, i) => i)
 
 function Porteria() {
   return (
-    <div className="grid grid-cols-6 gap-0.5 px-0.5">
+    <div className="grid grid-cols-5 gap-0.5 px-0.5">
       {ALL_COLS.map((c) => (
         <div
           key={c}
@@ -52,7 +52,7 @@ export function PitchBoard({
     <div className="rounded-xl bg-pitch-950 p-2 ring-1 ring-white/5">
       <Porteria />
       <div className="relative my-1">
-        <div className="grid grid-cols-6 gap-0.5">
+        <div className="grid grid-cols-5 gap-0.5">
           {DISPLAY_ROWS.map((row) =>
             ALL_COLS.map((col) => {
               const zone = ZONE_MAP[row][col]
