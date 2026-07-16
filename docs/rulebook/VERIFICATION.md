@@ -1,17 +1,29 @@
 # Rulebook — verification worklist
 
-The transcription in `pages/` is complete, but some spots were photographed at a
-distance / hand-underlined / very small, so they were transcribed **best-effort
-and flagged**. This file collects every flagged item in one place, in **priority
-order**, with the current reading laid out so a human review only has to
-**confirm or correct** each one — not re-transcribe.
+The transcription in `pages/` is complete. Spots that were photographed at a
+distance / hand-underlined / very small were transcribed **best-effort and
+flagged**; this file tracks each of those, in **priority order**, so a human
+review only has to **confirm or correct** — not re-transcribe.
+
+**Status**
+
+| Item | State |
+|------|-------|
+| Priority 1 — TABLA 1 & 2 (page 30) | ✓ verified |
+| Priority 1b — the example's goalkeepers | ✓ resolved (chronicle errs; lineup right) |
+| Priority 2 — worked-example dice values | ✓ verified |
+| Priority 3 — Figuras 1–5 (page 17) | ✓ transcribed |
+| Priority 3 — Figuras 6–9 (pages 25–26) | **open** — untranscribed |
+| Priority 4 — pages 2, 5, 23 (penalty), 29 | **open** |
+
+**Nothing now blocks the engine**, and the worked example on pages 13–17 is
+usable as a fixture — reading the two keeper names from the page-13 lineup, not
+from the chronicle (Priority 1b).
 
 **How to use this**
-- Go through each item against the scan (`scans/…`) or the physical booklet.
+- Go through each open item against the scan (`scans/…`) or the physical booklet.
 - If correct, tick it. If wrong, note the fix (edit the file directly, or just
   tell me the corrections and I'll apply them and re-push).
-- Priority 1 (the tables) is the only thing that materially blocks the game
-  engine; everything else is polish.
 
 Legend used by the tables (from page 31): **MH** = marcaje al hombre · **MZ** =
 marcaje en zona · **SM** = sin marcaje · **Nº** = number of dice to roll. Cell
@@ -76,54 +88,26 @@ keeper names from the page-13 lineup and ignores the chronicle's; every other na
 in the chronicle is fine. Note the page-17 figures can't corroborate either way —
 they show both keepers as dorsal 1 but name nobody.
 
-## Priority 2 — Worked-example dice values (pages 14–16)
+## ✓ Priority 2 — RESOLVED: worked-example dice values (pages 14–16, 25, 26)
 
-The play-by-play is legible; the small `(D1: x + D2: y + z)` roll values are not
-always. Please confirm each roll. Notation: `!` = conseguido, `?` = fallado.
+**Every roll is verified correct as transcribed** (confirmed by the booklet
+owner, roll by roll, across both the basic example on pages 14–16 and the two
+advanced examples on pages 25–26). Notation: `!` = conseguido, `?` = fallado.
+The values live on the pages themselves; they are not duplicated here.
 
-**Page 14 (turns 1–3)** — the only roll is:
-- Play 18 — Vizcaíno **RB !** (D1: 5 + D2: 6 + 0)
-- Play 20 — Solozábal→Francisco **PL ?** (5 + D1: 2 + 1)
-- Play 7 — ✓ **corrected.** It reads "Garitano va a casilla **B4** (M. H. a
-  Escaich)"; the transcription had **B5** and had dropped the M.H. B5 put three
-  players in one cell (two of them negro), breaking the page-3 rule of max 2 "y
-  siempre de distintos equipos". Figura 2 independently shows Garitano on B4.
+Two things were corrected along the way, both worth keeping:
 
-**Page 15 (turns 4–7)**
-- 27 — Barbará **RG !** (D1: 4 + D2: 4 + 2)
-- 29/30 — ✓ **resolved** against a macro crop of `scans/pages-14-15.jpeg`, and it
-  answers both halves of the old question: the RB **does** come before the shot,
-  and the shot **is** the 1-die form. The page reads, in order:
-  Solozábal **RB ?** (D1: 3 + D2: 3 + 2) · "Barbará ELIGE NO MOVER A OTRA
-  CASILLA." · 30 — Barbará **DL !** (**5 + D1: 5 + 0**) · Ablanedo **CO !**
-  (D1: 6 + D2: 5 +3). The transcription previously had the shot as
-  `D1: 5 + D2: 5 + 0` (2 dice); both sum to 10, so only the **form** was wrong —
-  and the form is what encodes the 1-die-vs-2-dice rule, so it mattered. The
-  *why* is the page-9 robo-de-balón rule: Solozábal's RB failed and Barbará chose
-  not to move, which leaves "el poseedor del balón … libre de cualquier tipo de
-  marcaje" — unmarked, hence one die.
-- 33 — Bakero **PC Hueco !** (D1: 6 + D2: 4 + 0)
-- 36 — Vizcaíno→Francisco **PL !** (D1: 4 + D2: 5 + 1); Tocornal **A !** (D1: 4 + D2: 4 + 2)
-- 37 — Tocornal→Barbará **PL !** (5 + D1: 6 + 0); Solozábal **A ?** (D1: 1 + D2: 2 + 2)
-- 38 — Barbará **DL !** (D1: 5 + D2: 6 + 0); Ablanedo **CO !** (D1: 5 + D2: 4 + 3)
-- 39 — Ablanedo **PL Hueco ?** (D1: 1 + D2: 5 + 0)
-
-**Page 16 (turn 8 → goal)**
-- Kiko **RB ?** (D1: 4 + D2: 5 + 0)
-- 43 — Michel **DL ?** (5 + D2: 2 + 2)
-- 50 — Francisco→Kiko **PC !** (5 + D1: 2 + 3); Tocornal **A ?** (D1: 6 + D2: 1 + 2)
-- 52 — Camarasa **RB ?** (D1: 2 + D2: 2 + 3)
-- 53 — Kiko **RM !** (5 + D1: 4 + 2); Zubizarreta **RF ?** (D1: 4 + D2: 3 + 2) → ¡GOL!
-
-**Page 25 (advanced example)**
-- 1 — Escaich **D ?** (D1: 3 + D2: 1 + 0); Felipe→Escaich **PA !** (D1: 4 + D2: 5 + 2);
-  Zubizarreta **SA ?** (D1: 2 + D2: 3 + 2); Karanka **RC ?** (D1: 3 + D2: 4 + 2)
-- 2 — Escaich **RC !** (5 + D1: 4 + 2)
-
-**Page 26 (advanced example)**
-- 1 — Francisco **D ?** (D1: 4 + D2: 5 + 0); Morales→Francisco **PL !** (D1: 6 + D2: 4 + 0);
-  Camarasa **A ?** (D1: 1 + D2: 6 + 2); Ablanedo **SP ?** (D1: 2 + D2: 4 + 3)
-- 2 — Francisco **RM !** (5 + D1: 5 + 0) → ¡GOOOOL!
+- **Page 14, play 7** — reads "Garitano va a casilla **B4** (M. H. a Escaich)".
+  The transcription had **B5** and had dropped the M.H. B5 put three players in
+  one cell, two of them negro, breaking the page-3 rule of max 2 "y siempre de
+  distintos equipos". Figura 2 independently shows Garitano on B4.
+- **Page 15, plays 29/30** — the RB comes *before* the shot, and the shot is the
+  **1-die** form: `30 — Barbará DL ! (5 + D1: 5 + 0)`. The transcription had
+  `D1: 5 + D2: 5 + 0` (2 dice); both sum to 10, so only the *form* was wrong —
+  and the form encodes the 1-die-vs-2-dice rule. The reason is the page-9
+  robo-de-balón rule: Solozábal's RB failed and Barbará chose not to move, which
+  leaves "el poseedor del balón … libre de cualquier tipo de marcaje" — unmarked,
+  hence one die.
 
 ---
 
