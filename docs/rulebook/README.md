@@ -101,28 +101,34 @@ Avanzado** (18–29) — advanced abilities, fouls, penalties, offside, corners,
 substitutions, injuries and the **official tournament regulation** — and the two
 master reference tables (30–31).
 
-### Verification worklist
+### Verification status
 
-Since no sharper scans are available, the uncertain spots are collected into a
-single review checklist — **[`VERIFICATION.md`](VERIFICATION.md)** — with the
-current reading laid out so a human review only has to confirm or correct each
-item. Priority 1 (the TABLA 1/2 grid) is the only thing that materially blocks
-the game engine.
+**Everything the engine relies on is verified against the physical booklet** —
+all prose, TABLA 1 & 2 (from the macro close-ups `tabla-1-closeup.png` /
+`tabla-2-closeup.png`), the worked example's dice values roll by roll, and the
+board figures of pages 1 and 17. The índice (p32–33) cross-checks every page
+number in the table above.
 
-### Where the reading is uncertain
+The one thing left is **Figuras 6–9** (pages 25–26), the board diagrams of the
+two Juego Avanzado examples — low priority, since the engine implements the basic
+game only. It is tracked in **[`VERIFICATION.md`](VERIFICATION.md)**, which holds
+open items only; each is deleted as it settles.
 
-A few pages are transcribed but flagged **verify-against-scan** because the photo
-resolution doesn't allow a fully reliable reading:
+### The booklet's own errata
 
-- **p14–16** — the die values in the worked example match (small superscripts).
-- **p17, p25, p26** — exact piece coordinates in the board diagrams (Figuras 1–9).
-- **p23, p29** — heavily hand-underlined paragraphs.
-- **p30** — TABLA 1 & TABLA 2 are **fully verified** from sharp macro close-ups
-  (`tabla-1-closeup.png`, `tabla-2-closeup.png`) and confirmed by the booklet
-  owner. TABLA 1 is also self-consistent with the page-31 worked example.
+Three spots where the original contradicts itself. All are transcribed **as
+printed**, with a note where they appear:
 
-The **índice (p32–33)** is fully legible and cross-checks every page number
-above, so the overall structure and pagination are confirmed.
+- **Pages 15–16** — the chronicle swaps the two goalkeepers' names: read
+  "Ablanedo" as **Zubizarreta** and vice versa. The page-13 lineup is the correct
+  one, and pages 25–26 agree with it.
+- **Figura 3 (p17)** — draws E2/E3 without the relevo of play 4, and Larrazabal
+  on A5 instead of B5. For those pieces it shows a board state earlier than the
+  one it is captioned for.
+- **Figura 5 (p17)** — omits the white goalkeeper; the goal has posts but no `1`.
+
+Figuras 1, 2 and 4 are the trustworthy snapshots; where a figure and the
+chronicle disagree, the chronicle wins.
 
 ## The dice mechanic at a glance
 
