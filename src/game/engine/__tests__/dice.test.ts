@@ -60,35 +60,4 @@ describe('TABLA 2 — action dice counts', () => {
   })
 })
 
-// Worked-example rolls transcribed in docs/rulebook/VERIFICATION.md. The ≥10
-// threshold is unambiguous even where the exact die faces are only best-effort.
-describe('rulebook worked examples', () => {
-  it('Vizcaíno RB (5 + 6 + 0 = 11) is achieved', () => {
-    const c = scoreContest([5, 6], 0)
-    expect(c.total).toBe(11)
-    expect(c.success).toBe(true)
-  })
-
-  it('Barbará RG (4 + 4 + 2 = 10) is achieved', () => {
-    expect(scoreContest([4, 4], 2)).toMatchObject({ total: 10, success: true })
-  })
-
-  it('Solozábal→Francisco PL (5 + 2 + 1 = 8, one die) is failed', () => {
-    expect(scoreContest([2], 1)).toMatchObject({ total: 8, success: false })
-  })
-
-  it('Bakero PC al hueco (6 + 4 + 0 = 10, two dice) is achieved', () => {
-    expect(scoreContest([6, 4], 0)).toMatchObject({ total: 10, success: true })
-  })
-
-  it('Michel DL (5 + 2 + 2 = 9, one die) is failed', () => {
-    expect(scoreContest([2], 2)).toMatchObject({ total: 9, success: false })
-  })
-
-  it('Kiko RM (5 + 4 + 2 = 11) beats Zubizarreta RF (4 + 3 + 2 = 9) → goal', () => {
-    const shot = scoreContest([4], 2) // one die + 5 + 2
-    const save = scoreContest([4, 3], 2) // keeper two dice + 2
-    expect(shot.success).toBe(true)
-    expect(save.success).toBe(false)
-  })
-})
+// The rulebook's full worked-example rolls now live in worked-example.test.ts.

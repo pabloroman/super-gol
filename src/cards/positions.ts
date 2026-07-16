@@ -47,7 +47,15 @@ export function roleProfile(position: string | null | undefined): RoleProfile {
 const T = true
 const F = false
 
-/** boolean[6][5] effectiveness grids by group (row 0 = attack (top), row 5 = own goal (bottom)). */
+/**
+ * Per-role **demarcación** grids (advanced game only — the basic game is played «sin
+ * demarcación», rulebook page 11). `boolean[6 rows][5 cols]`, sharing the board's 5×6
+ * coordinate system (see src/game/engine/pitch.ts), but in the card's own
+ * **attacking-up** frame: row 0 = the attacking end, row 5 = own goal. The engine's
+ * `ZONE_MAP` uses **absolute** coords (row 0 = home goal), so the two frames must be
+ * reconciled when demarcación lands — along with the LF/RM/DL/RC exceptions that
+ * apply regardless of demarcación (rulebook page 3).
+ */
 export const ZONE_GRIDS: Record<PositionGroup, boolean[][]> = {
   GK: [
     [F, F, F, F, F],

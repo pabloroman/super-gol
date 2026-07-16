@@ -1,13 +1,13 @@
 /**
- * Real 6×5 board model.
+ * Real 5×6 board model.
  *
- * The field is 30 casillas (6 columns × 5 rows) plus two goalkeeper cells, with the
+ * The field is 30 casillas (5 columns × 6 rows) plus two goalkeeper cells, with the
  * special zones RM (remate cercano / box), DL (disparo lejano) and PA (pases altos /
- * wings) from rulebook page 1 (docs/rulebook/pages/page-01.md, verified against
- * scans/page-01.jpeg). Cells that are none of those are plain build-up squares,
- * tagged MID here.
+ * wings) from rulebook page 1 (docs/rulebook/pages/page-01.md, verified against the
+ * rotated scan and the coordinate system fixed on page 17: columns A–E → 0–4, rows
+ * 1–6 → 0–5). Cells that are none of those are plain build-up squares, tagged MID.
  *
- * Absolute coordinates: home defends row 0, away defends row 4; each side attacks
+ * Absolute coordinates: home defends row 0, away defends row 5; each side attacks
  * toward the opponent's goal ("se ataca hacia arriba", page 2). The zone map is
  * symmetric top/bottom, so an RM/DL box exists at each end. Everything stays behind
  * the `Pitch` interface: the loop only advances the carrier and asks whether a shot
@@ -17,12 +17,12 @@
 
 import type { Side } from './types'
 
-export const COLS = 6
-export const ROWS = 5
+export const COLS = 5
+export const ROWS = 6
 
 export type Zone = 'RM' | 'DL' | 'PA' | 'MID'
 
-/** A square on the board, in absolute coordinates (col 0–5, row 0–4). */
+/** A square on the board, in absolute coordinates (col 0–4, row 0–5). */
 export interface Cell {
   col: number
   row: number
@@ -30,18 +30,23 @@ export interface Cell {
 
 /**
  * Zone of every cell, indexed `[row][col]` in absolute coordinates (row 0 = home
- * goal line, row 4 = away goal line). This refines the *approximate* ASCII diagram
- * in page-01.md toward the rulebook's stated zone meanings — RM is the box at each
- * goal, DL is the ring just outside it, the centre row is midfield build-up, and the
- * two wings are PA — and is the single place to correct if the scan is re-verified
- * (see docs/rulebook/scans/page-01.jpeg and VERIFICATION.md).
+ * goal line, row 5 = away goal line). Straight from the revised page-1 diagram: the
+ * box (RM) is the three central cells at each goal line, the DL ring is the three
+ * central cells just outside it, the two centre rows are midfield build-up, and the
+ * wings are PA.
+ *
+ * Single-valued simplification: page 1 labels the DL ring `PA | PA+DL | DL | PA+DL |
+ * PA` — cols 1 and 3 carry *both* the pase-alto and long-shot labels. The basic game
+ * only cares about RM/DL shot-legality (PA is an advanced pass), so those cells are
+ * tagged DL here; encode the PA+DL overlap when the advanced game lands.
  */
 export const ZONE_MAP: Zone[][] = [
-  ['PA', 'RM', 'RM', 'RM', 'RM', 'PA'], // row 0 — home's own box
-  ['PA', 'DL', 'DL', 'DL', 'DL', 'PA'], // row 1
-  ['PA', 'MID', 'MID', 'MID', 'MID', 'PA'], // row 2 — midfield
-  ['PA', 'DL', 'DL', 'DL', 'DL', 'PA'], // row 3
-  ['PA', 'RM', 'RM', 'RM', 'RM', 'PA'], // row 4 — away's box (home's target)
+  ['PA', 'RM', 'RM', 'RM', 'PA'], // row 0 — home's own box (away's target)
+  ['PA', 'DL', 'DL', 'DL', 'PA'], // row 1 — DL ring
+  ['MID', 'MID', 'MID', 'MID', 'MID'], // row 2 — midfield build-up
+  ['MID', 'MID', 'MID', 'MID', 'MID'], // row 3 — midfield build-up
+  ['PA', 'DL', 'DL', 'DL', 'PA'], // row 4 — DL ring
+  ['PA', 'RM', 'RM', 'RM', 'PA'], // row 5 — away's box (home's target)
 ]
 
 export function zoneAt(cell: Cell): Zone {
@@ -86,16 +91,18 @@ function makePitch(cell: Cell, attacker: Side): Pitch {
   }
 }
 
-/** The interior lane (cols 1–4) the carrier occupies at a given depth. */
+/** The interior lane (cols 1–3) the carrier occupies at a given depth. */
 const CENTRE_LANE = 2
 
 /**
- * Kickoff / post-goal restart: the ball sits at midfield, in a central lane. Every
- * possession starts here — the basic-game engine models each attack as a build-up
- * from the halfway line — so `step(1)` twice reaches the DL ring then the box.
+ * Kickoff / post-goal restart: the ball sits at midfield, in the centre lane, on the
+ * attacker's own side of the halfway line (home row 2, away row 3). Every possession
+ * starts here — the basic-game engine models each attack as a build-up from the
+ * halfway line — so advancing crosses a midfield row, then the DL ring, then the box.
  */
 export function initialPitch(attacker: Side): Pitch {
-  return makePitch({ col: CENTRE_LANE, row: 2 }, attacker)
+  const startRow = attacker === 'home' ? 2 : 3
+  return makePitch({ col: CENTRE_LANE, row: startRow }, attacker)
 }
 
 export function pitchAt(cell: Cell, attacker: Side): Pitch {
@@ -103,11 +110,11 @@ export function pitchAt(cell: Cell, attacker: Side): Pitch {
 }
 
 /**
- * A stable interior lane (cols 1–4) for a receiver, so passes shift the ball across
+ * A stable interior lane (cols 1–3) for a receiver, so passes shift the ball across
  * the pitch for the visual replay without ever touching a wing (which would change
  * the zone and thus shot legality). Deterministic — no RNG — so match outcomes stay
  * byte-identical to the pre-grid engine.
  */
 export function laneFor(index: number): number {
-  return 1 + (((index % 4) + 4) % 4)
+  return 1 + (((index % 3) + 3) % 3)
 }

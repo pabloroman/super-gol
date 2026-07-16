@@ -72,14 +72,6 @@ function CardEditor({
       return { ...c, abilities }
     })
   }
-  const toggleCell = (r: number, col: number) =>
-    setCard((c) => {
-      const grid = c.zone_grid.map((row) => [...row])
-      grid[r][col] = !grid[r][col]
-      return { ...c, zone_grid: grid }
-    })
-  const resetGrid = () => set('zone_grid', ZONE_GRIDS[(card.position ?? 'MF') as PositionGroup] ?? [])
-
   async function save() {
     if (!card.id.trim() || !card.name.trim()) {
       setError('id and name are required')
@@ -190,16 +182,21 @@ function CardEditor({
         </div>
 
         <div className="mt-3">
-          <div className="mb-1 flex items-center justify-between text-xs text-slate-400">
-            <span>zone_grid</span>
-            <button onClick={resetGrid} className="text-grass-400 hover:underline">reset to {card.position} default</button>
+          <div className="mb-1 text-xs text-slate-400">
+            zone_grid{' '}
+            <span className="text-slate-500">
+              · demarcación (juego avanzado — no afecta al juego básico)
+            </span>
           </div>
+          {/* Read-only: the basic game is played «sin demarcación» (rulebook p.11), so
+              this grid has no effect on the match engine. It is derived from the
+              player's position and only used by the advanced game (not yet built). */}
           <div className="flex flex-col gap-1">
             {card.zone_grid.map((row, r) => (
               <div key={r} className="flex gap-1">
                 {row.map((cell, col) => (
-                  <button key={col} type="button" onClick={() => toggleCell(r, col)}
-                    className={`h-5 w-5 rounded-sm ${cell ? 'bg-grass-400' : 'bg-white/10'}`} />
+                  <div key={col}
+                    className={`h-5 w-5 rounded-sm ${cell ? 'bg-grass-400/60' : 'bg-white/10'}`} />
                 ))}
               </div>
             ))}
