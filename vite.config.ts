@@ -27,6 +27,12 @@ export default defineConfig(({ mode }) => {
       VitePWA({
         registerType: 'autoUpdate',
         includeAssets: ['favicon.svg'],
+        workbox: {
+          // Workbox's default globPatterns omit woff2, which would leave the
+          // self-hosted faces out of the precache and drop the installed app
+          // back to system-ui offline — the one thing self-hosting them was for.
+          globPatterns: ['**/*.{js,css,html,ico,png,svg,woff2}'],
+        },
         manifest: {
           name: 'Super Gol',
           short_name: 'Super Gol',

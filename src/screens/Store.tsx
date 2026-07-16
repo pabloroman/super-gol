@@ -1,7 +1,8 @@
 import { useEffect, useMemo, useState } from 'react'
 import { useAuth } from '@/auth/AuthProvider'
 import { fetchCatalog, fetchPacks, openPack } from '@/data/api'
-import { CardTile } from '@/ui/CardTile'
+import { Naipe } from '@/ui/naipe/Naipe'
+import { CardSheet } from '@/ui/naipe/CardSheet'
 import type { Card, Pack } from '@/lib/types'
 
 export function Store() {
@@ -11,6 +12,7 @@ export function Store() {
   const [pulled, setPulled] = useState<Card[] | null>(null)
   const [busy, setBusy] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  const [open, setOpen] = useState<Card | null>(null)
 
   useEffect(() => {
     Promise.all([fetchPacks(), fetchCatalog()])
@@ -51,12 +53,21 @@ export function Store() {
         <h1 className="font-display text-2xl font-bold">¡Sobre abierto!</h1>
         <div className="grid grid-cols-2 gap-3">
           {sortedPulled.map((c, i) => (
-            <CardTile key={`${c.id}-${i}`} card={c} />
+            <Naipe key={`${c.id}-${i}`} card={c} onClick={() => setOpen(c)} />
           ))}
         </div>
-        <button className="btn-primary" onClick={() => setPulled(null)}>
+        <button
+          className="btn-primary"
+          onClick={() => {
+            setPulled(null)
+            // Leaving the reveal must drop the inspected card too, or the next
+            // pack opens straight into a sheet showing the previous one.
+            setOpen(null)
+          }}
+        >
           Volver a la tienda
         </button>
+        <CardSheet card={open} onClose={() => setOpen(null)} />
       </div>
     )
   }

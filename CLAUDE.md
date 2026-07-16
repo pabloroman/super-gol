@@ -104,12 +104,23 @@ emits `supabase/migrations/0005_cards_laliga_2025.sql`. Because the source has n
 ability breakdown, factors are **inferred**: market value + age → a single
 overall (`src/cards/valuation.ts`, a faithful port of virtua-fc's
 `PlayerValuationService`) → the thirteen Super Gol factors via per-position
-priority templates (`src/cards/factors.ts` / `positions.ts`), on the rulebook's
-0–3 scale. `scripts/cards/rows.ts` wires these into card rows for both emitters.
+priority templates (`src/cards/factors.ts` / `positions.ts`), on a 0–3 scale.
+`scripts/cards/rows.ts` wires these into card rows for both emitters.
 Photos hotlink virtua-fc's own public CDN: `photos.ts` maps each Transfermarkt id
 → SofaScore id and stores the direct `assets.virtuafc.com/players/{sofascoreId}.webp`
 URL in `image_url` (identical on every environment, so it's baked straight into
-the migration). `CardTile` renders it with a silhouette fallback.
+the migration). `Naipe` renders it with a silhouette fallback.
+
+**The generated factors are known to be unfaithful** — a tracked gap, not a bug to
+fix incidentally. The rulebook defines **17** factors (pages 2–3) but `AbilityKey`
+carries 13: `f` (falta), `lf` (lanz. faltas), `sa` (salida por alto) and `sp`
+(salida a los pies) are missing, so a real card like Hierro's cannot be
+represented. The 0–3 ceiling above is an **assumption** — the rulebook states no
+range anywhere (only the floor, page 6: a missing factor is zero) and real cards
+show a 4. And `buildAbilities` baselines every key to 1, so cards are dense where
+the rulebook says the row «varía de una carta a otra» (page 2) — which yields just
+54 distinct ability blobs across 518 cards. Until that is reworked, the UI picks a
+display subset (`src/ui/naipe/factors.ts`).
 
 - `npm run build:cards` — regenerate the catalog SQL (offline; no credentials).
   Never hand-edit the generated migration — edit `scripts/cards/` + `src/cards/`
@@ -117,6 +128,40 @@ the migration). `CardTile` renders it with a silhouette fallback.
   `scripts/cards/data/`.
 - `npm run export:cards:csv` — emit `scripts/cards/data/laliga-2025-cards.csv`,
   the same catalog in the admin importer's column shape.
+
+## The naipe (card UI)
+
+`src/ui/naipe/Naipe.tsx` reproduces the physical card, and
+**`docs/rulebook/pages/page-02.md` («LA CARTA:») is the spec** — read it before
+changing anything here. Rules that page settles, each of which the code got wrong
+once already:
+
+- The roundel is the **ficha** = `cost`, and prints **red for a foreigner**
+  («En rojo si es extranjero») — 227 of 518 cards. `isForeign` accepts both
+  spellings, since `0005` stores English exonyms (`'Spain'`) and `seed.sql` stores
+  Spanish (`'España'`).
+- The demarcación prints **the player's zone in red**, green elsewhere. The
+  `zone_grid` data is right (`true` = the zone, attacking-up); only the colour was
+  inverted.
+- The factor row is **variable-length by design** — «Cada carta sólo lleva las
+  características de las que está dotado el jugador».
+
+The card is a fixed 62×95 aspect (`aspect-naipe`) whose type must track its width,
+so the root is a **container** and everything inside is sized in `cqw`: the naipe
+fills whatever box it's given, from the picker chip to the full card in the sheet.
+`variant="full"` adds the Spanish factor labels from `ABILITY_META`.
+
+Which factors print is `src/ui/naipe/factors.ts`. It branches on `position === 'GK'`
+and must **not** use `isGoalkeeper` from `src/game/ratings.ts` — that answers
+"which starter keeps goal" and falls back to `rf > 0 || co > 0`, which as a display
+rule would render any outfielder carrying a stray keeper rating as a portero.
+
+Club crests are a slug→URL map in `src/cards/clubs.ts` (`crestUrl`), not a DB
+column — same reasoning as `image_url`: the URL is identical everywhere. Refresh it
+alongside `CLUB_SLUGS` when re-vendoring a season.
+
+`src/ui/Sheet.tsx` is the app's only overlay primitive (portal, focus trap, Escape,
+scroll lock). The older inline modal in `Admin.tsx` has none of that — don't copy it.
 
 ## Admin catalog UI
 

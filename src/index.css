@@ -1,3 +1,32 @@
+/* Self-hosted so the PWA keeps its type offline — a font CDN would not survive
+   the service worker. `font-display`/`font-sans` reference these by family name
+   in tailwind.config.js; without these imports both silently fell back to
+   system-ui, which for a card built on condensed type is not a small thing.
+   (vite.config.ts precaches the woff2 so this actually holds offline.)
+
+   latin + latin-ext only. The bare `@fontsource/<family>/<weight>.css` entry
+   points also pull cyrillic, greek and vietnamese: `unicode-range` means a
+   browser never downloads those, but they're still 24 extra files to build and
+   precache. The whole 537-card catalog uses six characters outside latin —
+   Ę ę ț Ț, from Szczęsny and Drăgușin — and zero greek/cyrillic/vietnamese,
+   since Transfermarkt transliterates. Re-check when a season adds a league. */
+@import '@fontsource/barlow-condensed/latin-400.css';
+@import '@fontsource/barlow-condensed/latin-ext-400.css';
+@import '@fontsource/barlow-condensed/latin-600.css';
+@import '@fontsource/barlow-condensed/latin-ext-600.css';
+@import '@fontsource/barlow-condensed/latin-700.css';
+@import '@fontsource/barlow-condensed/latin-ext-700.css';
+@import '@fontsource/barlow-condensed/latin-800.css';
+@import '@fontsource/barlow-condensed/latin-ext-800.css';
+@import '@fontsource/inter/latin-400.css';
+@import '@fontsource/inter/latin-ext-400.css';
+@import '@fontsource/inter/latin-500.css';
+@import '@fontsource/inter/latin-ext-500.css';
+@import '@fontsource/inter/latin-600.css';
+@import '@fontsource/inter/latin-ext-600.css';
+@import '@fontsource/inter/latin-700.css';
+@import '@fontsource/inter/latin-ext-700.css';
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
