@@ -107,11 +107,21 @@ always. Please confirm each roll. Notation: `!` = conseguido, `?` = fallado.
 
 ## Priority 3 — Board diagrams (Figuras 1–9, pages 17, 25, 26)
 
-These were described by *role* (which turn each illustrates) rather than mapped
-cell-by-cell, because piece positions weren't reliably readable. If you're
-willing, the useful thing per figure is the **grid coordinate of each numbered
-player** (columns 1–6 × rows A–E), and which cell holds the ball (**X**). Only
-worth doing if you want the example match fully reconstructable in code.
+**Figuras 1–5 (page 17) are now transcribed** cell by cell in
+[`pages/page-17.md`](pages/page-17.md). Page 17 turned out to be printed **rotated
+90°**, which is why the positions had looked unreadable — rotated upright and
+zoomed, the scan is legible. The board is **5 columns A–E × 6 rows 1–6** (letters
+are the *columns*; the old note here said "columns 1–6 × rows A–E", which was the
+axes swapped — see the page for the four independent confirmations).
+
+Figura 2 reproduces the chronicle exactly, play for play, which is what makes the
+whole example reconstructable in code. Four points still open, all listed at the
+bottom of `page-17.md`: the Figura 3 anomalies (E2/E3 relevo, and Larrazabal at
+A5), the missing white keeper in Figura 5, and what the upper/lower half of a
+shared cell really encodes (Solozábal is drawn *below* Barbará despite "M.H.").
+
+**Figuras 6–9 (pages 25, 26) are still untranscribed** — same treatment would
+work: crop, rotate 90°, upscale.
 
 ---
 

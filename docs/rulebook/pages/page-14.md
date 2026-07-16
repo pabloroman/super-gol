@@ -21,7 +21,7 @@
 4. Nacho y Felipe intercambian posiciones **(RELEVO)**
 5. Morales va a casilla A3
 6. Escaich va a casilla B4
-7. Garitano va a casilla B5
+7. Garitano va a casilla B4 **(M.H. a Escaich)**
 8. Escaich va a B5
 9. Larrazabal va a B5 **(M.H. a Escaich)**
 10. Michel va a C3
