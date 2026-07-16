@@ -9,7 +9,6 @@
 
 _(continuación de Faltas — tabla de resultados de la suma DADO 1 + DADO 2 + F)_
 
-- **2–4:** Tarjeta roja (expulsión: se retira al infractor del campo).
 - **5–7:** Tarjeta amarilla (2 amarillas = expulsión). Se recomienda etiquetar al
   jugador con un clip amarillo.
 - **8–9:** Falta sin tarjeta.

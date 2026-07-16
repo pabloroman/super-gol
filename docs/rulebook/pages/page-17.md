@@ -36,8 +36,9 @@ Convenios del dibujo:
 - El **blanco defiende la portería de arriba** (fila 1) y ataca hacia la fila 6;
   el **negro** al revés.
 - **X** marca quién tiene el balón (página 13).
-- Cuando dos fichas comparten casilla, la de la **mitad superior** va escrita
-  primero: `sup/inf`.
+- Cuando dos fichas comparten casilla, la de la **mitad superior** marca **al
+  hombre** y la de la **inferior** marca **en zona** (leyenda de la página 13).
+  Aquí va escrita primero la de arriba: `sup/inf`.
 
 Notación de estos diagramas: `9` = blanco 9 · `(9)` = negro 9 · `9 X` = tiene el
 balón · `(3)/9` = negro 3 en la mitad superior y blanco 9 en la inferior.
@@ -112,9 +113,19 @@ bajo Vizcaíno (17, 18), y la **X** sobre Vizcaíno, que acaba de robar el baló
                                  [(1)]
 ```
 
-Barbará (blanco 10) en C4 con el balón y Solozábal debajo (23, 26, 27); Kiko bajo
-Rafa Paz en B3 (24, 25). **Pero dos fichas no concuerdan con la crónica** — ver
-las dudas al final.
+Kiko bajo Rafa Paz en B3 (24, 25). En C4 está **Barbará encima de Solozábal**
+aunque el que fue a marcar era Solozábal (26): es el resultado del regate de la
+jugada 27, porque al conseguirlo «el jugador con la pelota pasará a marcar al
+hombre al defensor (**se coloca encima**)» (página 9).
+
+**El dibujo original lleva dos erratas**, ambas del mismo tipo — la Figura 3
+dibuja para esas fichas un estado anterior al que le toca —, y ambas se
+transcriben tal cual:
+
+- `3` en E2 y `11` en E3: es la colocación **sin** el relevo Nacho/Felipe de la
+  jugada 4, que las Figuras 2 y 4 sí aplican.
+- Larrazabal `(3)` en **A5**, su casilla de salida, con Escaich solo en B5: la
+  jugada 9 lo lleva a B5 a marcar a Escaich, y ahí está en las Figuras 2 y 4.
 
 ## Figura 4 — TURNO 5 (tras la jugada 36)
 
@@ -139,13 +150,18 @@ las dudas al final.
 
 Cuadra con la crónica: Vizcaíno coge el balón en D4 (34); Tocornal baja a D2 a
 marcar a Francisco (35) y le **anticipa** el pase, quedándose el balón (36) — de
-ahí la **X** sobre el 4. Barbará y Solozábal ya en C5 (28, 29). E2/E3 vuelven a
-estar como manda el relevo de la jugada 4, al contrario que en la Figura 3.
+ahí la **X** sobre el 4. E2/E3 vuelven a estar como manda el relevo de la jugada
+4, al contrario que en la Figura 3.
+
+En C5, Solozábal está **debajo** de Barbará pese a haber ido a marcarle al hombre
+(29): su robo de balón falló y Barbará eligió no moverse, y en ese caso «el
+defensor pasará a realizar siempre un **marcaje en zona** al atacante» (página 9)
+— y el de la mitad inferior es justo el que marca en zona.
 
 ## Figura 5 — Tras la jugada 48 (relevo con balón, TURNO 8)
 
 ```
-                                 [   ]   ← ¡vacía en el original!
+                                 [   ]   (vacía en el original — errata)
                A         B         C         D         E
           ┌─────────┬─────────┬─────────┬─────────┬─────────┐
     1     │         │         │    5    │         │         │
@@ -163,27 +179,10 @@ estar como manda el relevo de la jugada 4, al contrario que en la Figura 3.
                                  [(1)]
 ```
 
-Kiko y Francisco ya intercambiados (48). **La portería de arriba está dibujada con
-los palos pero sin portero**: sólo se cuentan 10 fichas blancas. No se aprecia
-ninguna **X** en esta figura.
+Kiko y Francisco ya intercambiados (48). No se aprecia ninguna **X** en esta
+figura.
 
-## Dudas pendientes (pág. 17)
+**Otra errata del dibujo**, transcrita tal cual: la portería de arriba lleva los
+palos pero **no el portero blanco**, así que sólo se cuentan 10 fichas blancas.
+El `1` debería estar ahí — no se mueve en todo el partido.
 
-Cuatro puntos que el escaneo no resuelve y que conviene mirar en el folleto:
-
-1. **Figura 3, E2/E3.** Aquí aparece `3` en E2 y `11` en E3, es decir **sin** el
-   relevo Nacho/Felipe de la jugada 4 — pero las Figuras 2 y 4 sí lo aplican. ¿Es
-   un despiste del dibujo de la Figura 3?
-2. **Figura 3, Larrazabal.** Aparece el `(3)` en **A5**, su casilla de salida,
-   con Escaich solo en B5. La jugada 9 lo lleva a B5 a marcar a Escaich, y en las
-   Figuras 2 y 4 está en B5. ¿Otro despiste de la Figura 3?
-3. **Figura 5, portero blanco.** ¿Falta de verdad el `1` en la portería de
-   arriba, o está impreso y el escaneo no lo coge?
-4. **Mitad superior/inferior.** La leyenda de la página 13 dice que el de la mitad
-   superior *marca al hombre*. Encaja en B5 (Larrazabal sobre Escaich), B3 (Rafa
-   Paz sobre Kiko), D5 (Vizcaíno sobre Michel) y D2 (Tocornal sobre Francisco) —
-   los cuatro marcadores arriba. Pero **Solozábal aparece debajo de Barbará** en
-   C4 (Figura 3) y en C5 (Figura 4), aunque las jugadas 26 y 29 dicen «M.H. a
-   Barbará». ¿Se dibuja debajo por haber sido regateado (jugada 27), o hay otra
-   regla — por ejemplo que el de la mitad superior sea simplemente el que llegó
-   después, o el que tiene el balón?

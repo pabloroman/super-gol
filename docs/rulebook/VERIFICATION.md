@@ -97,7 +97,10 @@ always. Please confirm each roll. Notation: `!` = conseguido, `?` = fallado.
   CASILLA." · 30 — Barbará **DL !** (**5 + D1: 5 + 0**) · Ablanedo **CO !**
   (D1: 6 + D2: 5 +3). The transcription previously had the shot as
   `D1: 5 + D2: 5 + 0` (2 dice); both sum to 10, so only the **form** was wrong —
-  and the form is what encodes the 1-die-vs-2-dice rule, so it mattered.
+  and the form is what encodes the 1-die-vs-2-dice rule, so it mattered. The
+  *why* is the page-9 robo-de-balón rule: Solozábal's RB failed and Barbará chose
+  not to move, which leaves "el poseedor del balón … libre de cualquier tipo de
+  marcaje" — unmarked, hence one die.
 - 33 — Bakero **PC Hueco !** (D1: 6 + D2: 4 + 0)
 - 36 — Vizcaíno→Francisco **PL !** (D1: 4 + D2: 5 + 1); Tocornal **A !** (D1: 4 + D2: 4 + 2)
 - 37 — Tocornal→Barbará **PL !** (5 + D1: 6 + 0); Solozábal **A ?** (D1: 1 + D2: 2 + 2)
@@ -133,10 +136,41 @@ are the *columns*; the old note here said "columns 1–6 × rows A–E", which w
 axes swapped — see the page for the four independent confirmations).
 
 Figura 2 reproduces the chronicle exactly, play for play, which is what makes the
-whole example reconstructable in code. Four points still open, all listed at the
-bottom of `page-17.md`: the Figura 3 anomalies (E2/E3 relevo, and Larrazabal at
-A5), the missing white keeper in Figura 5, and what the upper/lower half of a
-shared cell really encodes (Solozábal is drawn *below* Barbará despite "M.H.").
+whole example reconstructable in code.
+
+- ✓ **Figura 3 has two drawing errors in the booklet** (both confirmed by the
+  booklet owner). For those pieces the figure draws a *board state earlier than
+  the one it is captioned for*:
+  - `3` on E2 and `11` on E3 — the placement *before* the Nacho/Felipe relevo of
+    play 4, which Figuras 2 and 4 both apply.
+  - Larrazabal `(3)` on A5, his starting square, with Escaich alone on B5 —
+    play 9 moves him to B5 to mark Escaich, and Figuras 2 and 4 put him there.
+
+  The transcription keeps both as printed.
+
+- ✓ **Figura 5 omits the white goalkeeper** — also a drawing error, confirmed by
+  the booklet owner: the goal has its posts but no `1`, leaving only 10 white
+  pieces. He should be there; he never moves all match. Kept as printed.
+
+- ✓ **The upper/lower half of a shared cell is exactly what page 13 says** —
+  upper marks *al hombre*, lower marks *en zona*. Every shared cell in the five
+  figures obeys it once the page-9 rules are applied; the two that looked wrong
+  are the rules working:
+  - **Figura 3, C4** — Barbará is drawn *above* Solozábal even though Solozábal
+    went to mark him (26), because Barbará's regate succeeded (27) and a
+    successful regate inverts the marcaje: "el jugador con la pelota pasará a
+    marcar al hombre al defensor (**se coloca encima**)".
+  - **Figura 4/5, C5** — Solozábal is drawn *below* despite "M.H." (29) because
+    his RB failed and Barbará declined to move, and then "el defensor pasará a
+    realizar siempre un **marcaje en zona** al atacante".
+
+  Same rule closes the Priority 2 question about play 30's dice form: it ends
+  "el poseedor del balón se considerará **libre de cualquier tipo de marcaje**",
+  which is precisely why the shot is the 1-die `5 + D1` form.
+
+So **Figuras 1, 2 and 4 are the trustworthy snapshots**, and 3 and 5 each carry
+known drafting errors. An engine fixture must follow the chronicle where they
+disagree. Nothing on page 17 is open.
 
 **Figuras 6–9 (pages 25, 26) are still untranscribed** — same treatment would
 work: crop, rotate 90°, upscale.
