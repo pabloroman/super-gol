@@ -4,7 +4,9 @@
 -- pl (pase largo), pa (pase alto), dl (disparo lejano), rm (remate en el área).
 -- Goalkeepers additionally carry rf (reflejos) and co (colocación).
 -- A missing factor counts as zero in the match engine (rulebook page 6).
--- zone_grid is boolean[6][5]: row 0 = attack (top), row 5 = own goal (bottom); green = effective.
+-- zone_grid is boolean[6][5]: row 0 = attack (top), row 5 = own goal (bottom).
+-- true = the player's demarcación, which the naipe prints in RED — «la zona del
+-- jugador en rojo» (rulebook page 2). Green is everywhere else.
 
 -- ---- Real cards decoded from the original photo (ability values approximate) ----
 insert into public.cards

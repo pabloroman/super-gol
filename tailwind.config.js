@@ -20,12 +20,35 @@ export default {
         rare: '#f5b301',
         frequent: '#7dd3fc',
         common: '#cbd5e1',
+
+        // The physical naipe (Naipes Heraclio Fournier, 1995). Sampled off the
+        // scans in docs/rulebook/scans — these are print colours, not app chrome,
+        // and are only ever used inside the card. See docs/rulebook/pages/page-02.md.
+        naipe: {
+          // The card stock and the two-tone grey of the name/data bands.
+          white: '#fdfdfb',
+          band: '#55524f',
+          'band-dark': '#211f1e',
+        },
+        // Demarcación: «la zona del jugador en rojo» (page 2). Red marks where the
+        // player's factors are usable; green is everywhere else.
+        demarc: {
+          red: '#d92b1f',
+          green: '#7ac143',
+        },
+        // The factor strip prints its abbreviation in black and its value in blue.
+        factor: '#1c4fa1',
+        // The ficha numeral, «en rojo si es extranjero» (page 2).
+        ficha: '#cc2222',
       },
       fontFamily: {
         display: ['"Barlow Condensed"', 'system-ui', 'sans-serif'],
         sans: ['Inter', 'system-ui', 'sans-serif'],
       },
-      safelist: [],
+      aspectRatio: {
+        // Spanish naipe, 62 × 95 mm.
+        naipe: '62 / 95',
+      },
     },
   },
   plugins: [],
