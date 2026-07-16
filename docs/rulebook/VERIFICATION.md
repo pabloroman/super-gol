@@ -1,192 +1,47 @@
 # Rulebook — verification worklist
 
-The transcription in `pages/` is complete. Spots that were photographed at a
-distance / hand-underlined / very small were transcribed **best-effort and
-flagged**; this file tracks each of those, in **priority order**, so a human
-review only has to **confirm or correct** — not re-transcribe.
-
-**Status**
-
-| Item | State |
-|------|-------|
-| Priority 1 — TABLA 1 & 2 (page 30) | ✓ verified |
-| Priority 1b — the example's goalkeepers | ✓ resolved (chronicle errs; lineup right) |
-| Priority 2 — worked-example dice values | ✓ verified |
-| Priority 3 — Figuras 1–5 (page 17) | ✓ transcribed |
-| Priority 3 — Figuras 6–9 (pages 25–26) | **open** — untranscribed |
-| Priority 4 — pages 2, 5, 23 (penalty), 29 | **open** |
-
-**Nothing now blocks the engine**, and the worked example on pages 13–17 is
-usable as a fixture — reading the two keeper names from the page-13 lineup, not
-from the chronicle (Priority 1b).
-
-**How to use this**
-- Go through each open item against the scan (`scans/…`) or the physical booklet.
-- If correct, tick it. If wrong, note the fix (edit the file directly, or just
-  tell me the corrections and I'll apply them and re-push).
-
-Legend used by the tables (from page 31): **MH** = marcaje al hombre · **MZ** =
-marcaje en zona · **SM** = sin marcaje · **Nº** = number of dice to roll. Cell
-contents are the defender/keeper responses: **RB** robo de balón · **F** falta ·
-**PEN** penalty · **A** anticipación · **RC** remate/despeje de cabeza · **CO**
-colocación · **RF** reflejos · **SA** salida por alto · **SP** salida a los pies.
-Notes: shaded cells need the defender to *be able to move*; **(\*)** = "SP and/or
-penalty, and no need to be able to move".
+**Open items only.** Spots that were transcribed best-effort and still need
+confirming, or work that isn't finished yet. Check each against the scans
+(`scans/…`) or the physical booklet; when one is settled, **delete it from here**
+— the correction itself belongs in `pages/`, not in this file.
 
 ---
 
-## ★ Priority 1 — TABLA 1 & TABLA 2 (page 30)
+## Figuras 6–9 (pages 25, 26) — not transcribed yet
 
-**Update:** sharp macro close-ups now exist
-(`scans/tabla-1-closeup.png`, `scans/tabla-2-closeup.png`), so the reading is
-now high-confidence. The full transcription lives in
-[`pages/page-30.md`](pages/page-30.md). **TABLA 1 is considered verified** (it is
-even self-consistent with the page-31 worked example: PC passer-SM Nº = 0 +
-receiver-MH Nº = 2 → "máximo entre 0 y 2 = 2" ✓).
+The board diagrams of the two Juego Avanzado examples. Everything else on those
+pages is verified; the figures are the only gap.
 
-**TABLA 2 is now verified too** (confirmed by the booklet owner). For the shots
-(RM / DL / RC), each marking cell holds **two** responses — the outfield
-defender's (`RB y/o F`) and the goalkeeper's (`SP y/o PEN` before the shot;
-`RF` / `CO` after). Confirmed:
+Figuras 1–5 on page 17 are done and are the template. Those pages are **printed
+rotated 90°**, so the recipe is: crop each figure out of the scan, rotate upright,
+upscale and sharpen. Conventions, all established on page 17:
 
-1. ✓ In each RM/DL/RC cell the defender option and the keeper option coexist.
-2. ✓ Antes = defender `RB y/o F` + keeper `SP y/o PEN`; Después = keeper `RF`
-   (RM/RC) or `CO` (DL).
-3. ✓ RC "Antes" is just `SA` (keeper salida por alto), no `RB y/o F`.
+- Board is **5 columns A–E × 6 rows 1–6**, one portería above and one below.
+- **Hollow circle = equipo blanco, filled = equipo negro**; **X** marks the ball.
+- In a shared cell the **upper** half marks *al hombre*, the **lower** *en zona*.
 
-**Both tables are fully verified.** See [`pages/page-30.md`](pages/page-30.md).
+The plays on both pages are already transcribed, so each figure can be derived
+from the text and the scan used to check it — that is how the page-17 errors were
+caught.
 
----
+## Page 2 — the Guerrero card's factor values
 
-## ✓ Priority 1b — RESOLVED: the chronicle swaps the two keepers' names
+Don't resolve even at 9× zoom, so this one needs the **physical card**; the
+booklet scan can't settle it. The label sequence looks like
+**RC · RG · PC · PL · LF · DL · RM**, but both the labels and their numbers need
+confirming.
 
-**The page-13 lineup is correct as printed** (blanco 1: ABLANEDO · negro 1:
-ZUBIZARRETA — confirmed against the scan and by the booklet owner). The **pages
-14–16 chronicle is the errata**: it has the two keeper names the wrong way round
-in all six mentions. Read "Ablanedo" there as **Zubizarreta**, and vice versa.
-Noted on pages 15 and 16; both keep the printed text.
+## Page 5 — hand-underlined prose
 
-How it was settled — three sources against one:
+Parts of the lower half are hand-underlined and hard to read. Confirm the wording
+against `scans/pages-04-05.jpeg`.
 
-- **Lineup (page 13)** — prints ABLANEDO on the white side.
-- **Page 25** — Zubizarreta relieves **Larrazabal** (negro 3), so Zubizarreta is
-  negro. A relevo is a same-team swap.
-- **Page 26** — Ablanedo relieves **Camarasa** (blanco 5), so Ablanedo is blanco.
-- **Pages 14–16** — plays Ablanedo as the negro keeper: he saves **Barbará**'s
-  shots (blanco 10, plays 30/38), restarts by passing to **Jaime** (negro 2,
-  plays 31/44), and in play 39 his failed pass is collected by **Bjelica**
-  (blanco 7) exactly as the page-7 rule demands. In play 53 Zubizarreta concedes
-  to **Kiko** (negro 9).
+## Page 23 — "Penalty"
 
-Taking the chronicle as correct would mean the lineup row *and* both pages 25–26
-relevos are wrong — and those relevos would become cross-team, which the rules
-forbid. Taking the lineup as correct means one systematic slip: the author swapped
-the two names while writing the basic example. Nothing else breaks.
+Confirm the keeper stops on a **6** (single die), with no RF involved.
 
-**The worked example is no longer blocked as an engine fixture.** A fixture takes
-keeper names from the page-13 lineup and ignores the chronicle's; every other name
-in the chronicle is fine. Note the page-17 figures can't corroborate either way —
-they show both keepers as dorsal 1 but name nobody.
+## Page 29 — "Reglamento oficial del torneo"
 
-## ✓ Priority 2 — RESOLVED: worked-example dice values (pages 14–16, 25, 26)
-
-**Every roll is verified correct as transcribed** (confirmed by the booklet
-owner, roll by roll, across both the basic example on pages 14–16 and the two
-advanced examples on pages 25–26). Notation: `!` = conseguido, `?` = fallado.
-The values live on the pages themselves; they are not duplicated here.
-
-Two things were corrected along the way, both worth keeping:
-
-- **Page 14, play 7** — reads "Garitano va a casilla **B4** (M. H. a Escaich)".
-  The transcription had **B5** and had dropped the M.H. B5 put three players in
-  one cell, two of them negro, breaking the page-3 rule of max 2 "y siempre de
-  distintos equipos". Figura 2 independently shows Garitano on B4.
-- **Page 15, plays 29/30** — the RB comes *before* the shot, and the shot is the
-  **1-die** form: `30 — Barbará DL ! (5 + D1: 5 + 0)`. The transcription had
-  `D1: 5 + D2: 5 + 0` (2 dice); both sum to 10, so only the *form* was wrong —
-  and the form encodes the 1-die-vs-2-dice rule. The reason is the page-9
-  robo-de-balón rule: Solozábal's RB failed and Barbará chose not to move, which
-  leaves "el poseedor del balón … libre de cualquier tipo de marcaje" — unmarked,
-  hence one die.
-
----
-
-## Priority 3 — Board diagrams (Figuras 1–9, pages 17, 25, 26)
-
-**Figuras 1–5 (page 17) are now transcribed** cell by cell in
-[`pages/page-17.md`](pages/page-17.md). Page 17 turned out to be printed **rotated
-90°**, which is why the positions had looked unreadable — rotated upright and
-zoomed, the scan is legible. The board is **5 columns A–E × 6 rows 1–6** (letters
-are the *columns*; the old note here said "columns 1–6 × rows A–E", which was the
-axes swapped — see the page for the four independent confirmations).
-
-Figura 2 reproduces the chronicle exactly, play for play, which is what makes the
-whole example reconstructable in code.
-
-- ✓ **Figura 3 has two drawing errors in the booklet** (both confirmed by the
-  booklet owner). For those pieces the figure draws a *board state earlier than
-  the one it is captioned for*:
-  - `3` on E2 and `11` on E3 — the placement *before* the Nacho/Felipe relevo of
-    play 4, which Figuras 2 and 4 both apply.
-  - Larrazabal `(3)` on A5, his starting square, with Escaich alone on B5 —
-    play 9 moves him to B5 to mark Escaich, and Figuras 2 and 4 put him there.
-
-  The transcription keeps both as printed.
-
-- ✓ **Figura 5 omits the white goalkeeper** — also a drawing error, confirmed by
-  the booklet owner: the goal has its posts but no `1`, leaving only 10 white
-  pieces. He should be there; he never moves all match. Kept as printed.
-
-- ✓ **The upper/lower half of a shared cell is exactly what page 13 says** —
-  upper marks *al hombre*, lower marks *en zona*. Every shared cell in the five
-  figures obeys it once the page-9 rules are applied; the two that looked wrong
-  are the rules working:
-  - **Figura 3, C4** — Barbará is drawn *above* Solozábal even though Solozábal
-    went to mark him (26), because Barbará's regate succeeded (27) and a
-    successful regate inverts the marcaje: "el jugador con la pelota pasará a
-    marcar al hombre al defensor (**se coloca encima**)".
-  - **Figura 4/5, C5** — Solozábal is drawn *below* despite "M.H." (29) because
-    his RB failed and Barbará declined to move, and then "el defensor pasará a
-    realizar siempre un **marcaje en zona** al atacante".
-
-  Same rule closes the Priority 2 question about play 30's dice form: it ends
-  "el poseedor del balón se considerará **libre de cualquier tipo de marcaje**",
-  which is precisely why the shot is the 1-die `5 + D1` form.
-
-So **Figuras 1, 2 and 4 are the trustworthy snapshots**, and 3 and 5 each carry
-known drafting errors. An engine fixture must follow the chronicle where they
-disagree. Nothing on page 17 is open.
-
-**Figuras 6–9 (pages 25, 26) are still untranscribed** — same treatment would
-work: crop, rotate 90°, upscale.
-
----
-
-## Priority 4 — Heavily underlined / reconstructed paragraphs
-
-Prose that was hand-underlined or awkwardly split; meaning is clear but exact
-wording should be checked:
-
-- **Page 2** — the Guerrero card's **factor values** don't resolve even at 9×
-  zoom. The label sequence looks like **RC · RG · PC · PL · LF · DL · RM**, but
-  both the labels and their numbers need confirming against the physical card.
-- **Page 5** — parts of the lower half are hand-underlined and hard to read;
-  confirm against `scans/pages-04-05.jpeg`.
-- **Page 23** — ✓ "Libres directos desde fuera del área": **confirmed and
-  corrected** by the booklet owner. The dice rule was already right — **with**
-  barrera → `D1 + D2 + LF`; **no** barrera (defender negligence) →
-  `D1 + 5 + LF`. What was wrong was the wording: the attacking side asks for
-  **"pasos"** (the regulation distance), not for "barrera"; it's the defender who
-  then places or moves the barrera.
-- **Page 23** — "Penalty": confirm keeper stops on a **6** (single die), no RF.
-- **Page 29** — "Reglamento oficial del torneo": confirm the bullet list,
-  especially **100-point** cap, **demarcación** (abilities only in zone except
-  LF/RM/DL/RC), **3 foreigners**, 15-turn time limit.
-
----
-
-## Confirmed OK (no action needed)
-
-- Page numbering — cross-checked against the **índice** (pages 32–33). ✓
-- All Juego Básico prose (pages 1–13) and Juego Avanzado prose (pages 18–22,
-  24, 27–28) read cleanly.
+The list is heavily underlined by hand. Confirm the bullets, especially the
+**100-point** cap, **demarcación** (abilities valid only in the player's zone,
+except LF / RM / DL / RC), **3 foreigners** per team, and the 15-turn limit.
