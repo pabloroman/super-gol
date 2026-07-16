@@ -187,9 +187,12 @@ wording should be checked:
   both the labels and their numbers need confirming against the physical card.
 - **Page 5** — parts of the lower half are hand-underlined and hard to read;
   confirm against `scans/pages-04-05.jpeg`.
-- **Page 23** — "Libres directos desde fuera del área": the barrera vs.
-  no-barrera dice rule. Current reading: **with** barrera → `D1 + D2 + LF`;
-  **no** barrera (defender negligence) → `D1 + 5 + LF`. Confirm which is which.
+- **Page 23** — ✓ "Libres directos desde fuera del área": **confirmed and
+  corrected** by the booklet owner. The dice rule was already right — **with**
+  barrera → `D1 + D2 + LF`; **no** barrera (defender negligence) →
+  `D1 + 5 + LF`. What was wrong was the wording: the attacking side asks for
+  **"pasos"** (the regulation distance), not for "barrera"; it's the defender who
+  then places or moves the barrera.
 - **Page 23** — "Penalty": confirm keeper stops on a **6** (single die), no RF.
 - **Page 29** — "Reglamento oficial del torneo": confirm the bullet list,
   especially **100-point** cap, **demarcación** (abilities only in zone except
