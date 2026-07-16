@@ -46,34 +46,35 @@ defender's (`RB y/o F`) and the goalkeeper's (`SP y/o PEN` before the shot;
 
 ---
 
-## ★ Priority 1b — The example's two goalkeepers are swapped (page 13)
+## ✓ Priority 1b — RESOLVED: the chronicle swaps the two keepers' names
 
-The page-13 lineup is transcribed exactly as printed (**blanco 1: ABLANEDO ·
-negro 1: ZUBIZARRETA**, confirmed against the scan), but every appearance of the
-two keepers in the pages 14–16 chronicle has them the other way round — Ablanedo
-keeping for **negro**, Zubizarreta for **blanco**. Five plays agree on this and
-none contradict it:
+**The page-13 lineup is correct as printed** (blanco 1: ABLANEDO · negro 1:
+ZUBIZARRETA — confirmed against the scan and by the booklet owner). The **pages
+14–16 chronicle is the errata**: it has the two keeper names the wrong way round
+in all six mentions. Read "Ablanedo" there as **Zubizarreta**, and vice versa.
+Noted on pages 15 and 16; both keep the printed text.
 
-- **Ablanedo acts as the negro keeper:** he saves **Barbará**'s shots (blanco 10)
-  in plays 30 and 38, and restarts in plays 31 and 44 by passing to **Jaime**
-  (negro 2) — you only pass to a team-mate. In play 39 his pass fails and
-  **Bjelica** (blanco 7) collects it, which is exactly what the page-7 rule
-  demands: "recuperará el balón el equipo contrario".
-- **Zubizarreta acts as the blanco keeper:** in play 53 he concedes **Kiko**'s
-  shot (negro 9).
+How it was settled — three sources against one:
 
-A single swap of the table's row 1 explains all five plays. Against that, pages
-25–26 (Juego Avanzado) agree with the table as printed — Ablanedo relieves
-**Camarasa**, blanco 5 — so the evidence is genuinely split: the table + pages
-25–26 on one side, the pages 14–16 chronicle on the other.
+- **Lineup (page 13)** — prints ABLANEDO on the white side.
+- **Page 25** — Zubizarreta relieves **Larrazabal** (negro 3), so Zubizarreta is
+  negro. A relevo is a same-team swap.
+- **Page 26** — Ablanedo relieves **Camarasa** (blanco 5), so Ablanedo is blanco.
+- **Pages 14–16** — plays Ablanedo as the negro keeper: he saves **Barbará**'s
+  shots (blanco 10, plays 30/38), restarts by passing to **Jaime** (negro 2,
+  plays 31/44), and in play 39 his failed pass is collected by **Bjelica**
+  (blanco 7) exactly as the page-7 rule demands. In play 53 Zubizarreta concedes
+  to **Kiko** (negro 9).
 
-- **Q for the booklet owner:** does the printed page-13 lineup really say
-  ABLANEDO on the white side? (The scan says yes.) If so, which half carries the
-  errata — the lineup, or the chronicle's keeper names?
-- **This blocks using pages 14–16 as an engine fixture** until it's settled: the
-  fixture must swap the keepers or the run won't validate.
-- Note the figures on page 17 can't break the tie: they show both keepers as
-  dorsal 1, but name nobody.
+Taking the chronicle as correct would mean the lineup row *and* both pages 25–26
+relevos are wrong — and those relevos would become cross-team, which the rules
+forbid. Taking the lineup as correct means one systematic slip: the author swapped
+the two names while writing the basic example. Nothing else breaks.
+
+**The worked example is no longer blocked as an engine fixture.** A fixture takes
+keeper names from the page-13 lineup and ignores the chronicle's; every other name
+in the chronicle is fine. Note the page-17 figures can't corroborate either way —
+they show both keepers as dorsal 1 but name nobody.
 
 ## Priority 2 — Worked-example dice values (pages 14–16)
 

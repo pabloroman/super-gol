@@ -2,6 +2,12 @@
 
 > Transcripción literal del texto en español. Escaneo original:
 > [`../scans/pages-14-15.jpeg`](../scans/pages-14-15.jpeg) (página derecha).
+>
+> **Errata del folleto:** en la crónica de las páginas 15 y 16 los nombres de los
+> dos porteros están cambiados. Donde dice **Ablanedo** (blanco 1) hay que leer
+> **Zubizarreta** (negro 1), y al revés. La alineación de la página 13 es la
+> correcta, y con ella concuerdan los ejemplos de las páginas 25 y 26. Se
+> transcribe tal cual está impreso.
 
 ---
 
