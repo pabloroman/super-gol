@@ -23,16 +23,16 @@
 6. Escaich va a casilla B4
 7. Garitano va a casilla B5
 8. Escaich va a B5
-9. Larrazabal va a B5 **(M. H. a Escaich)**
+9. Larrazabal va a B5 **(M.H. a Escaich)**
 10. Michel va a C3
-11. Francisco va a D3 **(M. H. a Bjelica)**
+11. Francisco va a D3 **(M.H. a Bjelica)**
 12. Michel va a D4
 13. Francisco va a D2
 14. Camarasa --> a Tocornal **(PD)**
 15. Tocornal --> a Bjelica **(PD)**
 16. Bjelica --> a Michel **(PD)**
 17. Michel va a D5 con el balón sobre Vizcaíno
-18. Vizcaíno se coloca sobre Michel **(M. H.)**
+18. Vizcaíno se coloca sobre Michel **(M.H.)**
     Vizcaíno **RB !** (D1: 5 + D2: 6 + 0)
 
 ### TURNO 2 (Figura 2)

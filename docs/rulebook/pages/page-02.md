@@ -18,19 +18,34 @@ en rojo en el campo (salvo excepciones) (supondremos que se ataca hacia arriba).
 
 ### Anatomía de la carta (diagrama)
 
-La carta de ejemplo muestra:
+La carta de ejemplo (Julen Guerrero, Athletic Club) lleva siete llamadas:
 
-- **Nombre:** GUERRERO — dorsal **15**
-- **Escudo del club** (arriba a la derecha)
-- **Datos** (nombre completo, procedencia/nacionalidad, peso, etc. — texto en
-  letra muy pequeña, apenas legible en el escaneo)
-- **Ficha** — _(En rojo si es extranjero)_
-- **Factores** — fila de características con sus valores (RC, PA, PC, A, RG, DL,
-  RB, PL, D… en una rejilla en la parte inferior de la carta)
-- **Demarcación** — casilla/zona del campo por la que se mueve el jugador
+- **Nombre:** GUERRERO — en la banda superior.
+- **Escudo del club** — arriba a la derecha.
+- **Datos** — el bloque de texto pequeño junto a la ficha: «Julen Guerrero López ·
+  Portugalete (Vizcaya) · 07/01/74 - 1,79, 71 kg».
+- **Ficha** — el número **15** dentro del círculo, abajo a la izquierda.
+  _(En rojo si es extranjero.)_
+- **Factores** — la fila de casillas del borde inferior, cada una con una
+  característica y su valor. Cada carta sólo lleva las características «de las
+  que está dotado» el jugador, así que la fila varía de una carta a otra.
+- **Demarcación** — la rejilla de abajo a la derecha: un mini-campo de **5
+  columnas × 6 filas** con la zona del jugador sombreada (en rojo en la carta
+  original). En esta carta están marcadas las **tres filas de arriba**, es decir
+  la mitad de ataque, coherente con «supondremos que se ataca hacia arriba».
 
-> _Los valores numéricos de los factores de la carta de ejemplo no se leen con
-> claridad en el escaneo; verificar contra `scans/pages-02-03.jpeg`._
+**La ficha es el precio del jugador, no el dorsal.** El «15» es su valor en
+puntos: el reglamento del torneo (página 29) monta un equipo de 16 jugadores
+«con un máximo de 100 puntos (suma de las fichas de los 16 jugadores)», y el
+juego básico (página 12) la ignora por completo — «no se utiliza la ficha del
+jugador», que es también por lo que el básico no limita los extranjeros. Que la
+ficha se imprima **en rojo** para los extranjeros es justo lo que permite contar
+los «3 por equipo» del torneo.
+
+> ⚠️ _Los **valores numéricos** de los factores de esta carta no se leen con
+> claridad ni siquiera ampliando el escaneo. La secuencia de etiquetas parece ser
+> **RC · RG · PC · PL · LF · DL · RM**, pero tanto las etiquetas como sus valores
+> están pendientes de confirmar contra la carta física._
 
 ## Relación de características:
 

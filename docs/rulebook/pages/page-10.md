@@ -9,8 +9,9 @@
 
 _(…viene de la página 9: "¿Y si no se consigue?" del Regate)_
 
-… zona al defensor (se coloca debajo). Este último también se considerará libre
-de cualquier tipo de marcaje de cara a la siguiente jugada.
+… zona al defensor (se coloca debajo), tomando la pelota el jugador que defendía. 
+Este último también se considerará libre de cualquier tipo de marcaje de cara a 
+la siguiente jugada.
 
 ## REMATES
 

@@ -46,6 +46,21 @@ defender's (`RB y/o F`) and the goalkeeper's (`SP y/o PEN` before the shot;
 
 ---
 
+## ★ Priority 1b — The example's two goalkeepers are swapped (page 13)
+
+The page-13 lineup is transcribed exactly as printed (**blanco 1: ABLANEDO ·
+negro 1: ZUBIZARRETA**, confirmed against the scan), but every appearance of the
+two keepers in the pages 14–16 chronicle has them the other way round — Ablanedo
+keeping for **negro**, Zubizarreta for **blanco**. Five plays agree on this and
+none contradict it; the reasoning is written out in
+[`pages/page-13.md`](pages/page-13.md).
+
+- **Q for the booklet owner:** does the printed page-13 lineup really say
+  ABLANEDO on the white side? (The scan says yes.) If so the errata is the
+  booklet's own, and the chronicle — not the table — is the consistent half.
+- **This blocks using pages 14–16 as an engine fixture** until it's settled: the
+  fixture must swap the keepers or the run won't validate.
+
 ## Priority 2 — Worked-example dice values (pages 14–16)
 
 The play-by-play is legible; the small `(D1: x + D2: y + z)` roll values are not
@@ -57,10 +72,14 @@ always. Please confirm each roll. Notation: `!` = conseguido, `?` = fallado.
 
 **Page 15 (turns 4–7)**
 - 27 — Barbará **RG !** (D1: 4 + D2: 4 + 2)
-- 29/30 — order + values uncertain. Current reading:
-  Solozábal **RB ?** (D1: 3 + D2: 3 + 2), then Barbará **DL !** (D1: 5 + D2: 5 + 0).
-  **Q:** does the RB come *before* the shot, and is the shot `5 + D1:5 + 0`
-  (1 die, because Barbará became free/zonal) or two dice?
+- 29/30 — ✓ **resolved** against a macro crop of `scans/pages-14-15.jpeg`, and it
+  answers both halves of the old question: the RB **does** come before the shot,
+  and the shot **is** the 1-die form. The page reads, in order:
+  Solozábal **RB ?** (D1: 3 + D2: 3 + 2) · "Barbará ELIGE NO MOVER A OTRA
+  CASILLA." · 30 — Barbará **DL !** (**5 + D1: 5 + 0**) · Ablanedo **CO !**
+  (D1: 6 + D2: 5 +3). The transcription previously had the shot as
+  `D1: 5 + D2: 5 + 0` (2 dice); both sum to 10, so only the **form** was wrong —
+  and the form is what encodes the 1-die-vs-2-dice rule, so it mattered.
 - 33 — Bakero **PC Hueco !** (D1: 6 + D2: 4 + 0)
 - 36 — Vizcaíno→Francisco **PL !** (D1: 4 + D2: 5 + 1); Tocornal **A !** (D1: 4 + D2: 4 + 2)
 - 37 — Tocornal→Barbará **PL !** (5 + D1: 6 + 0); Solozábal **A ?** (D1: 1 + D2: 2 + 2)
