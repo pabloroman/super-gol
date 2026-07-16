@@ -61,7 +61,7 @@ pages; each `pages/page-NN.md` notes which half of which scan it transcribes.
 
 | Page | Scan | Transcription | Contents |
 |------|------|---------------|----------|
-| 1 | [scan](scans/page-01.jpeg) | [text](pages/page-01.md) | Intro (*Super Gol*), **El campo** — pitch: 6×5 grid + zones RM/DL/PA |
+| 1 | [scan](scans/page-01.jpeg) | [text](pages/page-01.md) | Intro (*Super Gol*), **El campo** — pitch: 5 cols × 6 rows, a goal at each end + zones RM/DL/PA |
 | 2 | [scan](scans/pages-02-03.jpeg) | [text](pages/page-02.md) | **La carta** — card anatomy; character list (Básicas / Avanzadas) |
 | 3 | [scan](scans/pages-02-03.jpeg) | [text](pages/page-03.md) | Remaining characters; goalkeeper stats; **Juego básico**: turno, jugada, movimientos |
 | 4 | [scan](scans/pages-04-05.jpeg) | [text](pages/page-04.md) | Movements (normal, relevos); **Marcajes**; initial placement |
