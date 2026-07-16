@@ -52,14 +52,28 @@ The page-13 lineup is transcribed exactly as printed (**blanco 1: ABLANEDO ·
 negro 1: ZUBIZARRETA**, confirmed against the scan), but every appearance of the
 two keepers in the pages 14–16 chronicle has them the other way round — Ablanedo
 keeping for **negro**, Zubizarreta for **blanco**. Five plays agree on this and
-none contradict it; the reasoning is written out in
-[`pages/page-13.md`](pages/page-13.md).
+none contradict it:
+
+- **Ablanedo acts as the negro keeper:** he saves **Barbará**'s shots (blanco 10)
+  in plays 30 and 38, and restarts in plays 31 and 44 by passing to **Jaime**
+  (negro 2) — you only pass to a team-mate. In play 39 his pass fails and
+  **Bjelica** (blanco 7) collects it, which is exactly what the page-7 rule
+  demands: "recuperará el balón el equipo contrario".
+- **Zubizarreta acts as the blanco keeper:** in play 53 he concedes **Kiko**'s
+  shot (negro 9).
+
+A single swap of the table's row 1 explains all five plays. Against that, pages
+25–26 (Juego Avanzado) agree with the table as printed — Ablanedo relieves
+**Camarasa**, blanco 5 — so the evidence is genuinely split: the table + pages
+25–26 on one side, the pages 14–16 chronicle on the other.
 
 - **Q for the booklet owner:** does the printed page-13 lineup really say
-  ABLANEDO on the white side? (The scan says yes.) If so the errata is the
-  booklet's own, and the chronicle — not the table — is the consistent half.
+  ABLANEDO on the white side? (The scan says yes.) If so, which half carries the
+  errata — the lineup, or the chronicle's keeper names?
 - **This blocks using pages 14–16 as an engine fixture** until it's settled: the
   fixture must swap the keepers or the run won't validate.
+- Note the figures on page 17 can't break the tie: they show both keepers as
+  dorsal 1, but name nobody.
 
 ## Priority 2 — Worked-example dice values (pages 14–16)
 
@@ -69,6 +83,10 @@ always. Please confirm each roll. Notation: `!` = conseguido, `?` = fallado.
 **Page 14 (turns 1–3)** — the only roll is:
 - Play 18 — Vizcaíno **RB !** (D1: 5 + D2: 6 + 0)
 - Play 20 — Solozábal→Francisco **PL ?** (5 + D1: 2 + 1)
+- Play 7 — ✓ **corrected.** It reads "Garitano va a casilla **B4** (M. H. a
+  Escaich)"; the transcription had **B5** and had dropped the M.H. B5 put three
+  players in one cell (two of them negro), breaking the page-3 rule of max 2 "y
+  siempre de distintos equipos". Figura 2 independently shows Garitano on B4.
 
 **Page 15 (turns 4–7)**
 - 27 — Barbará **RG !** (D1: 4 + D2: 4 + 2)
@@ -130,6 +148,11 @@ work: crop, rotate 90°, upscale.
 Prose that was hand-underlined or awkwardly split; meaning is clear but exact
 wording should be checked:
 
+- **Page 2** — the Guerrero card's **factor values** don't resolve even at 9×
+  zoom. The label sequence looks like **RC · RG · PC · PL · LF · DL · RM**, but
+  both the labels and their numbers need confirming against the physical card.
+- **Page 5** — parts of the lower half are hand-underlined and hard to read;
+  confirm against `scans/pages-04-05.jpeg`.
 - **Page 23** — "Libres directos desde fuera del área": the barrera vs.
   no-barrera dice rule. Current reading: **with** barrera → `D1 + D2 + LF`;
   **no** barrera (defender negligence) → `D1 + 5 + LF`. Confirm which is which.

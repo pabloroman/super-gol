@@ -30,22 +30,12 @@ La carta de ejemplo (Julen Guerrero, Athletic Club) lleva siete llamadas:
   característica y su valor. Cada carta sólo lleva las características «de las
   que está dotado» el jugador, así que la fila varía de una carta a otra.
 - **Demarcación** — la rejilla de abajo a la derecha: un mini-campo de **5
-  columnas × 6 filas** con la zona del jugador sombreada (en rojo en la carta
-  original). En esta carta están marcadas las **tres filas de arriba**, es decir
-  la mitad de ataque, coherente con «supondremos que se ataca hacia arriba».
+  columnas × 6 filas** con la zona del jugador en rojo. En esta carta son las
+  **tres filas de arriba** (la mitad de ataque, ya que «se ataca hacia arriba»).
 
-**La ficha es el precio del jugador, no el dorsal.** El «15» es su valor en
-puntos: el reglamento del torneo (página 29) monta un equipo de 16 jugadores
-«con un máximo de 100 puntos (suma de las fichas de los 16 jugadores)», y el
-juego básico (página 12) la ignora por completo — «no se utiliza la ficha del
-jugador», que es también por lo que el básico no limita los extranjeros. Que la
-ficha se imprima **en rojo** para los extranjeros es justo lo que permite contar
-los «3 por equipo» del torneo.
-
-> ⚠️ _Los **valores numéricos** de los factores de esta carta no se leen con
-> claridad ni siquiera ampliando el escaneo. La secuencia de etiquetas parece ser
-> **RC · RG · PC · PL · LF · DL · RM**, pero tanto las etiquetas como sus valores
-> están pendientes de confirmar contra la carta física._
+La **ficha** es el valor en puntos del jugador: el reglamento del torneo (página
+29) limita el equipo de 16 jugadores a «un máximo de 100 puntos (suma de las
+fichas de los 16 jugadores)», y el juego básico (página 12) no la utiliza.
 
 ## Relación de características:
 

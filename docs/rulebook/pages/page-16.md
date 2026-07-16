@@ -2,8 +2,6 @@
 
 > Transcripción literal del texto en español. Escaneo original:
 > [`../scans/pages-16-17.jpeg`](../scans/pages-16-17.jpeg) (página izquierda).
->
-> ⚠️ **Valores de dados de lectura difícil; verificar contra el escaneo.**
 
 ---
 

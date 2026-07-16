@@ -2,10 +2,6 @@
 
 > Transcripción literal del texto en español. Escaneo original:
 > [`../scans/pages-14-15.jpeg`](../scans/pages-14-15.jpeg) (página izquierda).
->
-> ⚠️ **Los valores numéricos de los dados de este partido de ejemplo son de
-> lectura difícil en el escaneo. Verificar cada tirada contra
-> `scans/pages-14-15.jpeg` antes de usarlos como referencia exacta.**
 
 ---
 

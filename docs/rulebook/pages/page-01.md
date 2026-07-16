@@ -2,8 +2,6 @@
 
 > Transcripción literal del texto en español. Escaneo original:
 > [`../scans/page-01.jpeg`](../scans/page-01.jpeg).
->
-> _Nota manuscrita en la parte superior del escaneo: «1 turno cada jugador»._
 
 ---
 
@@ -39,8 +37,7 @@ habilitadas especialmente para los porteros. Existen zonas especiales, que son:
 ### Diagrama del campo
 
 Cuadrícula de **5 columnas × 6 filas** (las 30 casillas), con una casilla de
-portería **arriba y otra abajo** — cada equipo ataca hacia la portería contraria.
-Las zonas están rotuladas tal como aparecen en el escaneo:
+portería **arriba y otra abajo** — cada equipo ataca hacia la portería contraria:
 
 ```
                      ┌────────┐
@@ -64,17 +61,10 @@ Las zonas están rotuladas tal como aparecen en el escaneo:
                      └────────┘
 ```
 
-Notas de lectura del escaneo:
-
-- Las **columnas exteriores** (1 y 5) son **PA** en las cuatro filas con zona; las
-  dos **filas centrales** no tienen zona especial (son casillas de juego normal).
-- `PA+DL` son las casillas donde el escaneo apila **ambos** rótulos (PA sobre DL):
-  cuentan como zona de pases altos **y** de disparo lejano a la vez.
-- Las dos casillas de portería son las «dos habilitadas especialmente para los
-  porteros» del texto, adicionales a las 30.
-
-> _Diagrama verificado contra el escaneo original
-> ([`../scans/page-01.jpeg`](../scans/page-01.jpeg))._
+`PA+DL` son las casillas que llevan **los dos** rótulos (PA sobre DL): son zona de
+pases altos **y** de disparo lejano a la vez. Las dos filas centrales no llevan
+rótulo: son casillas de juego normal. Las dos casillas de portería son las «dos
+habilitadas especialmente para los porteros», adicionales a las 30.
 
 ---
 
