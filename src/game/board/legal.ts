@@ -157,16 +157,25 @@ function defenderMoveActions(state: MatchState): Action[] {
     for (const move of movesFor(state, p)) {
       if (move.kind !== 'move') continue
       out.push(move)
-      // Case 2: stepping onto the holder's cell to mark him al hombre, then robbing.
-      if (distance(move.to, holder.cell) === 0) {
-        out.push({ kind: 'robo', defender: p.id, mode: 'move-onto', to: move.to })
-      }
     }
-    // Case 3: already al hombre on the holder — renounce the move and rob in place.
-    const holderMark = markerOf(state, holder.id)
-    if (holderMark && holderMark.id === p.id && holderMark.onTop) {
-      out.push({ kind: 'robo', defender: p.id, mode: 'renounce' })
+  }
+  // Robo case 2 (page 9): a defender who, being able to move, marks the holder al hombre
+  // and robs — either by stepping onto the holder's cell from a neighbour, or (already
+  // sharing the cell en zona, below the holder) by flipping on top in place.
+  const marker = markerOf(state, holder.id)
+  for (const p of playersOf(state, def)) {
+    if (p.id === keeperId(def)) continue
+    if (distance(p.cell, holder.cell) === 1 && canOccupy(state, holder.cell, def)) {
+      out.push({ kind: 'robo', defender: p.id, mode: 'move-onto', to: { ...holder.cell } })
     }
+  }
+  if (marker && !marker.onTop) {
+    // Sharing the holder's cell but en zona (below): flip on top and rob.
+    out.push({ kind: 'robo', defender: marker.id, mode: 'move-onto', to: { ...holder.cell } })
+  }
+  // Case 3: already al hombre on the holder — renounce the move and rob in place.
+  if (marker && marker.onTop) {
+    out.push({ kind: 'robo', defender: marker.id, mode: 'renounce' })
   }
   return out
 }

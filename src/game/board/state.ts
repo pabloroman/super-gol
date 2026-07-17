@@ -82,13 +82,6 @@ export interface AntiStall {
   pdChain: PlayerId[]
   /** `player → "col,row"` a player has already been moved to (no moving there twice). */
   movedTo: Record<PlayerId, string[]>
-  /**
-   * Consecutive movements interleaved only with pases directos. At 5 the possession
-   * costs "un turno más" without losing the ball (rulebook page 29) — the brake that
-   * stops a player from stalling out the clock with legal shuffling. Any non-direct
-   * pass, regate or remate resets it.
-   */
-  movesRun: number
 }
 
 /**

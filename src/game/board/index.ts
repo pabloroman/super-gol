@@ -47,7 +47,7 @@ export function createMatch(input: CreateMatchInput): MatchState {
     turno: 0,
     ply: 0,
     possessionJugadas: 0,
-    antiStall: { pdChain: [], movedTo: {}, movesRun: 0 },
+    antiStall: { pdChain: [], movedTo: {} },
     difficulty: input.difficulty,
   }
 }

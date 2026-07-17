@@ -23,18 +23,19 @@ import type { Cell } from '../engine/pitch'
 import type { Action, PassKind } from './actions'
 import { actionKey } from './actions'
 import { legalActions, other, keeperId, carrier, playersOf } from './legal'
-import { marcajeOf, markerOf, occupants, distance, cellKey } from './derive'
+import { marcajeOf, markerOf, occupants, distance, cellKey, sameCell } from './derive'
 import { autoPlace, kickoffCarrier } from './placement'
 import type { MatchState, MatchPlayer, PlayerId, Marcaje, Side } from './state'
 
 /** How many possession changes end the match (rulebook page 29). */
 const TURNO_LIMIT = 15
-/** Consecutive movements that cost an extra turno without losing the ball (page 29). */
-const MOVES_RUN_LIMIT = 5
 /**
  * Jugadas one possession may run before it "breaks down" and the ball is conceded. Not a
  * rulebook number — a safety valve (see `MatchState.possessionJugadas`) set high enough
  * that ordinary human play never trips it, but low enough that the clock always advances.
+ * (The rulebook's own stall brake, the page-29 "5 movimientos = un turno" rule, is
+ * tournament-only — the basic-game worked example runs six movements in one turno — so it
+ * is deliberately NOT applied here.)
  */
 const POSSESSION_CAP = 24
 
@@ -59,11 +60,13 @@ function giveBall(state: MatchState, id: PlayerId): void {
 function stepInto(state: MatchState, moverId: PlayerId, cell: Cell): void {
   const mover = state.players[moverId]
   const oldCell = mover.cell
+  const inPlace = sameCell(oldCell, cell) // a "flip on top in place" (robo case 2)
   mover.cell = { ...cell }
   const sharing = occupants(state, cell).filter((o) => o.id !== moverId)
   mover.onTop = sharing.length > 0
   for (const o of sharing) o.onTop = false
-  for (const o of occupants(state, oldCell)) o.onTop = false // whoever remains is now alone
+  // Whoever remains in the vacated cell is now alone — but only if the mover actually left.
+  if (!inPlace) for (const o of occupants(state, oldCell)) o.onTop = false
   if (state.ball.carrier === moverId) state.ball.cell = { ...cell }
 }
 
@@ -102,7 +105,7 @@ function advanceTurno(state: MatchState, events: EngineEvent[]): boolean {
 }
 
 function resetAntiStall(state: MatchState): void {
-  state.antiStall = { pdChain: [], movedTo: {}, movesRun: 0 }
+  state.antiStall = { pdChain: [], movedTo: {} }
 }
 
 /**
@@ -225,7 +228,7 @@ function applyAttack(state: MatchState, action: Action, rng: Rng, events: Engine
     case 'shot':
       return applyShot(state, action.shot, rng, events)
     case 'move':
-      return applyMove(state, action.player, action.to, events)
+      return applyMove(state, action.player, action.to)
     default:
       throw new Error(`unexpected attack action ${action.kind}`)
   }
@@ -265,7 +268,6 @@ function applyPass(
   const contest = resolvePase(rng, pass, passerMark, receiverMark, rating)
   // A non-direct pass breaks both anti-stall runs.
   state.antiStall.pdChain = []
-  state.antiStall.movesRun = 0
 
   if (contest.success) {
     giveBall(state, to)
@@ -304,7 +306,6 @@ function applyRegate(state: MatchState, rng: Rng, events: EngineEvent[]): void {
   const defender = markerOf(state, self.id)!
   state.libre = null
   state.antiStall.pdChain = []
-  state.antiStall.movesRun = 0
   const contest = resolveRegate(rng, mark, rate(self, 'rg'))
   events.push(
     evContest('dribble', state.attacker, {
@@ -337,7 +338,6 @@ function applyShot(state: MatchState, shot: 'RM' | 'DL', rng: Rng, events: Engin
   const mark = marcajeOf(state, self.id)
   state.libre = null
   state.antiStall.pdChain = []
-  state.antiStall.movesRun = 0
   const rating = rate(self, shot === 'RM' ? 'rm' : 'dl')
   const contest = resolveShot(rng, shot, mark, rating)
   if (!contest.success) {
@@ -356,24 +356,24 @@ function applyShot(state: MatchState, shot: 'RM' | 'DL', rng: Rng, events: Engin
   keeperRestartAfterShot(state, events)
 }
 
-function applyMove(state: MatchState, playerId: PlayerId, to: Cell, events: EngineEvent[]): void {
+function applyMove(state: MatchState, playerId: PlayerId, to: Cell): void {
   const mover = state.players[playerId]
   const target = occupants(state, to).find((o) => o.side === mover.side && o.id !== playerId)
   if (target) relevo(state, playerId, target.id)
   else stepInto(state, playerId, to)
-  // Record the move for anti-stall, and count it toward the 5-move clock bump (page 29).
+  // A movement ends the current run of pases directos: the "sucesión de pases directos"
+  // the reuse rule (page 12) forbids is a run of CONSECUTIVE PDs, so any non-PD play
+  // breaks it. The worked example relies on this — plays 14–16 re-pass to players from
+  // the plays 1–3 chain, legal only because the intervening moves reset the run.
+  state.antiStall.pdChain = []
+  // Record the move so the same player can't be sent to the same cell twice (page 12).
   ;(state.antiStall.movedTo[playerId] ??= []).push(cellKey(to))
-  state.antiStall.movesRun += 1
 
   // If the carrier moved onto an opponent, they are on top and libre next jugada (page 4).
   if (state.ball.carrier === playerId && marcajeOf(state, playerId) === 'MZ') {
     state.libre = playerId
   }
 
-  if (state.antiStall.movesRun >= MOVES_RUN_LIMIT) {
-    state.antiStall.movesRun = 0
-    if (advanceTurno(state, events)) return // costs a turno but keeps possession
-  }
   // Any attacker movement grants the defender a move window (page 5).
   state.phase = { kind: 'defend_move', side: other(state.attacker) }
 }
@@ -382,7 +382,6 @@ function applyHueco(state: MatchState, pass: Exclude<PassKind, 'PD'>, to: Cell, 
   const from = carrier(state)
   state.libre = null
   state.antiStall.pdChain = []
-  state.antiStall.movesRun = 0
   const contest = resolvePaseHueco(rng, rate(from, pass === 'PL' ? 'pl' : 'pc'))
   // The ball goes loose on the target cell either way; the roll only decides who moves
   // toward it first (pages 7–8).
