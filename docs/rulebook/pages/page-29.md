@@ -3,10 +3,9 @@
 > Transcripción literal del texto en español. Escaneo original:
 > [`../scans/pages-28-29.jpeg`](../scans/pages-28-29.jpeg) (página derecha).
 >
-> ⚠️ **La lista del reglamento de torneo está muy subrayada a mano; algunos
-> renglones son de lectura difícil. La reconstrucción es la más coherente con el
-> resto del reglamento (100 puntos, demarcación) pero debe verificarse contra el
-> escaneo.**
+> La lista del reglamento de torneo está muy subrayada a mano. Verificada contra el
+> escaneo `../scans/pages-28-29.jpeg`; la línea del reloj de 15 turnos se corrigió
+> (antes truncaba la frase en un «(cambie de los jugadores)» ilegible).
 
 ---
 
@@ -18,8 +17,8 @@ _(…viene de la página 28: Lesiones)_
 
 ## REGLAMENTO OFICIAL DEL TORNEO
 
-- Se juega a tiempo, esto es, a 15 turnos. Cuando éste se cumpla (cambie de los
-  jugadores), termina el partido.
+- Se juega a tiempo, esto es, a 15 turnos. Cuando éste cambie de los jugadores de
+  un equipo al otro 15 veces, termina el partido.
 - Se juega con fichas de los 16 jugadores.
 - Se juega con límite de puntos: se puede jugar con jugadores de más de un
   equipo, con un máximo de **100 puntos** (suma de las fichas de los 16
