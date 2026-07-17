@@ -87,7 +87,7 @@ export function useInteractiveMatch(difficulty: Difficulty) {
   // or the match ends.
   useEffect(() => {
     if (!state || !rng.current || actorOf(state) !== 'away') return
-    const id = setTimeout(() => step(state, chooseAction(state, rng.current!)), AI_DELAY_MS)
+    const id = setTimeout(() => step(state, chooseAction(state, rng.current!, state.difficulty)), AI_DELAY_MS)
     return () => clearTimeout(id)
   }, [state, step])
 

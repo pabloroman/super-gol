@@ -80,7 +80,10 @@ function attackerActions(state: MatchState): Action[] {
   const side = state.attacker
   const self = carrier(state)
   const mark = marcajeOf(state, self.id)
-  const mates = playersOf(state, side).filter((p) => p.id !== self.id)
+  // Field teammates only: the keeper's passes are a cesión, enumerated once by the block
+  // below. Leaving him in here as well double-listed every back-pass (a duplicate legal
+  // action, and — once the menu is surfaced to the UI — a duplicate button).
+  const mates = playersOf(state, side).filter((p) => p.id !== self.id && p.id !== keeperId(side))
   const out: Action[] = []
 
   for (const t of mates) {

@@ -5,6 +5,7 @@ import {
   createMatch,
   legalActions,
   apply,
+  actionKey,
   marcajeOf,
   playerId,
   type MatchState,
@@ -187,7 +188,7 @@ describe('a full AI-vs-AI match always completes', () => {
       const rng = seededFaces(seed)
       let guard = 0
       while (st.phase.kind !== 'fulltime' && guard++ < 20000) {
-        st = apply(st, chooseAction(st, rng), rng).state
+        st = apply(st, chooseAction(st, rng, 'normal'), rng).state
       }
       expect(st.phase.kind).toBe('fulltime')
       expect(st.turno).toBeGreaterThanOrEqual(15)
@@ -196,12 +197,17 @@ describe('a full AI-vs-AI match always completes', () => {
 })
 
 describe('legalActions is never empty while the ball is in play', () => {
-  it('always offers the attacker at least one action across a random walk', () => {
+  it('always offers the attacker at least one action, and never a duplicate', () => {
     let st = freshMatch({ pc: 1, pl: 1, rg: 1, rm: 1, dl: 1 })
     const rng = seededFaces(1234)
     for (let i = 0; i < 200 && st.phase.kind !== 'fulltime'; i++) {
       const opts = legal(st)
       expect(opts.length).toBeGreaterThan(0)
+      // No two legal actions may share an actionKey: a duplicate is scored twice by the AI
+      // and drawn twice by the UI. (A back-pass to the keeper used to appear twice — once as
+      // a "teammate" pass, once as a cesión.)
+      const keys = opts.map(actionKey)
+      expect(new Set(keys).size).toBe(keys.length)
       // Pick a pseudo-random legal action and apply it.
       const pick = opts[Math.abs(hash(i)) % opts.length]
       st = apply(st, pick, rng).state
