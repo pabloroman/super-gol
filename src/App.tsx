@@ -16,10 +16,10 @@ function TopBar() {
   const { profile, signOut } = useAuth()
   return (
     // The bar itself is full-bleed so its border and backdrop span the viewport;
-    // only its contents take the width token. (It used to sit inside the app's
-    // max-w-md column, which left the chrome floating in a 448px strip on any
-    // wide screen — the BottomNav already got this right.) h-topbar pins the
-    // height that --topbar-h promises everything sticking below it.
+    // only the inner row takes the width token. Both bars used to sit inside the
+    // app's max-w-md column, so their borders stopped at 448px and the chrome
+    // floated in a strip on any wider screen. h-topbar pins the height that
+    // --topbar-h promises to everything sticking below it.
     <header className="sticky top-0 z-20 h-topbar border-b border-white/5 bg-pitch-950/90 backdrop-blur">
       <div className="app-wide flex h-full items-center gap-4 px-4 md:px-6">
         <Link

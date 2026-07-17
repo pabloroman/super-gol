@@ -169,7 +169,7 @@ export function Play() {
           key={d.id}
           disabled={busy}
           onClick={() => play(d.id)}
-          className="card-surface flex items-center justify-between p-5 text-left transition hover:bg-pitch-700/80 hover:ring-white/10 active:scale-[0.99] disabled:opacity-50"
+          className="card-surface flex items-center justify-between p-5 text-left transition md:hover:bg-pitch-700/80 md:hover:ring-white/10 active:scale-[0.99] disabled:opacity-50"
         >
           <div>
             <div className="font-display text-xl font-bold">{d.label}</div>

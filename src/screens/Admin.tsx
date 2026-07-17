@@ -329,7 +329,7 @@ function CardRow({ card, onEdit }: { card: Card; onEdit: () => void }) {
   return (
     <tr
       onClick={onEdit}
-      className="flex cursor-pointer items-center gap-3 border-b border-white/5 py-2 transition hover:bg-white/5 md:table-row md:border-0 md:py-0 md:[&>td]:border-b md:[&>td]:border-white/5 md:[&>td]:px-2 md:[&>td]:py-1.5"
+      className="flex cursor-pointer items-center gap-3 border-b border-white/5 py-2 transition md:table-row md:border-0 md:py-0 md:hover:bg-white/5 md:[&>td]:border-b md:[&>td]:border-white/5 md:[&>td]:px-2 md:[&>td]:py-1.5"
     >
       <td className="block shrink-0 md:table-cell">
         <span className="block h-8 w-8 overflow-hidden rounded-full bg-white/10">
@@ -350,7 +350,7 @@ function CardRow({ card, onEdit }: { card: Card; onEdit: () => void }) {
             e.stopPropagation()
             onEdit()
           }}
-          className="block max-w-full truncate text-left text-sm font-semibold transition hover:text-grass-400"
+          className="block max-w-full truncate text-left text-sm font-semibold transition md:hover:text-grass-400"
         >
           {card.name}
         </button>
@@ -437,9 +437,9 @@ export function Admin() {
       {loading && <p className="text-slate-500">Cargando…</p>}
       {error && <p className="text-sm text-red-400">{error}</p>}
 
-      {/* border-separate, not the default collapse: sticky <thead> loses its
-          borders under border-collapse in Chrome. Same reason tbody uses per-cell
-          borders rather than divide-y. */}
+      {/* Separated borders, not the collapsed default: a sticky <thead> loses its
+          borders when a table collapses them in Chrome. Same reason the body
+          draws borders per cell rather than with a divide utility. */}
       <table className="block w-full md:table md:border-separate md:border-spacing-0">
         <thead className="hidden md:table-header-group">
           <tr className="text-left font-display text-xs uppercase tracking-widest text-slate-500 [&>th]:sticky [&>th]:top-topbar [&>th]:z-10 [&>th]:border-b [&>th]:border-white/10 [&>th]:bg-pitch-900 [&>th]:px-2 [&>th]:py-2">

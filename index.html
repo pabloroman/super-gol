@@ -3,11 +3,14 @@
   <head>
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-    <!-- viewport-fit=cover is load-bearing: the safe-area insets in index.css,
-         BottomNav and Sheet all read env(safe-area-inset-*), which stays 0
-         without it. No scale lock — the cards print type at ~10px and zoom is
-         the accommodation for that. -->
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <!-- TODO: the scale lock is a WCAG 1.4.4 failure and should go — but it is
+         also what suppresses iOS Safari's zoom-on-input-focus, which fires for
+         any input under 16px. CardFilters' search is 14px and its selects are
+         12px, so removing the lock without resizing those first trades one
+         mobile bug for another. Its own change, tested on a real phone.
+         viewport-fit=cover is load-bearing: the safe-area insets in index.css,
+         BottomNav and Sheet all read env(safe-area-inset-*), which is 0 without it. -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, maximum-scale=1.0, user-scalable=no" />
     <meta name="theme-color" content="#0b6b3a" />
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />

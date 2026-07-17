@@ -260,9 +260,10 @@ export function SquadBuilder() {
             <h2 className="font-display text-xs uppercase tracking-widest text-slate-500">
               Titulares · {starterCards.length}/{STARTER_COUNT}
             </h2>
-            {/* 6 columns at lg, not Colección's 5: the squad wants tidy, not
-                dense. 11 titulares + the AddSlot is 12, and the bench's 5 + 1 is
-                6 — both tile exactly, with no ragged last row. */}
+            {/* 6 columns at lg, not Colección's 5: a squad is a fixed, small set
+                and wants to be read at a glance, not scrolled. Six puts the 11
+                titulares in two rows and a full bench in one; four would take
+                three rows and two. */}
             <div className="grid grid-cols-2 gap-3 md:grid-cols-4 lg:grid-cols-6">
               {starterCards.map((card) => (
                 <SquadCard

@@ -42,10 +42,12 @@ export function Collection() {
         // The filters stack above the grid below lg and become a sticky rail at
         // lg. CardFilters is already a vertical stack, so this is pure placement
         // — the component is untouched and the Equipo picker keeps using it as
-        // is. The rail waits for lg rather than md deliberately: at md a 15rem
-        // rail would leave room for only 3 columns of 144px cards, i.e. *smaller*
-        // than the phone's 202px. Shrinking the cards on a bigger screen to make
-        // room for controls used occasionally is a bad trade.
+        // is.
+        //
+        // The rail waits for lg because lg is the first width where it is free:
+        // it still leaves 4 columns at ~169px, which is what md already shows
+        // without it (~171px). At md the same rail would take 40% of the card
+        // width (down to ~105px), or force the grid to 3 columns.
         //
         // The whole block sits inside this guard on purpose: a conditional
         // <aside> inside a live 2-col grid would drop the card grid into the
