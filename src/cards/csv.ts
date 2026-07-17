@@ -26,8 +26,14 @@ const defaultGrid = (pos: string): boolean[][] => ZONE_GRIDS[pos as PositionGrou
 const isDefaultGrid = (c: Card): boolean =>
   gridKey(c.zone_grid ?? []) === gridKey(defaultGrid(c.position ?? ''))
 
+// A card parsed from a CSV that may omit the is_starter column. When the column
+// is absent, is_starter is left undefined so the importer preserves whatever the
+// DB already has (the starter deck is owned by a migration, not the catalog CSV).
+// A Card is assignable to this, so callers can pass either shape to the upsert.
+export type ImportedCard = Omit<Card, 'is_starter'> & { is_starter?: boolean }
+
 export interface ParseResult {
-  cards: Card[]
+  cards: ImportedCard[]
   errors: string[]
 }
 
@@ -50,7 +56,10 @@ export function parseCardsCsv(text: string): ParseResult {
     transformHeader: (h) => h.trim(),
   })
   const errors: string[] = parsed.errors.map((e) => `row ${e.row ?? '?'}: ${e.message}`)
-  const cards: Card[] = []
+  const cards: ImportedCard[] = []
+  // When the file has no is_starter column, leave it unset so the importer keeps
+  // the DB's existing flag rather than resetting the starter deck.
+  const hasStarterColumn = (parsed.meta.fields ?? []).includes('is_starter')
 
   parsed.data.forEach((row, i) => {
     const line = i + 2 // 1-based, +1 for the header row
@@ -90,7 +99,7 @@ export function parseCardsCsv(text: string): ParseResult {
       zone_grid = defaultGrid(position)
     }
 
-    cards.push({
+    const card: ImportedCard = {
       id,
       name,
       full_name: (row.full_name ?? '').trim() || null,
@@ -104,20 +113,34 @@ export function parseCardsCsv(text: string): ParseResult {
       position: position || null,
       cost,
       rarity,
-      is_starter: boolCell(row.is_starter),
       abilities,
       zone_grid,
       image_url: (row.image_url ?? '').trim() || null,
-    })
+    }
+    if (hasStarterColumn) card.is_starter = boolCell(row.is_starter)
+    cards.push(card)
   })
 
   return { cards, errors }
 }
 
-/** Serialize Cards to an admin CSV. Emits a `zone_grid` column only when some card deviates from its position default. */
-export function cardsToCsv(cards: Card[]): string {
+/**
+ * Serialize Cards to an admin CSV. Emits a `zone_grid` column only when some
+ * card deviates from its position default.
+ *
+ * `includeStarter` (default true) controls the is_starter column. Pass false for
+ * a catalog export that should be starter-agnostic — the offline seed CSV — so
+ * re-importing it never disturbs the migration-owned starter deck. The in-app
+ * admin export keeps it true, so a full export→edit→import round trip preserves
+ * each card's real flag.
+ */
+export function cardsToCsv(cards: Card[], opts: { includeStarter?: boolean } = {}): string {
+  const includeStarter = opts.includeStarter ?? true
   const needsGrid = cards.some((c) => !isDefaultGrid(c))
-  const columns = [...SCALAR_COLUMNS, ...ABILITY_KEYS, ...(needsGrid ? ['zone_grid'] : [])]
+  const scalarColumns = includeStarter
+    ? SCALAR_COLUMNS
+    : SCALAR_COLUMNS.filter((col) => col !== 'is_starter')
+  const columns = [...scalarColumns, ...ABILITY_KEYS, ...(needsGrid ? ['zone_grid'] : [])]
 
   const rows = cards.map((c) => {
     const row: Record<string, string> = {

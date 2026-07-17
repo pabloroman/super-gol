@@ -64,6 +64,31 @@ describe('cardsToCsv / parseCardsCsv round trip', () => {
     expect(errors).toEqual([])
     expect(cards[0].zone_grid).toEqual(ZONE_GRIDS.MF)
   })
+
+  it('round-trips a true is_starter flag', () => {
+    const starter: Card = { ...fw, is_starter: true }
+    const csv = cardsToCsv([starter])
+    expect(csv.split('\n')[0]).toContain('is_starter')
+    const { cards } = parseCardsCsv(csv)
+    expect(cards[0].is_starter).toBe(true)
+  })
+})
+
+describe('is_starter is only set when the column is present', () => {
+  it('omits is_starter (preserve) when the CSV has no is_starter column', () => {
+    // buildRows-style export drops the column; parse must leave it undefined so
+    // the importer keeps the DB's flag instead of resetting the starter deck.
+    const csv = cardsToCsv([fw], { includeStarter: false })
+    expect(csv.split('\n')[0]).not.toContain('is_starter')
+    const { cards } = parseCardsCsv(csv)
+    expect('is_starter' in cards[0]).toBe(false)
+  })
+
+  it('keeps is_starter when the column is present (even if false)', () => {
+    const csv = cardsToCsv([fw]) // fw.is_starter === false, column included by default
+    const { cards } = parseCardsCsv(csv)
+    expect(cards[0].is_starter).toBe(false)
+  })
 })
 
 describe('parseCardsCsv validation', () => {

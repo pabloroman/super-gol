@@ -7,6 +7,7 @@ import type {
   Squad,
   SquadSlot,
 } from '@/lib/types'
+import type { ImportedCard } from '@/cards/csv'
 
 // ---------- profile / wallet ----------
 export async function fetchProfile(): Promise<Profile | null> {
@@ -117,7 +118,7 @@ export async function openPack(packId: string): Promise<PackResult> {
 // Both go through SECURITY DEFINER RPCs that verify the caller's profiles.is_admin
 // server-side, matching the save_squad/open_pack pattern — the browser can call
 // but cannot forge admin rights.
-export async function adminUpsertCards(cards: Card[]): Promise<number> {
+export async function adminUpsertCards(cards: ImportedCard[]): Promise<number> {
   const { data, error } = await requireSupabase().rpc('admin_upsert_cards', {
     p_cards: cards,
   })

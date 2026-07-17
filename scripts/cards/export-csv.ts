@@ -37,5 +37,9 @@ const cards: Card[] = buildRows(league).map((r) => ({
   image_url: r.image_url,
 }))
 
-writeFileSync(OUT_FILE, cardsToCsv(cards) + '\n')
+// Starter-agnostic on purpose: the 55-card starter deck is owned by
+// 0009_starter_deck.sql, not the catalog. Emitting is_starter here (always
+// false) would let a re-import reset the deck; omitting the column makes the
+// import preserve whatever flags the DB already has (see 0010).
+writeFileSync(OUT_FILE, cardsToCsv(cards, { includeStarter: false }) + '\n')
 console.log(`wrote ${cards.length} cards -> ${OUT_FILE.replace(ROOT + '/', '')}`)
