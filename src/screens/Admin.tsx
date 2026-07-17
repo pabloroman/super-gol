@@ -3,7 +3,7 @@ import { useAuth } from '@/auth/AuthProvider'
 import { adminDeleteCard, adminUpsertCards, fetchCatalog } from '@/data/api'
 import { ABILITY_META, ABILITY_ORDER } from '@/game/abilities'
 import { ZONE_GRIDS, type PositionGroup } from '@/cards/positions'
-import { cardsToCsv, parseCardsCsv } from '@/cards/csv'
+import { cardsToCsv, parseCardsCsv, type ImportedCard } from '@/cards/csv'
 import type { AbilityKey, Card, Rarity } from '@/lib/types'
 
 const POSITIONS: PositionGroup[] = ['GK', 'DF', 'MF', 'FW']
@@ -226,7 +226,7 @@ function CardEditor({
 // ---------- CSV import ----------
 function CsvImport({ existingIds, onImported }: { existingIds: Set<string>; onImported: () => void }) {
   const fileRef = useRef<HTMLInputElement>(null)
-  const [preview, setPreview] = useState<{ cards: Card[]; errors: string[] } | null>(null)
+  const [preview, setPreview] = useState<{ cards: ImportedCard[]; errors: string[] } | null>(null)
   const [busy, setBusy] = useState(false)
   const [msg, setMsg] = useState<string | null>(null)
 
