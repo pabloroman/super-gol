@@ -610,7 +610,7 @@ function simulateMatch(input) {
 // src/game/engine/squad.ts
 function buildEngineSquad(name, squad, catalog) {
   const byId = new Map(catalog.map((c) => [c.id, c]));
-  const starters = squad.slots.filter((s) => s.is_starter).map((s) => byId.get(s.card_id)).filter((c) => Boolean(c)).map((c) => ({ id: c.id, name: c.name, position: c.position, abilities: c.abilities }));
+  const starters = squad.slots.map((s) => byId.get(s.card_id)).filter((c) => Boolean(c)).map((c) => ({ id: c.id, name: c.name, position: c.position, abilities: c.abilities }));
   if (starters.length === 0) throw new Error("your squad has no starters");
   let keeperIdx = starters.findIndex(isGoalkeeper);
   if (keeperIdx < 0) keeperIdx = 0;
@@ -653,10 +653,10 @@ Deno.serve(async (req) => {
     if (body && DIFFICULTIES.includes(body.p_difficulty)) difficulty = body.p_difficulty;
   } catch {
   }
-  const { data: squadRow, error: squadErr } = await userClient.from("squads").select("id, name, formation, total_cost").order("is_active", { ascending: false }).limit(1).maybeSingle();
+  const { data: squadRow, error: squadErr } = await userClient.from("squads").select("id, name, total_cost").order("is_active", { ascending: false }).limit(1).maybeSingle();
   if (squadErr) return json({ error: squadErr.message }, 400);
   if (!squadRow) return json({ error: "you have no squad yet" }, 400);
-  const { data: slots, error: slotErr } = await userClient.from("squad_slots").select("card_id, slot, is_starter").eq("squad_id", squadRow.id).order("slot", { ascending: true });
+  const { data: slots, error: slotErr } = await userClient.from("squad_slots").select("card_id, slot").eq("squad_id", squadRow.id).order("slot", { ascending: true });
   if (slotErr) return json({ error: slotErr.message }, 400);
   const { data: catalog, error: catErr } = await userClient.from("cards").select("*");
   if (catErr) return json({ error: catErr.message }, 400);
@@ -672,10 +672,13 @@ Deno.serve(async (req) => {
   const away = generateOpponent(difficulty, createRng(seedFrom(seed, "opponent")));
   const outcome = simulateMatch({ home, away, difficulty, seed });
   const byId = new Map(cards.map((c) => [c.id, c]));
-  const strength = squad.slots.filter((s) => s.is_starter).reduce((sum, s) => {
-    var _a2;
-    return sum + (((_a2 = byId.get(s.card_id)) == null ? void 0 : _a2.cost) ?? 0);
-  }, 0);
+  const strength = squad.slots.reduce(
+    (sum, s) => {
+      var _a2;
+      return sum + (((_a2 = byId.get(s.card_id)) == null ? void 0 : _a2.cost) ?? 0);
+    },
+    0
+  );
   const adminClient = createClient(url, serviceKey);
   const { data: recorded, error: recErr } = await adminClient.rpc("record_match", {
     p_uid: uid,

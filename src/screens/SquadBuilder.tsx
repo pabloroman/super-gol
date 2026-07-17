@@ -6,15 +6,8 @@ import { Sheet } from '@/ui/Sheet'
 import { CardFilters } from '@/ui/CardFilters'
 import { useCardFilters } from '@/ui/useCardFilters'
 import { positionAbbr, positionRank } from '@/ui/positions'
-import {
-  POINT_CAP,
-  STARTER_COUNT,
-  MAX_BENCH,
-  validateSquad,
-} from '@/game/squad'
+import { POINT_CAP, STARTER_COUNT, validateSquad } from '@/game/squad'
 import type { Card } from '@/lib/types'
-
-type Role = 'starter' | 'bench'
 
 const getCard = (c: Card) => c
 
@@ -27,32 +20,19 @@ function bySquadOrder(a: Card, b: Card) {
   )
 }
 
-function SquadCard({
-  card,
-  role,
-  onRemove,
-}: {
-  card: Card
-  role: Role
-  onRemove: () => void
-}) {
+function SquadCard({ card, onRemove }: { card: Card; onRemove: () => void }) {
   const pos = positionAbbr(card.position)
   return (
     <div className="relative">
-      <Naipe card={card} selected={role === 'starter'} />
+      <Naipe card={card} selected />
+      {/* No TITULAR badge: with no bench, every card here is one — the
+          demarcación chip is the only thing left worth printing. */}
       <div className="absolute -top-1.5 left-1/2 flex -translate-x-1/2 items-center gap-1">
         {pos && (
           <span className="rounded-full bg-black/85 px-1.5 py-0.5 text-[9px] font-bold tracking-wider text-slate-300">
             {pos}
           </span>
         )}
-        <span
-          className={`rounded-full px-2 py-0.5 text-[9px] font-bold tracking-wider ${
-            role === 'starter' ? 'bg-grass-500 text-white' : 'bg-frequent text-pitch-900'
-          }`}
-        >
-          {role === 'starter' ? 'TITULAR' : 'SUPLENTE'}
-        </span>
       </div>
       <button
         type="button"
@@ -85,14 +65,13 @@ function AddSlot({ label, onClick }: { label: string; onClick: () => void }) {
 export function SquadBuilder() {
   const { refreshProfile } = useAuth()
   const [cards, setCards] = useState<Card[]>([])
-  const [roles, setRoles] = useState<Record<string, Role>>({})
+  const [pickedIds, setPickedIds] = useState<string[]>([])
   const [name, setName] = useState('Mi equipo')
   const [loading, setLoading] = useState(true)
   const [busy, setBusy] = useState(false)
   const [message, setMessage] = useState<string | null>(null)
   const [error, setError] = useState<string | null>(null)
-  /** Which role the picker is filling, or null when closed. */
-  const [picking, setPicking] = useState<Role | null>(null)
+  const [picking, setPicking] = useState(false)
 
   useEffect(() => {
     Promise.all([fetchCollection(), fetchActiveSquad()])
@@ -100,11 +79,7 @@ export function SquadBuilder() {
         setCards(collection.map((e) => e.card))
         if (squad) {
           setName(squad.name)
-          const initial: Record<string, Role> = {}
-          for (const slot of squad.slots) {
-            initial[slot.card_id] = slot.is_starter ? 'starter' : 'bench'
-          }
-          setRoles(initial)
+          setPickedIds(squad.slots.map((s) => s.card_id))
         }
       })
       .catch((e) => setError(e.message))
@@ -116,24 +91,13 @@ export function SquadBuilder() {
     [cards],
   )
 
-  const starterIds = useMemo(
-    () => Object.keys(roles).filter((id) => roles[id] === 'starter'),
-    [roles],
-  )
-  const benchIds = useMemo(
-    () => Object.keys(roles).filter((id) => roles[id] === 'bench'),
-    [roles],
-  )
+  const picked = useMemo(() => new Set(pickedIds), [pickedIds])
   const starterCards = useMemo(
-    () => starterIds.map((id) => byId[id]).filter(Boolean).sort(bySquadOrder),
-    [starterIds, byId],
-  )
-  const benchCards = useMemo(
-    () => benchIds.map((id) => byId[id]).filter(Boolean).sort(bySquadOrder),
-    [benchIds, byId],
+    () => pickedIds.map((id) => byId[id]).filter(Boolean).sort(bySquadOrder),
+    [pickedIds, byId],
   )
 
-  const validation = validateSquad(starterCards, benchCards)
+  const validation = validateSquad(starterCards)
   const remaining = POINT_CAP - validation.cost
   const overCap = validation.cost > POINT_CAP
 
@@ -141,29 +105,22 @@ export function SquadBuilder() {
   // what can't be added is the whole point — the old grid let you tap a card
   // that silently did nothing.
   const available = useMemo(
-    () => cards.filter((c) => !roles[c.id] && c.cost <= remaining),
-    [cards, roles, remaining],
+    () => cards.filter((c) => !picked.has(c.id) && c.cost <= remaining),
+    [cards, picked, remaining],
   )
   const { filtered, state } = useCardFilters(available, getCard, {
     initialSort: 'position',
   })
 
-  const add = useCallback(
-    (id: string, role: Role) => {
-      setMessage(null)
-      setRoles((prev) => ({ ...prev, [id]: role }))
-      setPicking(null)
-    },
-    [],
-  )
+  const add = useCallback((id: string) => {
+    setMessage(null)
+    setPickedIds((prev) => [...prev, id])
+    setPicking(false)
+  }, [])
 
   const remove = useCallback((id: string) => {
     setMessage(null)
-    setRoles((prev) => {
-      const next = { ...prev }
-      delete next[id]
-      return next
-    })
+    setPickedIds((prev) => prev.filter((x) => x !== id))
   }, [])
 
   async function save() {
@@ -171,7 +128,7 @@ export function SquadBuilder() {
     setError(null)
     setMessage(null)
     try {
-      await saveSquad(name, '4-4-2', starterIds, benchIds)
+      await saveSquad(name, pickedIds)
       await refreshProfile()
       setMessage('Equipo guardado ✓')
     } catch (e) {
@@ -182,7 +139,6 @@ export function SquadBuilder() {
   }
 
   const startersFull = starterCards.length >= STARTER_COUNT
-  const benchFull = benchCards.length >= MAX_BENCH
 
   return (
     <div className="flex flex-col gap-4 pb-4">
@@ -202,10 +158,6 @@ export function SquadBuilder() {
             <span className="text-slate-400">Titulares </span>
             <span className="font-bold">
               {starterCards.length}/{STARTER_COUNT}
-            </span>
-            <span className="text-slate-400"> · Banquillo </span>
-            <span className="font-bold">
-              {benchCards.length}/{MAX_BENCH}
             </span>
           </div>
           <div className={`tabular-nums ${overCap ? 'text-red-400' : 'text-slate-400'}`}>
@@ -255,55 +207,28 @@ export function SquadBuilder() {
       )}
 
       {!loading && cards.length > 0 && (
-        <>
-          <section className="flex flex-col gap-2">
-            <h2 className="font-display text-xs uppercase tracking-widest text-slate-500">
-              Titulares · {starterCards.length}/{STARTER_COUNT}
-            </h2>
-            {/* 6 columns at lg, not Colección's 5: a squad is a fixed, small set
-                and wants to be read at a glance, not scrolled. Six puts the 11
-                titulares in two rows and a full bench in one; four would take
-                three rows and two. */}
-            <div className="grid grid-cols-2 gap-3 md:grid-cols-4 lg:grid-cols-6">
-              {starterCards.map((card) => (
-                <SquadCard
-                  key={card.id}
-                  card={card}
-                  role="starter"
-                  onRemove={() => remove(card.id)}
-                />
-              ))}
-              {!startersFull && (
-                <AddSlot label="Añadir titular" onClick={() => setPicking('starter')} />
-              )}
-            </div>
-          </section>
-
-          <section className="flex flex-col gap-2">
-            <h2 className="font-display text-xs uppercase tracking-widest text-slate-500">
-              Suplentes · {benchCards.length}/{MAX_BENCH}
-            </h2>
-            <div className="grid grid-cols-2 gap-3 md:grid-cols-4 lg:grid-cols-6">
-              {benchCards.map((card) => (
-                <SquadCard
-                  key={card.id}
-                  card={card}
-                  role="bench"
-                  onRemove={() => remove(card.id)}
-                />
-              ))}
-              {!benchFull && (
-                <AddSlot label="Añadir suplente" onClick={() => setPicking('bench')} />
-              )}
-            </div>
-          </section>
-        </>
+        <section className="flex flex-col gap-2">
+          <h2 className="font-display text-xs uppercase tracking-widest text-slate-500">
+            Titulares · {starterCards.length}/{STARTER_COUNT}
+          </h2>
+          {/* 6 columns at lg, not Colección's 5: a squad is a fixed, small set
+              and wants to be read at a glance, not scrolled. Six puts the 11
+              titulares in two rows; four would take three. */}
+          <div className="grid grid-cols-2 gap-3 md:grid-cols-4 lg:grid-cols-6">
+            {starterCards.map((card) => (
+              <SquadCard key={card.id} card={card} onRemove={() => remove(card.id)} />
+            ))}
+            {!startersFull && (
+              <AddSlot label="Añadir titular" onClick={() => setPicking(true)} />
+            )}
+          </div>
+        </section>
       )}
 
       <Sheet
-        open={picking !== null}
-        onClose={() => setPicking(null)}
-        title={picking === 'bench' ? 'Elegir suplente' : 'Elegir titular'}
+        open={picking}
+        onClose={() => setPicking(false)}
+        title="Elegir titular"
         size="wide"
       >
         <CardFilters state={state} count={filtered.length} />
@@ -313,11 +238,7 @@ export function SquadBuilder() {
         </p>
         <div className="grid min-h-0 grid-cols-2 gap-3 overflow-y-auto pb-2 md:grid-cols-4">
           {filtered.map((card) => (
-            <Naipe
-              key={card.id}
-              card={card}
-              onClick={() => picking && add(card.id, picking)}
-            />
+            <Naipe key={card.id} card={card} onClick={() => add(card.id)} />
           ))}
         </div>
         {filtered.length === 0 && (

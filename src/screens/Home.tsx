@@ -15,7 +15,7 @@ export function Home() {
       .finally(() => setLoading(false))
   }, [])
 
-  const starterCount = squad?.slots.filter((s) => s.is_starter).length ?? 0
+  const starterCount = squad?.slots.length ?? 0
   const ready = starterCount === 11
 
   return (
@@ -40,8 +40,7 @@ export function Home() {
             <div>
               <div className="font-display text-2xl font-bold">{squad.name}</div>
               <div className="text-sm text-slate-400">
-                {squad.formation} · {squad.total_cost}/100 pts · {starterCount}/11
-                titulares
+                {squad.total_cost}/100 pts · {starterCount}/11 titulares
               </div>
             </div>
             <Link to="/squad" className="btn-ghost text-sm">

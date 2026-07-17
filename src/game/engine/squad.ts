@@ -13,7 +13,6 @@ import type { EngineSquad } from './types'
 export function buildEngineSquad(name: string, squad: Squad, catalog: Card[]): EngineSquad {
   const byId = new Map(catalog.map((c) => [c.id, c]))
   const starters = squad.slots
-    .filter((s) => s.is_starter)
     .map((s) => byId.get(s.card_id))
     .filter((c): c is Card => Boolean(c))
     .map((c) => ({ id: c.id, name: c.name, position: c.position, abilities: c.abilities }))

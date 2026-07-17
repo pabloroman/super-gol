@@ -67,7 +67,7 @@ Deno.serve(async (req: Request): Promise<Response> => {
   // Load the active squad, its slots, and the card catalog (same as src/data/api.ts).
   const { data: squadRow, error: squadErr } = await userClient
     .from('squads')
-    .select('id, name, formation, total_cost')
+    .select('id, name, total_cost')
     .order('is_active', { ascending: false })
     .limit(1)
     .maybeSingle()
@@ -76,7 +76,7 @@ Deno.serve(async (req: Request): Promise<Response> => {
 
   const { data: slots, error: slotErr } = await userClient
     .from('squad_slots')
-    .select('card_id, slot, is_starter')
+    .select('card_id, slot')
     .eq('squad_id', squadRow.id)
     .order('slot', { ascending: true })
   if (slotErr) return json({ error: slotErr.message }, 400)
@@ -100,9 +100,10 @@ Deno.serve(async (req: Request): Promise<Response> => {
 
   // Strength = summed cost of the starters (kept for match history parity).
   const byId = new Map(cards.map((c) => [c.id, c]))
-  const strength = squad.slots
-    .filter((s) => s.is_starter)
-    .reduce((sum, s) => sum + (byId.get(s.card_id)?.cost ?? 0), 0)
+  const strength = squad.slots.reduce(
+    (sum, s) => sum + (byId.get(s.card_id)?.cost ?? 0),
+    0,
+  )
 
   // Commit the outcome authoritatively with the service-role key.
   const adminClient = createClient(url, serviceKey)

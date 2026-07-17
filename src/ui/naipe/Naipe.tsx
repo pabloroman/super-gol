@@ -15,7 +15,7 @@ import { isForeign, physicalLine } from './card-data'
  * fixed Tailwind text step can do. So the root is a **container** and everything
  * inside is sized in `cqw` (1cqw = 1% of the card's width): the naipe fills
  * whatever box it's given and stays internally proportional from the 40px chip
- * on the bench up to the full card in the sheet.
+ * in the picker up to the full card in the sheet.
  */
 
 export type NaipeVariant = 'mini' | 'full'
