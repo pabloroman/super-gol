@@ -10,6 +10,7 @@ import {
   type MatchState,
   type Action,
 } from '@/game/board'
+import { chooseAction } from '@/game/board/ai'
 
 function card(id: string, position: string, abilities: EngineCard['abilities'] = {}): EngineCard {
   return { id, name: id, position, abilities }
@@ -134,6 +135,25 @@ describe('a shot on target that beats the keeper is a goal, and re-places the bo
   })
 })
 
+describe('shots are legal only from the attacking end (the zone map is symmetric)', () => {
+  function withCarrierAt(row: number, col = 2): MatchState {
+    let st = freshMatch({ rm: 2, dl: 2 })
+    st = apply(st, legal(st)[0], noRng).state
+    return moveTo(st, st.ball.carrier!, { col, row })
+  }
+  const shots = (st: MatchState) => legal(st).filter((a) => a.kind === 'shot').map((a) => (a as { shot: string }).shot)
+
+  it('offers no shot from home\'s OWN box or ring (rows 0/1)', () => {
+    expect(shots(withCarrierAt(0))).toEqual([])
+    expect(shots(withCarrierAt(1))).toEqual([])
+  })
+
+  it('offers RM in the attacking box (row 5) and DL in the attacking ring (row 4)', () => {
+    expect(shots(withCarrierAt(5))).toContain('RM')
+    expect(shots(withCarrierAt(4))).toContain('DL')
+  })
+})
+
 describe('anti-stall: a player cannot be moved to the same cell twice (page 12)', () => {
   it('drops the repeat from the legal set after the move', () => {
     let st = freshMatch()
@@ -153,6 +173,25 @@ describe('anti-stall: a player cannot be moved to the same cell twice (page 12)'
       (a) => a.kind === 'move' && a.player === mover && a.to.col === dest.col && a.to.row === dest.row,
     )
     expect(repeat).toBe(false)
+  })
+})
+
+describe('a full AI-vs-AI match always completes', () => {
+  it('reaches fulltime at the 15-possession clock across several seeds', () => {
+    for (const seed of [1, 7, 42, 99, 1234]) {
+      let st = createMatch({
+        home: squad('home', { pc: 2, pl: 1, rg: 1, rm: 2, dl: 1 }),
+        away: squad('away', { pc: 2, pl: 1, rg: 1, rm: 2, dl: 1 }),
+        difficulty: 'normal',
+      })
+      const rng = seededFaces(seed)
+      let guard = 0
+      while (st.phase.kind !== 'fulltime' && guard++ < 20000) {
+        st = apply(st, chooseAction(st, rng), rng).state
+      }
+      expect(st.phase.kind).toBe('fulltime')
+      expect(st.turno).toBeGreaterThanOrEqual(15)
+    }
   })
 })
 

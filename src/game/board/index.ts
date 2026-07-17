@@ -46,6 +46,7 @@ export function createMatch(input: CreateMatchInput): MatchState {
     score: { home: 0, away: 0 },
     turno: 0,
     ply: 0,
+    possessionJugadas: 0,
     antiStall: { pdChain: [], movedTo: {}, movesRun: 0 },
     difficulty: input.difficulty,
   }

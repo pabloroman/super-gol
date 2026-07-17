@@ -31,6 +31,12 @@ import type { MatchState, MatchPlayer, PlayerId, Marcaje, Side } from './state'
 const TURNO_LIMIT = 15
 /** Consecutive movements that cost an extra turno without losing the ball (page 29). */
 const MOVES_RUN_LIMIT = 5
+/**
+ * Jugadas one possession may run before it "breaks down" and the ball is conceded. Not a
+ * rulebook number — a safety valve (see `MatchState.possessionJugadas`) set high enough
+ * that ordinary human play never trips it, but low enough that the clock always advances.
+ */
+const POSSESSION_CAP = 24
 
 const rate = (p: MatchPlayer, key: Parameters<typeof abilityValue>[1]): number =>
   abilityValue(p.card, key)
@@ -107,8 +113,21 @@ function resetAntiStall(state: MatchState): void {
 function changePossession(state: MatchState, events: EngineEvent[]): void {
   state.attacker = other(state.attacker)
   resetAntiStall(state)
+  state.possessionJugadas = 0
   if (advanceTurno(state, events)) return
   state.phase = { kind: 'attack', side: state.attacker }
+}
+
+/** A stalled possession breaks down: the nearest opponent takes the ball (safety valve). */
+function breakDown(state: MatchState, events: EngineEvent[]): void {
+  const holder = carrier(state)
+  const taker = playersOf(state, other(state.attacker))
+    .filter((p) => p.id !== keeperId(other(state.attacker)))
+    .sort((a, b) => distance(a.cell, holder.cell) - distance(b.cell, holder.cell))[0]
+  events.push(ev('turnover', other(state.attacker), { player: taker.card.name }))
+  giveBall(state, taker.id)
+  state.libre = null
+  changePossession(state, events)
 }
 
 // ── the reducer ───────────────────────────────────────────────────────────────
@@ -191,6 +210,11 @@ function applyKickoff(state: MatchState, action: Action, events: EngineEvent[]):
 // ── attacker jugadas ─────────────────────────────────────────────────────────
 
 function applyAttack(state: MatchState, action: Action, rng: Rng, events: EngineEvent[]): void {
+  // A possession that never turns over would stall the clock; force a breakdown once it
+  // runs past the budget (the human never gets near it — see POSSESSION_CAP).
+  if (state.possessionJugadas >= POSSESSION_CAP) return breakDown(state, events)
+  state.possessionJugadas += 1
+
   switch (action.kind) {
     case 'pass':
       return applyPass(state, action.pass, action.to, rng, events)
@@ -545,6 +569,7 @@ function nearestTo(state: MatchState, side: Side, cell: Cell): PlayerId {
 function keeperRestartAfterShot(state: MatchState, events: EngineEvent[]): void {
   state.attacker = other(state.attacker)
   resetAntiStall(state)
+  state.possessionJugadas = 0
   if (advanceTurno(state, events)) return
   giveBall(state, keeperId(state.attacker))
   // One player per team may reposition first (page 11): restarting side, then the other.
@@ -614,6 +639,7 @@ function concede(state: MatchState, scorer: Side, events: EngineEvent[]): void {
   state.players = { ...autoPlace(homeSquadOf(state), 'home'), ...autoPlace(awaySquadOf(state), 'away') }
   state.attacker = conceding
   resetAntiStall(state)
+  state.possessionJugadas = 0
   state.libre = null
   const kicker = kickoffCarrier(conceding)
   giveBall(state, kicker)

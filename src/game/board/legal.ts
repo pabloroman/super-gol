@@ -122,10 +122,14 @@ function attackerActions(state: MatchState): Action[] {
   // Regate: only when marked (page 9).
   if (isMarked(mark)) out.push({ kind: 'regate' })
 
-  // Shots: strictly by zone (page 10).
+  // Shots: from the RM box / DL ring, but only at the ATTACKING end — the zone map is
+  // symmetric, so a carrier standing in their OWN ring must not be allowed to shoot at
+  // the far goal (page 10: you chutar a gol from the box/ring in front of it).
   const zone = zoneOf(self.cell)
-  if (zone === 'RM') out.push({ kind: 'shot', shot: 'RM' })
-  if (zone === 'DL') out.push({ kind: 'shot', shot: 'DL' })
+  const rmRow = side === 'home' ? 5 : 0
+  const dlRow = side === 'home' ? 4 : 1
+  if (zone === 'RM' && self.cell.row === rmRow) out.push({ kind: 'shot', shot: 'RM' })
+  if (zone === 'DL' && self.cell.row === dlRow) out.push({ kind: 'shot', shot: 'DL' })
 
   // Movement: the carrier only if libre de marcaje; teammates freely; adjacency + anti-stall.
   for (const p of playersOf(state, side)) {

@@ -150,6 +150,14 @@ export interface MatchState {
   /** Possession changes so far; the match ends at 15 (page 29). */
   turno: number
   ply: number
+  /**
+   * Jugadas played in the current possession. A completed pass keeps the ball and does
+   * not advance `turno`, and the basic game puts no repeat cap on pases corto/largo — so
+   * a possession is, in principle, unbounded. A human never stalls like that, but a
+   * passive agent can, so a generous per-possession budget forces a breakdown; it is the
+   * only thing that guarantees the 15-turno clock is ever reached.
+   */
+  possessionJugadas: number
   antiStall: AntiStall
   difficulty: Difficulty
 }
