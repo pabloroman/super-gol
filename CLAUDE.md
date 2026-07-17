@@ -198,17 +198,26 @@ below `md`, a centered dialog above. `size` (`'default' | 'wide'`) sets the desk
 width only. Don't build a second overlay: the hand-rolled modal that used to live
 in `Admin.tsx` had none of the above, which is exactly why it isn't there anymore.
 
-## Admin catalog UI
+## Admin UI
 
 Admins (a `profiles.is_admin` flag, set only in the DB) get an in-app screen
-(`src/screens/Admin.tsx`, gated in `App.tsx`'s TopBar) to **edit individual
-cards** and **import a full-card CSV**. Writes go through the SECURITY DEFINER
-RPCs `admin_upsert_cards` / `admin_delete_card` (`0006_admin_cards.sql`), which
-verify `is_admin` server-side — same posture as the economy RPCs; `cards` RLS is
-unchanged. CSV parsing/serialization is `src/cards/csv.ts` (one column per field
-+ one per ability; `zone_grid` derived from `position`). **Once cards are edited
-in-app the DB is the source of truth** — `0005` is just the initial seed, and a
-`db reset` would revert admin edits.
+gated in `App.tsx`'s TopBar. `src/screens/Admin.tsx` is only the **shell**: the
+gate plus a local-state tab switcher over two sibling screens, **`AdminCards.tsx`**
+(catalog) and **`AdminUsers.tsx`** (users). Tabs, not routes — two views of one
+screen, and `/admin` is deliberately absent from `TABS` in `src/ui/nav.ts`. The
+inactive tab is unmounted, so the 518-row catalog isn't left in the DOM behind
+Usuarios. **The gate is UX, not security**: every write re-checks `is_admin`
+server-side, so a forged client flag reveals empty screens and nothing else.
+
+### Cartas
+
+**Edit individual cards** and **import a full-card CSV**. Writes go through the
+SECURITY DEFINER RPCs `admin_upsert_cards` / `admin_delete_card`
+(`0006_admin_cards.sql`), which verify `is_admin` server-side — same posture as
+the economy RPCs; `cards` RLS is unchanged. CSV parsing/serialization is
+`src/cards/csv.ts` (one column per field + one per ability; `zone_grid` derived
+from `position`). **Once cards are edited in-app the DB is the source of truth** —
+`0005` is just the initial seed, and a `db reset` would revert admin edits.
 
 The catalog is a list below `md` and a real `<table>` above it, from **one render**
 (`CardRow`) — the 518 rows are unvirtualized, so a second hidden mobile copy would
@@ -218,6 +227,33 @@ and a missed one turns Cancelar into a save. Search is `useCardFilters` with
 `searchId: true` — that flag is opt-in because ids are slugs of name+club+season,
 so matching them by default would make "rma" return every Real Madrid card in
 Colección. Its `getCard` must stay at module scope (it's a `useMemo` dep).
+
+### Usuarios
+
+List every profile, adjust a wallet, and grant/revoke `is_admin`, through
+`admin_list_users` / `admin_adjust_coins` / `admin_set_admin`
+(`0011_admin_users.sql`), all behind the same `require_admin()` guard `0006`
+added. Notes that are easy to get wrong:
+
+- **RLS is unchanged and must stay that way.** `0002` lets a client read only its
+  own `profiles` row; the list is an admin-only RPC that bypasses it as owner,
+  *not* a widened policy. `admin_list_users` also joins `auth.users` for the
+  email — admin-only PII, which is why it is an RPC and not a view.
+- **`admin_adjust_coins` takes a signed amount and writes a `transactions` row**
+  (`kind: 'admin_adjust'`), like every other coin movement — a grant that skipped
+  the ledger would stop it summing to the balance. It locks the wallet row
+  (`for update`) as `open_pack` does, and pre-checks the balance because
+  `profiles.coins` carries `check (coins >= 0)`.
+- **Self-revoke of `is_admin` is refused server-side.** The flag is settable only
+  from the DB or by another admin, so the last admin demoting themselves would
+  lock it out of the app for good. The checkbox disables on your own row to say
+  so before the round trip.
+- Editing your own row calls `refreshProfile()` — the TopBar reads coins and the
+  admin gear from the auth profile and would otherwise keep stale numbers.
+
+Usuarios reuses Cartas' one-render list/`<table>` shape, but **not**
+`useCardFilters` — that hook filters by rarity/position/ficha, which a user has
+none of; a name/email substring is the whole of what it needs.
 
 ## Commands
 

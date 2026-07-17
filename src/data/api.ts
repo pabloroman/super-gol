@@ -1,5 +1,6 @@
 import { requireSupabase } from '@/lib/supabase'
 import type {
+  AdminUser,
   Card,
   CollectionEntry,
   Pack,
@@ -129,4 +130,37 @@ export async function adminUpsertCards(cards: ImportedCard[]): Promise<number> {
 export async function adminDeleteCard(id: string): Promise<void> {
   const { error } = await requireSupabase().rpc('admin_delete_card', { p_id: id })
   if (error) throw new Error(error.message)
+}
+
+// ---------- admin (users) ----------
+// Same posture again (0011): profiles RLS still exposes only your own row to a
+// client, so the list has to come from an RPC that verifies is_admin as owner
+// rather than from a widened policy.
+export async function adminListUsers(): Promise<AdminUser[]> {
+  const { data, error } = await requireSupabase().rpc('admin_list_users')
+  if (error) throw new Error(error.message)
+  return (data ?? []) as AdminUser[]
+}
+
+export async function adminSetAdmin(userId: string, isAdmin: boolean): Promise<void> {
+  const { error } = await requireSupabase().rpc('admin_set_admin', {
+    p_user_id: userId,
+    p_is_admin: isAdmin,
+  })
+  if (error) throw new Error(error.message)
+}
+
+/** `amount` is signed (+credit / -debit). Returns the new balance. */
+export async function adminAdjustCoins(
+  userId: string,
+  amount: number,
+  reason: string,
+): Promise<number> {
+  const { data, error } = await requireSupabase().rpc('admin_adjust_coins', {
+    p_user_id: userId,
+    p_amount: amount,
+    p_reason: reason,
+  })
+  if (error) throw new Error(error.message)
+  return data as number
 }

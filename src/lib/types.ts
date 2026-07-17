@@ -47,6 +47,21 @@ export interface Profile {
   is_admin: boolean
 }
 
+// A row of the admin Usuarios list. Not a table mirror like the types above: it
+// is the shape of `admin_list_users()` (0011), which joins the profile to its
+// email and to the two counts the screen shows. `email` is admin-only PII — no
+// player-facing query returns it.
+export interface AdminUser {
+  id: string
+  username: string | null
+  email: string | null
+  coins: number
+  is_admin: boolean
+  created_at: string
+  cards_owned: number
+  matches_played: number
+}
+
 export interface CollectionEntry {
   card: Card
   quantity: number
