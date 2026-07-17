@@ -54,17 +54,16 @@ export function autoPlace(squad: EngineSquad, side: Side): Record<PlayerId, Matc
   )
 
   const players: Record<PlayerId, MatchPlayer> = {}
-  const keeper = squad.keeper
   players[playerId(side, 0)] = {
     id: playerId(side, 0),
     side,
-    cardId: keeper.id,
+    card: squad.keeper,
     cell: keeperCell(side),
     onTop: false,
   }
   outfield.forEach((card: EngineCard, i) => {
     const id = playerId(side, i + 1)
-    players[id] = { id, side, cardId: card.id, cell: cells[i], onTop: false }
+    players[id] = { id, side, card, cell: cells[i], onTop: false }
   })
   return players
 }

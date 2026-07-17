@@ -34,6 +34,11 @@ export function inBounds(cell: Cell): boolean {
   return cell.col >= 0 && cell.col < COLS && cell.row >= 0 && cell.row < ROWS
 }
 
+/** The 30 playable cells, row-major. Handy for "every empty cell in range" scans. */
+export const ALL_CELLS: Cell[] = Array.from({ length: ROWS }, (_, row) =>
+  Array.from({ length: COLS }, (_, col) => ({ col, row })),
+).flat()
+
 /**
  * The (up to 8) squares adjacent to a cell. "Casillas adyacentes" in the rulebook is
  * king-move adjacency on the grid — the worked example's moves (e.g. C4→B3) include

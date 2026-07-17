@@ -16,6 +16,9 @@ import { autoPlace, kickoffCarrier } from './placement'
 
 export * from './state'
 export * from './derive'
+export * from './actions'
+export { legalActions } from './legal'
+export { apply } from './reducer'
 export { autoPlace, kickoffCarrier } from './placement'
 
 export interface CreateMatchInput {
@@ -43,7 +46,7 @@ export function createMatch(input: CreateMatchInput): MatchState {
     score: { home: 0, away: 0 },
     turno: 0,
     ply: 0,
-    antiStall: { pdChain: [], movedTo: {} },
+    antiStall: { pdChain: [], movedTo: {}, movesRun: 0 },
     difficulty: input.difficulty,
   }
 }

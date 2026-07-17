@@ -19,10 +19,10 @@
  */
 
 import type { Cell } from '../engine/pitch'
-import type { Side, Difficulty } from '../engine/types'
+import type { Side, Difficulty, EngineCard } from '../engine/types'
 
 export type { Cell } from '../engine/pitch'
-export type { Side, Marcaje, Difficulty } from '../engine/types'
+export type { Side, Marcaje, Difficulty, EngineCard } from '../engine/types'
 
 /** The 30 playable squares. The keeper cells (row -1 / row 6) are outside this grid. */
 export const COLS = 5
@@ -43,8 +43,13 @@ export type PlayerId = string
 export interface MatchPlayer {
   id: PlayerId
   side: Side
-  /** The catalog card this player is, for ratings/rendering. */
-  cardId: string
+  /**
+   * A self-contained snapshot of the card (id, name, position, ratings). Embedded
+   * rather than referenced so the state needs no external catalog to resolve a
+   * jugada — every `apply` reads ratings straight off the player — and so a persisted
+   * session survives a later catalog edit unchanged.
+   */
+  card: EngineCard
   cell: Cell
   /**
    * Stacking (rulebook page 4/13): at most two players share a cell and always from
@@ -77,6 +82,13 @@ export interface AntiStall {
   pdChain: PlayerId[]
   /** `player → "col,row"` a player has already been moved to (no moving there twice). */
   movedTo: Record<PlayerId, string[]>
+  /**
+   * Consecutive movements interleaved only with pases directos. At 5 the possession
+   * costs "un turno más" without losing the ball (rulebook page 29) — the brake that
+   * stops a player from stalling out the clock with legal shuffling. Any non-direct
+   * pass, regate or remate resets it.
+   */
+  movesRun: number
 }
 
 /**
