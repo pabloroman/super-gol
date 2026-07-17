@@ -193,9 +193,10 @@ export function SquadBuilder() {
         onChange={(e) => setName(e.target.value)}
       />
 
-      {/* Sticky status bar. top-[53px] matches the TopBar's real height — the old
-          top-16 left a gap that content scrolled through. */}
-      <div className="card-surface sticky top-[53px] z-10 flex items-center justify-between gap-3 p-4">
+      {/* Sticky status bar. It parks directly under the TopBar, whose height is
+          --topbar-h (index.css) — and which is taller above md, where it carries
+          the nav tabs. Was a hard-coded pixel constant; don't reintroduce one. */}
+      <div className="card-surface sticky top-topbar z-10 flex items-center justify-between gap-3 p-4">
         <div className="min-w-0 text-sm">
           <div className="tabular-nums">
             <span className="text-slate-400">Titulares </span>

@@ -1,15 +1,10 @@
 import { NavLink } from 'react-router-dom'
-
-const TABS = [
-  { to: '/', label: 'Inicio', icon: '⚽', end: true },
-  { to: '/squad', label: 'Equipo', icon: '👕', end: false },
-  { to: '/collection', label: 'Colección', icon: '🗂️', end: false },
-  { to: '/store', label: 'Tienda', icon: '🛒', end: false },
-]
+import { TABS } from '@/ui/nav'
 
 export function BottomNav() {
   return (
     <nav
+      aria-label="Principal"
       className="sticky bottom-0 z-20 border-t border-white/5 bg-pitch-950/90 backdrop-blur"
       style={{ paddingBottom: 'env(safe-area-inset-bottom)' }}
     >

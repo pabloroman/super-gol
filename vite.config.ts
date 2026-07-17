@@ -40,7 +40,9 @@ export default defineConfig(({ mode }) => {
           theme_color: '#0b6b3a',
           background_color: '#0b1a12',
           display: 'standalone',
-          orientation: 'portrait',
+          // 'any', not 'portrait': the app has a landscape layout above md, and
+          // pinning portrait would hide it from an installed tablet.
+          orientation: 'any',
           start_url: '/',
           icons: [
             { src: 'pwa-192.png', sizes: '192x192', type: 'image/png' },
