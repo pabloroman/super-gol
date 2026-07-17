@@ -66,11 +66,37 @@ export function Login() {
     const sb = requireSupabase()
     try {
       if (mode === 'signup') {
+        const trimmed = username.trim()
+
+        // Check the name BEFORE signing up, not by reading the error after.
+        // handle_new_user still refuses a duplicate (0012), but supabase-js turns
+        // the resulting 500 into an AuthRetryableFetchError and throws the body
+        // away — whatever the trigger raises reaches us as the string "{}". So
+        // this is the only point at which we can say something true to the user.
+        // A name claimed between here and the insert loses the race and surfaces
+        // as the generic failure below; rare, and the retry is correct.
+        if (trimmed) {
+          const { data: free, error: checkError } = await sb.rpc('username_available', {
+            p_username: trimmed,
+          })
+          if (checkError) throw checkError
+          if (!free) {
+            setError('Ese nombre de entrenador ya está en uso. Elige otro.')
+            return
+          }
+        }
+
         const { data, error } = await sb.auth.signUp({
           email,
           password,
           options: {
-            data: { username: username || 'Entrenador' },
+            // Send it blank if it is blank: handle_new_user turns blank into a
+            // NULL username. Defaulting to 'Entrenador' here is what broke
+            // signup — profiles.username is unique, so the first blank signup
+            // reserved that name and every later one collided. Home and the
+            // admin list already render 'Entrenador' for a null, so the fallback
+            // lives there, where it is a label and not a claim.
+            data: { username: trimmed },
             emailRedirectTo: emailRedirectTo(),
           },
         })
