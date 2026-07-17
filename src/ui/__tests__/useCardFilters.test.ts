@@ -1,0 +1,73 @@
+import { describe, expect, it } from 'vitest'
+import type { Card } from '../../lib/types'
+import { cardMatchesQuery } from '../useCardFilters'
+
+function card(over: Partial<Card>): Card {
+  return {
+    id: 'x',
+    name: 'X',
+    full_name: null,
+    club: null,
+    club_slug: null,
+    nationality: null,
+    birthplace: null,
+    birth_date: null,
+    height_cm: null,
+    weight_kg: null,
+    position: 'FW',
+    cost: 5,
+    rarity: 'comun',
+    is_starter: false,
+    abilities: {},
+    zone_grid: [],
+    image_url: null,
+    ...over,
+  }
+}
+
+// A real catalog row: ids are slugs of name + club + season, which is the whole
+// reason searchId has to be opt-in.
+const militao = card({
+  id: 'eder-militao-rma-2526',
+  name: 'Militão',
+  full_name: 'Éder Gabriel Militão',
+  club: 'Real Madrid',
+})
+
+describe('cardMatchesQuery', () => {
+  it('folds accents, so an ASCII keyboard finds the card', () => {
+    // Admin's old hand-rolled includes() matched none of these.
+    expect(cardMatchesQuery(militao, 'militao')).toBe(true)
+    expect(cardMatchesQuery(militao, 'Militao')).toBe(true)
+    expect(cardMatchesQuery(militao, 'eder')).toBe(true)
+    expect(cardMatchesQuery(militao, 'Militão')).toBe(true)
+  })
+
+  it('matches name, full_name and club', () => {
+    expect(cardMatchesQuery(militao, 'gabriel')).toBe(true)
+    expect(cardMatchesQuery(militao, 'real madrid')).toBe(true)
+  })
+
+  it('ignores empty and whitespace-only queries', () => {
+    expect(cardMatchesQuery(militao, '')).toBe(true)
+    expect(cardMatchesQuery(militao, '   ')).toBe(true)
+  })
+
+  it('does not match the id by default — the player-facing default', () => {
+    // Both of these are substrings of the id. If they ever match here, every
+    // Real Madrid card answers "rma" and all 518 answer "2526" in Colección.
+    expect(cardMatchesQuery(militao, 'rma')).toBe(false)
+    expect(cardMatchesQuery(militao, '2526')).toBe(false)
+  })
+
+  it('matches the id when searchId is on — the admin catalog wants that', () => {
+    expect(cardMatchesQuery(militao, 'rma', true)).toBe(true)
+    expect(cardMatchesQuery(militao, '2526', true)).toBe(true)
+    expect(cardMatchesQuery(militao, 'eder-militao', true)).toBe(true)
+  })
+
+  it('still misses what it should miss', () => {
+    expect(cardMatchesQuery(militao, 'barcelona')).toBe(false)
+    expect(cardMatchesQuery(militao, 'zzz', true)).toBe(false)
+  })
+})

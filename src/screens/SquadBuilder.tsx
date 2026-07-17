@@ -303,6 +303,7 @@ export function SquadBuilder() {
         open={picking !== null}
         onClose={() => setPicking(null)}
         title={picking === 'bench' ? 'Elegir suplente' : 'Elegir titular'}
+        size="wide"
       >
         <CardFilters state={state} count={filtered.length} />
         <p className="shrink-0 text-xs tabular-nums text-slate-400">
