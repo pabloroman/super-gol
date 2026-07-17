@@ -1740,13 +1740,23 @@ async function startMatch(userClient, adminClient, uid, difficulty) {
     }
     return json({ error: insErr.message }, 500);
   }
-  return json({ sessionId: inserted.id, ply: state.ply, state, legal: legalActions(state), events: [] });
+  return json({
+    sessionId: inserted.id,
+    ply: state.ply,
+    state,
+    legal: legalActions(state),
+    events: [],
+    opponent: away.name
+  });
 }
 async function resumeMatch(userClient, uid) {
-  const { data: session } = await userClient.from("match_sessions").select("id, state, ply").eq("user_id", uid).eq("status", "active").maybeSingle();
+  var _a;
+  const { data: session } = await userClient.from("match_sessions").select("id, state, ply, away_squad, log").eq("user_id", uid).eq("status", "active").maybeSingle();
   if (!session) return json({ error: "no_active_session" }, 404);
   const state = session.state;
-  return json({ sessionId: session.id, ply: session.ply, state, legal: legalActions(state), events: [] });
+  const events = session.log ?? [];
+  const opponent = ((_a = session.away_squad) == null ? void 0 : _a.name) ?? "Rival";
+  return json({ sessionId: session.id, ply: session.ply, state, legal: legalActions(state), events, opponent });
 }
 async function resignMatch(adminClient, uid) {
   const { data: session } = await adminClient.from("match_sessions").select("id").eq("user_id", uid).eq("status", "active").maybeSingle();

@@ -185,20 +185,31 @@ async function startMatch(
     return json({ error: insErr.message }, 500)
   }
 
-  return json({ sessionId: inserted.id, ply: state.ply, state, legal: legalActions(state), events: [] })
+  return json({
+    sessionId: inserted.id,
+    ply: state.ply,
+    state,
+    legal: legalActions(state),
+    events: [],
+    opponent: away.name,
+  })
 }
 
 async function resumeMatch(userClient: SupabaseClient, uid: string): Promise<Response> {
   // Reading your own session is harmless — perfect-information board game, nothing hidden.
   const { data: session } = await userClient
     .from('match_sessions')
-    .select('id, state, ply')
+    .select('id, state, ply, away_squad, log')
     .eq('user_id', uid)
     .eq('status', 'active')
     .maybeSingle()
   if (!session) return json({ error: 'no_active_session' }, 404)
   const state = session.state as MatchState
-  return json({ sessionId: session.id, ply: session.ply, state, legal: legalActions(state), events: [] })
+  // Replay the whole chronicle so a refresh restores the log, not just the board. The
+  // client renders these exactly like a live `act`'s events.
+  const events = (session.log as unknown[]) ?? []
+  const opponent = (session.away_squad as { name?: string })?.name ?? 'Rival'
+  return json({ sessionId: session.id, ply: session.ply, state, legal: legalActions(state), events, opponent })
 }
 
 async function resignMatch(adminClient: SupabaseClient, uid: string): Promise<Response> {
