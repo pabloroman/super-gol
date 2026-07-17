@@ -3,6 +3,7 @@ import { useAuth } from '@/auth/AuthProvider'
 import { matchEngine, DIFFICULTIES, type Difficulty } from '@/game/engine'
 import type { MatchOutcome } from '@/lib/types'
 import { PitchBoard } from '@/ui/PitchBoard'
+import { InteractiveMatch } from './play/InteractiveMatch'
 
 const RESULT_COPY = {
   win: { title: '¡Victoria!', color: 'text-grass-400' },
@@ -22,6 +23,9 @@ export function Play() {
   const [step, setStep] = useState(0)
   const [playing, setPlaying] = useState(false)
   const activeRef = useRef<HTMLLIElement | null>(null)
+  // Interactive (turn-based) mode: a difficulty here means "play it live vs the AI".
+  const [interactive, setInteractive] = useState(true)
+  const [liveMatch, setLiveMatch] = useState<Difficulty | null>(null)
 
   async function play(difficulty: Difficulty) {
     setBusy(true)
@@ -59,6 +63,11 @@ export function Play() {
   useEffect(() => {
     activeRef.current?.scrollIntoView({ block: 'nearest' })
   }, [step])
+
+  // All hooks above run unconditionally; only now may we branch the render.
+  if (liveMatch) {
+    return <InteractiveMatch difficulty={liveMatch} onExit={() => setLiveMatch(null)} />
+  }
 
   if (outcome) {
     const copy = RESULT_COPY[outcome.result]
@@ -163,12 +172,20 @@ export function Play() {
     // above is the wide one, where the pitch sits beside the crónica.
     <div className="app-measure flex flex-col gap-4">
       <h1 className="font-display text-2xl font-bold">Elige rival</h1>
+      <label className="flex items-center gap-2 text-sm text-slate-300">
+        <input
+          type="checkbox"
+          checked={interactive}
+          onChange={(e) => setInteractive(e.target.checked)}
+        />
+        Modo interactivo (beta) — juega jugada a jugada
+      </label>
       {error && <p className="text-sm text-red-400">{error}</p>}
       {DIFFICULTIES.map((d) => (
         <button
           key={d.id}
           disabled={busy}
-          onClick={() => play(d.id)}
+          onClick={() => (interactive ? setLiveMatch(d.id) : play(d.id))}
           className="card-surface flex items-center justify-between p-5 text-left transition md:hover:bg-pitch-700/80 md:hover:ring-white/10 active:scale-[0.99] disabled:opacity-50"
         >
           <div>

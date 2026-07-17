@@ -1,0 +1,183 @@
+import type { MatchState, MatchPlayer, Cell } from '@/game/board'
+import { occupants, cellKey, keeperCell } from '@/game/board'
+import { ZONE_MAP, COLS, ROWS, type Zone } from '@/game/engine/pitch'
+
+/**
+ * The interactive board: the real 5×6 grid plus the two portería cells, with all 22
+ * players shown as pips. Away attacks from the top, home from the bottom (so the human
+ * plays "up" the screen). Stacking is drawn as two half-height pips — the upper one is
+ * "encima" (marking al hombre), which IS the marcaje, so it has to read at a glance.
+ *
+ * The board is a container: pips are sized in `cqw`, so it fills whatever width it is
+ * given (unlike the fixed-px replay board, which caps at 22rem).
+ */
+
+const ZONE_FILL: Record<Zone, string> = {
+  RM: 'bg-grass-600/50',
+  DL: 'bg-grass-600/25',
+  MID: 'bg-grass-500/10',
+  PA: 'bg-grass-500/[0.06]',
+}
+
+const ALL_COLS = Array.from({ length: COLS }, (_, i) => i)
+// Away goal (row 5) at the top, home goal (row 0) at the bottom.
+const DISPLAY_ROWS = Array.from({ length: ROWS }, (_, i) => ROWS - 1 - i)
+
+function shirtNumber(p: MatchPlayer): string {
+  const n = Number(p.id.slice(1))
+  return n === 0 ? 'P' : String(n)
+}
+
+function Pip({
+  player,
+  hasBall,
+  selected,
+  half,
+  onClick,
+}: {
+  player: MatchPlayer
+  hasBall: boolean
+  selected: boolean
+  half: 'top' | 'bottom' | 'full'
+  onClick?: () => void
+}) {
+  const home = player.side === 'home'
+  const height = half === 'full' ? 'h-[16cqw]' : 'h-[8cqw]'
+  return (
+    <button
+      type="button"
+      onClick={
+        onClick &&
+        ((e) => {
+          e.stopPropagation() // don't also fire the cell's move handler
+          onClick()
+        })
+      }
+      className={`relative flex ${height} w-[16cqw] items-center justify-center rounded-[3cqw] text-[7cqw] font-bold leading-none ${
+        home ? 'bg-white text-pitch-950' : 'bg-rare text-white'
+      } ${selected ? 'ring-[1.5cqw] ring-amber-300' : 'ring-1 ring-black/30'}`}
+    >
+      {shirtNumber(player)}
+      {hasBall && (
+        <span className="absolute -right-[2cqw] -top-[2cqw] h-[6cqw] w-[6cqw] rounded-full bg-amber-400 ring-2 ring-pitch-950" />
+      )}
+    </button>
+  )
+}
+
+function CellStack({
+  players,
+  ballCarrier,
+  selectedPlayer,
+  onSelectPlayer,
+}: {
+  players: MatchPlayer[]
+  ballCarrier: string | null
+  selectedPlayer: string | null
+  onSelectPlayer?: (id: string) => void
+}) {
+  if (players.length === 0) return null
+  if (players.length === 1) {
+    const p = players[0]
+    return (
+      <Pip
+        player={p}
+        half="full"
+        hasBall={ballCarrier === p.id}
+        selected={selectedPlayer === p.id}
+        onClick={onSelectPlayer && (() => onSelectPlayer(p.id))}
+      />
+    )
+  }
+  // Two players: the one "encima" (onTop) sits in the upper half.
+  const top = players.find((p) => p.onTop) ?? players[0]
+  const bottom = players.find((p) => p.id !== top.id)!
+  return (
+    <div className="flex flex-col gap-[1cqw]">
+      {[top, bottom].map((p, i) => (
+        <Pip
+          key={p.id}
+          player={p}
+          half={i === 0 ? 'top' : 'bottom'}
+          hasBall={ballCarrier === p.id}
+          selected={selectedPlayer === p.id}
+          onClick={onSelectPlayer && (() => onSelectPlayer(p.id))}
+        />
+      ))}
+    </div>
+  )
+}
+
+export function InteractivePitchBoard({
+  state,
+  selectedPlayer = null,
+  highlight,
+  onSelectPlayer,
+  onSelectCell,
+}: {
+  state: MatchState
+  selectedPlayer?: string | null
+  highlight?: Set<string>
+  onSelectPlayer?: (id: string) => void
+  onSelectCell?: (cell: Cell) => void
+}) {
+  const ballCarrier = state.ball.carrier
+
+  function Porteria({ side }: { side: 'home' | 'away' }) {
+    const cell = keeperCell(side)
+    const keeper = occupants(state, cell)[0]
+    return (
+      <div className="flex items-center justify-center py-[1cqw]">
+        <div className="h-[3cqw] w-[40cqw] rounded-full bg-white/40" />
+        {keeper && (
+          <div className="absolute">
+            <Pip
+              player={keeper}
+              half="full"
+              hasBall={ballCarrier === keeper.id}
+              selected={selectedPlayer === keeper.id}
+              onClick={onSelectPlayer && (() => onSelectPlayer(keeper.id))}
+            />
+          </div>
+        )}
+      </div>
+    )
+  }
+
+  return (
+    <div className="rounded-xl bg-pitch-950 p-[2cqw] ring-1 ring-white/5" style={{ containerType: 'inline-size' }}>
+      <div className="relative">
+        <Porteria side="away" />
+        <div className="grid grid-cols-5 gap-[1cqw]">
+          {DISPLAY_ROWS.map((row) =>
+            ALL_COLS.map((col) => {
+              const cell = { col, row }
+              const here = occupants(state, cell)
+              const zone = ZONE_MAP[row][col]
+              const lit = highlight?.has(cellKey(cell))
+              return (
+                <div
+                  role="button"
+                  tabIndex={onSelectCell ? 0 : undefined}
+                  key={`${row}-${col}`}
+                  onClick={onSelectCell && (() => onSelectCell(cell))}
+                  className={`relative flex aspect-square cursor-pointer items-center justify-center rounded-[2cqw] ${ZONE_FILL[zone]} ${
+                    lit ? 'ring-[1.5cqw] ring-amber-300/80' : ''
+                  }`}
+                >
+                  <CellStack
+                    players={here}
+                    ballCarrier={ballCarrier}
+                    selectedPlayer={selectedPlayer}
+                    onSelectPlayer={onSelectPlayer}
+                  />
+                </div>
+              )
+            }),
+          )}
+        </div>
+        <Porteria side="home" />
+      </div>
+    </div>
+  )
+}
