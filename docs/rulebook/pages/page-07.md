@@ -13,7 +13,7 @@
   o tres casillas de distancia.
 - **¿Quién puede realizarlo?:** El jugador que posee el balón, esté o no marcado.
 - **¿Hacia quién puede realizarlo?:** Hacia un jugador que esté a dos o tres
-  casillas de distancia que no esté marcado.
+  casillas de distancia que esté o no marcado.
 - **¿Cómo se hace?:**
   1. Cuando ni el receptor ni el pasador estén marcados al hombre, se lanzará un
      dado, habiendo de conseguir como mínimo un 10 mediante la suma:

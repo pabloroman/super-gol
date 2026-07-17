@@ -112,13 +112,20 @@ function resetAntiStall(state: MatchState): void {
  * Hand possession to the other side and start their build-up. The caller has already
  * placed the ball and set any LIBRE flag; this flips the attacker, resets the
  * possession-scoped bookkeeping and advances the clock.
+ *
+ * `grantDefenderMove` covers the one case where the new attacker did not just act but
+ * MOVED to take the ball — a defender reaching a failed pase al hueco (page 7). Since
+ * that pickup was itself a movement, the OTHER side (the old attacker) earns its move
+ * window first, mirroring the attacker-pickup branch of `applyHuecoMove`.
  */
-function changePossession(state: MatchState, events: EngineEvent[]): void {
+function changePossession(state: MatchState, events: EngineEvent[], grantDefenderMove = false): void {
   state.attacker = other(state.attacker)
   resetAntiStall(state)
   state.possessionJugadas = 0
   if (advanceTurno(state, events)) return
-  state.phase = { kind: 'attack', side: state.attacker }
+  state.phase = grantDefenderMove
+    ? { kind: 'defend_move', side: other(state.attacker) }
+    : { kind: 'attack', side: state.attacker }
 }
 
 /** A stalled possession breaks down: the nearest opponent takes the ball (safety valve). */
@@ -228,7 +235,7 @@ function applyAttack(state: MatchState, action: Action, rng: Rng, events: Engine
     case 'shot':
       return applyShot(state, action.shot, rng, events)
     case 'move':
-      return applyMove(state, action.player, action.to)
+      return applyMove(state, action.player, action.to, action.handoff ?? false)
     default:
       throw new Error(`unexpected attack action ${action.kind}`)
   }
@@ -264,7 +271,10 @@ function applyPass(
   // PC / PL — a contested pass. Dice = max(passer, receiver) per TABLA 1.
   const receiverMark = marcajeOf(state, to)
   const ratingKey = pass === 'PL' ? 'pl' : 'pc'
-  const rating = cesion ? 0 : rate(from, ratingKey) // keeper cesión: passer rating as normal; keeper's own PC/PL are 0 only when HE passes
+  // The passer's own PC/PL always counts, cesión or not: page 11's "sus factores PC y PL
+  // son cero" is the KEEPER's rating when HE plays the ball (handled in the keeper restart),
+  // not a penalty on the field player ceding back to him.
+  const rating = rate(from, ratingKey)
   const contest = resolvePase(rng, pass, passerMark, receiverMark, rating)
   // A non-direct pass breaks both anti-stall runs.
   state.antiStall.pdChain = []
@@ -356,11 +366,17 @@ function applyShot(state: MatchState, shot: 'RM' | 'DL', rng: Rng, events: Engin
   keeperRestartAfterShot(state, events)
 }
 
-function applyMove(state: MatchState, playerId: PlayerId, to: Cell): void {
+function applyMove(state: MatchState, playerId: PlayerId, to: Cell, handoff: boolean): void {
   const mover = state.players[playerId]
+  const wasCarrier = state.ball.carrier === playerId
   const target = occupants(state, to).find((o) => o.side === mover.side && o.id !== playerId)
   if (target) relevo(state, playerId, target.id)
   else stepInto(state, playerId, to)
+  // Relevo con balón, hand-off variant (page 4): the carrier swaps and leaves the ball on
+  // the teammate he swapped with, rather than carrying it. `relevo` kept the ball on the
+  // mover; move it across. The worked example needs this at play 48 (Kiko ↔ Francisco,
+  // "cogiendo el balón Francisco").
+  if (handoff && wasCarrier && target) giveBall(state, target.id)
   // A movement ends the current run of pases directos: the "sucesión de pases directos"
   // the reuse rule (page 12) forbids is a run of CONSECUTIVE PDs, so any non-PD play
   // breaks it. The worked example relies on this — plays 14–16 re-pass to players from
@@ -369,10 +385,12 @@ function applyMove(state: MatchState, playerId: PlayerId, to: Cell): void {
   // Record the move so the same player can't be sent to the same cell twice (page 12).
   ;(state.antiStall.movedTo[playerId] ??= []).push(cellKey(to))
 
-  // If the carrier moved onto an opponent, they are on top and libre next jugada (page 4).
-  if (state.ball.carrier === playerId && marcajeOf(state, playerId) === 'MZ') {
-    state.libre = playerId
-  }
+  // The carrier's own movement IS his jugada, so it consumes any "libre de marcaje" grace
+  // he was carrying. Page 4 makes being libre the PRECONDITION to move the ball, never a
+  // consequence: a carrier who steps onto a defender ends up marked en zona (the opponent
+  // below him), not free. Granting libre here was a bug — it left Barbará reading LIBRE
+  // three plays later and made his regate (worked example play 27) illegal.
+  if (wasCarrier) state.libre = null
 
   // Any attacker movement grants the defender a move window (page 5).
   state.phase = { kind: 'defend_move', side: other(state.attacker) }
@@ -538,10 +556,16 @@ function applyHuecoMove(state: MatchState, action: Action, events: EngineEvent[]
       const picker = state.players[action.player]
       giveBall(state, picker.id)
       if (picker.side === state.attacker) {
-        state.phase = { kind: 'attack', side: state.attacker }
+        // Reaching the ball was itself a movement, so the defender earns a move window
+        // (page 5). The worked example relies on this: Vizcaíno picks up the hueco ball
+        // (play 34), then Tocornal — the defender — moves onto Francisco (play 35).
+        state.phase = { kind: 'defend_move', side: other(state.attacker) }
       } else {
+        // The defender reached it: possession changes to them, and by the same "reaching
+        // was a movement" logic the old attacker now gets its move window (play 40 Bjelica
+        // picks up → play 41 Kiko moves onto him).
         state.libre = null
-        return changePossession(state, events)
+        return changePossession(state, events, true)
       }
       return
     }

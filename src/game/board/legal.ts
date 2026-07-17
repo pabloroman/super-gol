@@ -94,8 +94,11 @@ function attackerActions(state: MatchState): Action[] {
     if (d === 1 && (isMarked(mark) || isMarked(tMark))) {
       out.push({ kind: 'pass', pass: 'PC', to: t.id })
     }
-    // Pase largo: 2–3 cells to an unmarked teammate (page 7).
-    if (d >= 2 && d <= 3 && isUnmarked(tMark)) {
+    // Pase largo: to a teammate 2–3 cells away, marked or not — page 7 reads "que esté o
+    // no marcado", exactly like PC (page 6). (The interruption rules confirm it: pages 8–9
+    // fire anticipación/robo after a completed PL to a MARKED receiver, as in worked-example
+    // plays 36/37.) The dice (passDice, which counts the receiver's mark) price the risk.
+    if (d >= 2 && d <= 3) {
       out.push({ kind: 'pass', pass: 'PL', to: t.id })
     }
   }
@@ -136,6 +139,17 @@ function attackerActions(state: MatchState): Action[] {
     if (p.id === self.id && isMarked(mark)) continue // carrier can't move when marked
     if (p.id === keeperId(side)) continue // the keeper doesn't roam in the basic game
     out.push(...movesFor(state, p))
+  }
+
+  // Relevo con balón (page 4): a libre carrier swapping with a teammate may hand him the
+  // ball instead of carrying it ("llevando el balón o dejándoselo a este último"). Each of
+  // the carrier's relevo moves above (destination holds a teammate) gets a hand-off twin.
+  if (!isMarked(mark)) {
+    for (const m of movesFor(state, self)) {
+      if (m.kind !== 'move') continue
+      const swaps = occupants(state, m.to).some((o) => o.side === side && o.id !== self.id)
+      if (swaps) out.push({ kind: 'move', player: self.id, to: m.to, handoff: true })
+    }
   }
 
   return out
@@ -203,13 +217,18 @@ export function legalActions(state: MatchState): Action[] {
       return defenderMoveActions(state)
 
     case 'defend_interrupt': {
-      // After a completed PC/PL to a marked receiver: anticipación (only if the marker
-      // is en zona), robo (only if al hombre), or decline (pages 8–9).
+      // After a completed PC/PL to a marked receiver: anticipación, robo, or decline
+      // (pages 8–9). Page 8's "¿Quién? Un defensor marcando en zona" reads as a slip:
+      // its OWN failure clause ("si estaba marcando al hombre ... pasa a marcaje en zona")
+      // describes an AL-HOMBRE marker failing an anticipación, so a man-marker plainly may
+      // attempt one — which the worked example confirms (play 36: Tocornal, marking
+      // Francisco al hombre, takes a completed PL with his A). So anticipación is offered to
+      // either marker; robo (page 9 case 1) stays al-hombre-only.
       const receiverMark = marcajeOf(state, phase.receiver)
       const out: Action[] = [{ kind: 'decline' }]
       const marker = markerOf(state, phase.receiver)
       if (marker) {
-        if (receiverMark === 'MZ') out.push({ kind: 'anticipacion', defender: marker.id })
+        out.push({ kind: 'anticipacion', defender: marker.id })
         if (receiverMark === 'MH') out.push({ kind: 'robo', defender: marker.id, mode: 'after-pass' })
       }
       return out

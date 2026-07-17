@@ -39,7 +39,12 @@ export type Action =
   | { kind: 'hueco'; pass: Exclude<PassKind, 'PD'>; to: Cell }
   | { kind: 'regate' }
   | { kind: 'shot'; shot: ShotKind }
-  | { kind: 'move'; player: PlayerId; to: Cell }
+  /**
+   * A movement. When `to` holds a teammate it is a relevo (they swap). `handoff` only
+   * applies to a relevo con balón by the carrier: true leaves the ball with the swapped
+   * teammate ("dejándoselo a este último", page 4), absent/false carries it along.
+   */
+  | { kind: 'move'; player: PlayerId; to: Cell; handoff?: boolean }
   // Defender reactions.
   | { kind: 'anticipacion'; defender: PlayerId }
   | { kind: 'robo'; defender: PlayerId; mode: RoboMode; to?: Cell }
@@ -78,7 +83,7 @@ export function actionKey(a: Action): string {
     case 'shot':
       return `shot:${a.shot}`
     case 'move':
-      return `move:${a.player}:${cellKey(a.to)}`
+      return `move:${a.player}:${cellKey(a.to)}${a.handoff ? ':handoff' : ''}`
     case 'anticipacion':
       return `anticipacion:${a.defender}`
     case 'robo':
