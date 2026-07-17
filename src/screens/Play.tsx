@@ -95,48 +95,60 @@ export function Play() {
           </div>
         </div>
 
-        <div className="card-surface p-4">
-          <div className="mb-3 flex items-center justify-between">
-            <h3 className="text-xs font-semibold uppercase tracking-wide text-slate-400">
-              El campo
-            </h3>
-            <button
-              className="btn-ghost px-3 py-1.5 text-sm"
-              onClick={replayControl}
-            >
-              {playing ? '⏸ Pausa' : atEnd ? '↻ Repetición' : '▶ Reanudar'}
-            </button>
+        {/* Pitch beside crónica above md. The pitch track is capped at 22rem on
+            purpose: PitchBoard's cells scale, but its ball marker, centre circle
+            and goal mouths are fixed px, so a stretched board loses its
+            proportions. Inside 22rem it stays in the envelope it already renders
+            at and needs no changes. The crónica track is capped too — a 776px
+            line of match commentary is mostly trailing whitespace. */}
+        <div className="grid gap-4 md:grid-cols-[minmax(0,22rem)_minmax(0,42rem)] md:items-start md:justify-center">
+          {/* Sticky so the board stays put while a long crónica scrolls past —
+              that is the point of the split, not merely filling the width. */}
+          <div className="card-surface p-4 md:sticky md:top-[calc(var(--topbar-h)+1.5rem)]">
+            <div className="mb-3 flex items-center justify-between">
+              <h3 className="text-xs font-semibold uppercase tracking-wide text-slate-400">
+                El campo
+              </h3>
+              <button
+                className="btn-ghost px-3 py-1.5 text-sm"
+                onClick={replayControl}
+              >
+                {playing ? '⏸ Pausa' : atEnd ? '↻ Repetición' : '▶ Reanudar'}
+              </button>
+            </div>
+            <PitchBoard cell={ball?.params?.cell} side={ball?.side} />
           </div>
-          <PitchBoard cell={ball?.params?.cell} side={ball?.side} />
-        </div>
 
-        <div className="card-surface p-4">
-          <h3 className="mb-2 text-xs font-semibold uppercase tracking-wide text-slate-400">
-            Crónica
-          </h3>
-          <ul className="max-h-72 space-y-1 overflow-y-auto text-sm">
-            {outcome.log.map((e, i) => {
-              const active = i === step
-              return (
-                <li
-                  key={i}
-                  ref={active ? activeRef : null}
-                  onClick={() => {
-                    setPlaying(false)
-                    setStep(i)
-                  }}
-                  className={`flex cursor-pointer gap-2 rounded px-1 transition ${
-                    active ? 'bg-white/10 text-slate-100' : 'text-slate-300'
-                  }`}
-                >
-                  <span className="w-8 shrink-0 tabular-nums text-slate-500">
-                    {e.minute}'
-                  </span>
-                  <span>{e.text}</span>
-                </li>
-              )
-            })}
-          </ul>
+          <div className="card-surface flex flex-col p-4 md:max-h-[calc(100vh-var(--topbar-h)-3rem)]">
+            <h3 className="mb-2 shrink-0 text-xs font-semibold uppercase tracking-wide text-slate-400">
+              Crónica
+            </h3>
+            {/* max-h-72 is the phone's vertical budget: it has to share one
+                column with the board. Given its own column, the log fills it. */}
+            <ul className="max-h-72 space-y-1 overflow-y-auto text-sm md:max-h-none md:min-h-0 md:flex-1">
+              {outcome.log.map((e, i) => {
+                const active = i === step
+                return (
+                  <li
+                    key={i}
+                    ref={active ? activeRef : null}
+                    onClick={() => {
+                      setPlaying(false)
+                      setStep(i)
+                    }}
+                    className={`flex cursor-pointer gap-2 rounded px-1 transition ${
+                      active ? 'bg-white/10 text-slate-100' : 'text-slate-300'
+                    }`}
+                  >
+                    <span className="w-8 shrink-0 tabular-nums text-slate-500">
+                      {e.minute}'
+                    </span>
+                    <span>{e.text}</span>
+                  </li>
+                )
+              })}
+            </ul>
+          </div>
         </div>
 
         <button className="btn-primary" onClick={() => setOutcome(null)}>
@@ -147,7 +159,9 @@ export function Play() {
   }
 
   return (
-    <div className="flex flex-col gap-4">
+    // The picker is a short list of choices — app-measure. The outcome state
+    // above is the wide one, where the pitch sits beside the crónica.
+    <div className="app-measure flex flex-col gap-4">
       <h1 className="font-display text-2xl font-bold">Elige rival</h1>
       {error && <p className="text-sm text-red-400">{error}</p>}
       {DIFFICULTIES.map((d) => (
@@ -155,7 +169,7 @@ export function Play() {
           key={d.id}
           disabled={busy}
           onClick={() => play(d.id)}
-          className="card-surface flex items-center justify-between p-5 text-left transition active:scale-[0.99] disabled:opacity-50"
+          className="card-surface flex items-center justify-between p-5 text-left transition md:hover:bg-pitch-700/80 md:hover:ring-white/10 active:scale-[0.99] disabled:opacity-50"
         >
           <div>
             <div className="font-display text-xl font-bold">{d.label}</div>

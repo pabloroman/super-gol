@@ -49,9 +49,11 @@ export function Store() {
 
   if (sortedPulled) {
     return (
-      <div className="flex flex-col gap-4">
+      <div className="app-measure flex flex-col gap-4">
         <h1 className="font-display text-2xl font-bold">¡Sobre abierto!</h1>
-        <div className="grid grid-cols-2 gap-3">
+        {/* Only 3 columns, inside app-measure: a pack reveal is a celebration,
+            not a browse. Five cards should get *bigger* on a bigger screen. */}
+        <div className="grid grid-cols-2 gap-3 md:grid-cols-3">
           {sortedPulled.map((c, i) => (
             <Naipe key={`${c.id}-${i}`} card={c} onClick={() => setOpen(c)} />
           ))}
@@ -73,7 +75,7 @@ export function Store() {
   }
 
   return (
-    <div className="flex flex-col gap-4">
+    <div className="app-measure flex flex-col gap-4">
       <h1 className="font-display text-2xl font-bold">Tienda</h1>
       {error && <p className="text-sm text-red-400">{error}</p>}
 

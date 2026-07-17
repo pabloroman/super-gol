@@ -49,6 +49,12 @@ export default {
         // Spanish naipe, 62 × 95 mm.
         naipe: '62 / 95',
       },
+      spacing: {
+        // The TopBar's height, defined once as --topbar-h in index.css. Gives
+        // `h-topbar` for the bar itself and `top-topbar` for everything that
+        // sticks below it, so the coupling is legible instead of a magic number.
+        topbar: 'var(--topbar-h)',
+      },
     },
   },
   plugins: [],

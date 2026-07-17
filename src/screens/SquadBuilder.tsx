@@ -193,9 +193,10 @@ export function SquadBuilder() {
         onChange={(e) => setName(e.target.value)}
       />
 
-      {/* Sticky status bar. top-[53px] matches the TopBar's real height — the old
-          top-16 left a gap that content scrolled through. */}
-      <div className="card-surface sticky top-[53px] z-10 flex items-center justify-between gap-3 p-4">
+      {/* Sticky status bar. It parks directly under the TopBar, whose height is
+          --topbar-h (index.css) — and which is taller above md, where it carries
+          the nav tabs. Was a hard-coded pixel constant; don't reintroduce one. */}
+      <div className="card-surface sticky top-topbar z-10 flex items-center justify-between gap-3 p-4">
         <div className="min-w-0 text-sm">
           <div className="tabular-nums">
             <span className="text-slate-400">Titulares </span>
@@ -259,7 +260,11 @@ export function SquadBuilder() {
             <h2 className="font-display text-xs uppercase tracking-widest text-slate-500">
               Titulares · {starterCards.length}/{STARTER_COUNT}
             </h2>
-            <div className="grid grid-cols-2 gap-3">
+            {/* 6 columns at lg, not Colección's 5: a squad is a fixed, small set
+                and wants to be read at a glance, not scrolled. Six puts the 11
+                titulares in two rows and a full bench in one; four would take
+                three rows and two. */}
+            <div className="grid grid-cols-2 gap-3 md:grid-cols-4 lg:grid-cols-6">
               {starterCards.map((card) => (
                 <SquadCard
                   key={card.id}
@@ -278,7 +283,7 @@ export function SquadBuilder() {
             <h2 className="font-display text-xs uppercase tracking-widest text-slate-500">
               Suplentes · {benchCards.length}/{MAX_BENCH}
             </h2>
-            <div className="grid grid-cols-2 gap-3">
+            <div className="grid grid-cols-2 gap-3 md:grid-cols-4 lg:grid-cols-6">
               {benchCards.map((card) => (
                 <SquadCard
                   key={card.id}
@@ -299,13 +304,14 @@ export function SquadBuilder() {
         open={picking !== null}
         onClose={() => setPicking(null)}
         title={picking === 'bench' ? 'Elegir suplente' : 'Elegir titular'}
+        size="wide"
       >
         <CardFilters state={state} count={filtered.length} />
         <p className="shrink-0 text-xs tabular-nums text-slate-400">
           Te quedan <span className="font-bold text-grass-400">{remaining} pts</span> · no se
           muestran las cartas que no caben
         </p>
-        <div className="grid min-h-0 grid-cols-2 gap-3 overflow-y-auto pb-2">
+        <div className="grid min-h-0 grid-cols-2 gap-3 overflow-y-auto pb-2 md:grid-cols-4">
           {filtered.map((card) => (
             <Naipe
               key={card.id}

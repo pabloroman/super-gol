@@ -36,32 +36,51 @@ export function Collection() {
 
       {error && <p className="text-sm text-red-400">{error}</p>}
 
-      {!loading && entries.length > 0 && (
-        <CardFilters state={state} count={filtered.length} />
-      )}
-
       {loading && <p className="text-slate-500">Cargando…</p>}
 
-      <div className="grid grid-cols-2 gap-3">
-        {filtered.map((e) => (
-          <Naipe
-            key={e.card.id}
-            card={e.card}
-            quantity={e.quantity}
-            onClick={() => show(e.card)}
-          />
-        ))}
-      </div>
+      {!loading && entries.length > 0 && (
+        // The filters stack above the grid below lg and become a sticky rail at
+        // lg. CardFilters is already a vertical stack, so this is pure placement
+        // — the component is untouched and the Equipo picker keeps using it as
+        // is.
+        //
+        // The rail waits for lg because lg is the first width where it is free:
+        // it still leaves 4 columns at ~169px, which is what md already shows
+        // without it (~171px). At md the same rail would take 40% of the card
+        // width (down to ~105px), or force the grid to 3 columns.
+        //
+        // The whole block sits inside this guard on purpose: a conditional
+        // <aside> inside a live 2-col grid would drop the card grid into the
+        // 15rem track.
+        <div className="lg:grid lg:grid-cols-[15rem_minmax(0,1fr)] lg:items-start lg:gap-6">
+          <aside className="mb-4 lg:sticky lg:top-[calc(var(--topbar-h)+1.5rem)] lg:mb-0">
+            <CardFilters state={state} count={filtered.length} />
+          </aside>
+
+          <div>
+            <div className="grid grid-cols-2 gap-3 md:grid-cols-4 xl:grid-cols-5">
+              {filtered.map((e) => (
+                <Naipe
+                  key={e.card.id}
+                  card={e.card}
+                  quantity={e.quantity}
+                  onClick={() => show(e.card)}
+                />
+              ))}
+            </div>
+
+            {filtered.length === 0 && (
+              <p className="text-slate-500">
+                Ninguna carta coincide con esos filtros.
+              </p>
+            )}
+          </div>
+        </div>
+      )}
 
       {!loading && entries.length === 0 && (
         <p className="text-slate-500">
           Tu colección está vacía. Abre un sobre en la tienda.
-        </p>
-      )}
-
-      {!loading && entries.length > 0 && filtered.length === 0 && (
-        <p className="text-slate-500">
-          Ninguna carta coincide con esos filtros.
         </p>
       )}
 

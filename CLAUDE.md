@@ -72,6 +72,38 @@ the current engine.
 - Missing ability ratings count as **0** (rulebook page 6); always read ratings
   through `abilityValue` in `src/game/ratings.ts`, never index `abilities[key]`.
 
+## Layout — mobile-first, one breakpoint
+
+The app is mobile-first and responsive up to the desktop. A few rules hold the
+whole thing together:
+
+- **`md` (768px) is the only structural breakpoint.** Nav, `Sheet`, Play's outcome
+  and the Admin table all switch there; `lg`/`xl` only adjust grid density.
+  **`sm:` is useless here and is always a bug** — below `md` the content column is
+  pinned at 448px regardless of viewport, so an `sm:` rule fires at a 640px
+  viewport while its box is still phone-width.
+- **Width comes from `.app-measure` / `.app-wide`** (`src/index.css`), never a raw
+  `max-w-*` on a screen. Both are 448px below `md`, so mobile is untouched by
+  definition; above it they open to 672px (reading column) and 1152px (grid
+  column). `main` is `.app-wide`; screens that are mostly prose and buttons
+  (Home, Tienda, the rival picker) opt down to `.app-measure`.
+- **Responsive utilities append, never replace.** Write `max-w-md md:max-w-3xl`,
+  not `md:max-w-3xl` alone — the base utility is the phone's rendering and must
+  survive. Media queries add no specificity, so a base rule emitted *after* its
+  override silently wins.
+- **`--topbar-h` (`src/index.css`) is the TopBar's height**, exposed as Tailwind's
+  `h-topbar` / `top-topbar`. Anything sticking below the bar offsets by it. Never
+  hard-code the pixel value — the bar is taller above `md`, where it carries the
+  nav tabs.
+- **`hover:` fires on touch.** Tailwind emits it unconditionally (no
+  `future.hoverOnlyWhenSupported`), and mobile browsers apply `:hover` on tap and
+  leave it stuck. Desktop-only affordances must be **`md:hover:`**.
+- **Tailwind's content scanner is regex over raw file text, comments included.**
+  Writing a class name in prose emits that rule as dead CSS. Describe utilities
+  without spelling them (this has already shipped dead rules twice).
+- `TABS` (`src/ui/nav.ts`) is the single nav list — the BottomNav below `md`, the
+  TopBar's inline tabs above it.
+
 ## Conventions
 
 - Import via the `@/` alias (`@/*` → `src/*`); use `import type` for type-only
@@ -161,7 +193,10 @@ column — same reasoning as `image_url`: the URL is identical everywhere. Refre
 alongside `CLUB_SLUGS` when re-vendoring a season.
 
 `src/ui/Sheet.tsx` is the app's only overlay primitive (portal, focus trap, Escape,
-scroll lock). The older inline modal in `Admin.tsx` has none of that — don't copy it.
+scroll lock, focus restore) and everything modal goes through it — a bottom sheet
+below `md`, a centered dialog above. `size` (`'default' | 'wide'`) sets the desktop
+width only. Don't build a second overlay: the hand-rolled modal that used to live
+in `Admin.tsx` had none of the above, which is exactly why it isn't there anymore.
 
 ## Admin catalog UI
 
@@ -174,6 +209,15 @@ unchanged. CSV parsing/serialization is `src/cards/csv.ts` (one column per field
 + one per ability; `zone_grid` derived from `position`). **Once cards are edited
 in-app the DB is the source of truth** — `0005` is just the initial seed, and a
 `db reset` would revert admin edits.
+
+The catalog is a list below `md` and a real `<table>` above it, from **one render**
+(`CardRow`) — the 518 rows are unvirtualized, so a second hidden mobile copy would
+double the DOM. The editor is a `Sheet` wrapping a `<form>`: **every button that
+isn't Guardar needs `type="button"`**, since the default inside a form is submit
+and a missed one turns Cancelar into a save. Search is `useCardFilters` with
+`searchId: true` — that flag is opt-in because ids are slugs of name+club+season,
+so matching them by default would make "rma" return every Real Madrid card in
+Colección. Its `getCard` must stay at module scope (it's a `useMemo` dep).
 
 ## Commands
 

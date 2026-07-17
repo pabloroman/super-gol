@@ -33,6 +33,25 @@
 
 :root {
   color-scheme: dark;
+
+  /* The TopBar's height — the single place it is written down. Everything that
+     sticks *below* the bar (SquadBuilder's status bar, Colección's filter rail,
+     the Admin thead) offsets by this. It used to be a magic pixel constant 250
+     lines away from the header it depended on; the desktop bar carries the nav
+     tabs and is taller, which would have silently reopened the gap that
+     constant was patching.
+
+     Declared rather than measured: the bar's height is a design constant, and a
+     ResizeObserver is a lot of machinery for a number we choose. Tailwind's
+     box-border default means `h-topbar` *includes* the 1px border-b, so 53 is
+     the bar's real rendered height today, not an approximation of it. */
+  --topbar-h: 53px;
+}
+
+@media (min-width: 768px) {
+  :root {
+    --topbar-h: 61px;
+  }
 }
 
 html,
@@ -62,5 +81,23 @@ body {
   }
   .card-surface {
     @apply rounded-2xl bg-pitch-800/80 ring-1 ring-white/5;
+  }
+
+  /* The app's width scale. Below md both are the 448px phone measure the whole
+     app used to be hard-coded to, so the mobile layout is untouched by
+     definition — the desktop layout is added on top of it, never traded for it.
+     (Below md the container is pinned at 448px regardless of viewport, which is
+     why `sm:` is useless here: it would fire at a 640px viewport while the box
+     is still 448px. md is the only structural breakpoint.)
+
+     `.app-measure` is the reading column — a full-width primary button must not
+     span a monitor. `.app-wide` is the grid column: it opens to 1152px, six
+     naipes at ~174px, and stops. Past six columns the eye travels further than
+     the density is worth, so we don't chase the viewport. */
+  .app-measure {
+    @apply mx-auto w-full max-w-md md:max-w-2xl;
+  }
+  .app-wide {
+    @apply mx-auto w-full max-w-md md:max-w-6xl;
   }
 }

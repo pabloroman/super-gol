@@ -37,15 +37,24 @@ function Chip({
 const select =
   'rounded-lg bg-black/30 px-2 py-1 text-xs text-slate-300 outline-none ring-1 ring-white/10 focus:ring-grass-400'
 
-export function CardFilters({ state, count }: { state: CardFilterState; count: number }) {
+export function CardFilters({
+  state,
+  count,
+  searchLabel = 'Buscar jugador o club',
+}: {
+  state: CardFilterState
+  count: number
+  /** What the search actually covers. The admin catalog also matches the id. */
+  searchLabel?: string
+}) {
   return (
     <div className="flex flex-col gap-2">
       <input
         type="search"
         value={state.query}
         onChange={(e) => state.setQuery(e.target.value)}
-        placeholder="Buscar jugador o club…"
-        aria-label="Buscar jugador o club"
+        placeholder={`${searchLabel}…`}
+        aria-label={searchLabel}
         className="w-full rounded-xl bg-black/30 px-3 py-2 text-sm outline-none ring-1 ring-white/10 placeholder:text-slate-500 focus:ring-grass-400"
       />
 

@@ -127,7 +127,14 @@ export function Naipe({
 
   // Only interactive when it does something. The old CardTile rendered a
   // <button> even with no onClick, leaving Colección and Tienda full of
-  // focusable controls that did nothing.
+  // focusable controls that did nothing. (This is also why the hover lift below
+  // needs no cursor-pointer: Preflight already sets it on <button>, and Tag is a
+  // button exactly when onClick exists.)
+  //
+  // The lift is md:hover:, not hover:. Tailwind emits :hover unconditionally
+  // here (no future.hoverOnlyWhenSupported), and a touch browser fires :hover on
+  // tap and leaves it stuck — so a plain hover: would leave every tapped card
+  // hovering on a phone, on the most-rendered component in the app.
   const Tag = onClick ? 'button' : 'div'
 
   return (
@@ -135,7 +142,9 @@ export function Naipe({
       {...(onClick ? { type: 'button' as const, onClick, 'aria-label': card.name } : {})}
       style={{ containerType: 'inline-size' }}
       className={`aspect-naipe w-full rounded-[8%] bg-naipe-white p-[2.8%] shadow-lg shadow-black/50 ${
-        onClick ? 'transition active:scale-[0.98]' : ''
+        onClick
+          ? 'transition md:hover:-translate-y-0.5 md:hover:shadow-xl md:hover:shadow-black/60 active:scale-[0.98]'
+          : ''
       } ${
         selected ? 'ring-[3px] ring-grass-400 ring-offset-1 ring-offset-pitch-900' : ''
       } ${className}`}

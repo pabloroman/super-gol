@@ -4,10 +4,20 @@ import { adminDeleteCard, adminUpsertCards, fetchCatalog } from '@/data/api'
 import { ABILITY_META, ABILITY_ORDER } from '@/game/abilities'
 import { ZONE_GRIDS, type PositionGroup } from '@/cards/positions'
 import { cardsToCsv, parseCardsCsv, type ImportedCard } from '@/cards/csv'
+import { Sheet } from '@/ui/Sheet'
+import { CardFilters } from '@/ui/CardFilters'
+import { useCardFilters } from '@/ui/useCardFilters'
+import { positionAbbr } from '@/ui/positions'
 import type { AbilityKey, Card, Rarity } from '@/lib/types'
 
 const POSITIONS: PositionGroup[] = ['GK', 'DF', 'MF', 'FW']
 const RARITIES: Rarity[] = ['comun', 'frecuente', 'rara']
+
+// Module scope, not inline: this is a useCardFilters useMemo dependency, so a
+// fresh identity each render would re-filter and re-sort 518 cards on every
+// unrelated state change. Colección and SquadBuilder hoist theirs for the same
+// reason.
+const getCard = (c: Card) => c
 
 function blankCard(): Card {
   return {
@@ -106,24 +116,34 @@ function CardEditor({
   const field = 'w-full rounded bg-black/30 px-2 py-1 text-sm ring-1 ring-white/10'
 
   return (
-    <div className="fixed inset-0 z-30 flex items-start justify-center overflow-y-auto bg-black/70 p-4">
-      <div className="card-surface w-full max-w-md p-4">
-        <div className="mb-3 flex items-center justify-between">
-          <h2 className="font-display text-lg font-bold">{isNew ? 'Nueva carta' : card.id}</h2>
-          <button onClick={onClose} className="text-slate-400 hover:text-slate-200">✕</button>
-        </div>
-
-        <div className="grid grid-cols-2 gap-2">
-          <label className="col-span-1 text-xs text-slate-400">
+    // On Sheet, which brings the portal, focus trap, Escape, scroll lock and
+    // focus restore this modal never had — and, because it portals out of the
+    // app column, the room to be four fields wide above md.
+    <Sheet open onClose={onClose} title={isNew ? 'Nueva carta' : card.id} size="wide">
+      {/* A form so Enter saves. Every button that is NOT save must say so
+          explicitly: the default type inside a form is submit, which would turn
+          "Cancelar" into a second Guardar. Validation stays manual — native
+          `required` bubbles are English and unstylable. */}
+      <form
+        className="min-h-0 overflow-y-auto"
+        onSubmit={(e) => {
+          e.preventDefault()
+          void save()
+        }}
+      >
+        {/* The labels are the schema on purpose: club_slug here matching
+            club_slug in the CSV header is a feature of a data tool. */}
+        <div className="grid grid-cols-2 gap-2 md:grid-cols-4 md:gap-3">
+          <label className="col-span-1 text-xs text-slate-400 md:col-span-2">
             id
             <input className={field} value={card.id} disabled={!isNew}
               onChange={(e) => set('id', e.target.value)} />
           </label>
-          <label className="col-span-1 text-xs text-slate-400">
+          <label className="col-span-1 text-xs text-slate-400 md:col-span-2">
             name
             <input className={field} value={card.name} onChange={(e) => set('name', e.target.value)} />
           </label>
-          <label className="col-span-2 text-xs text-slate-400">
+          <label className="col-span-2 text-xs text-slate-400 md:col-span-4">
             full_name
             <input className={field} value={card.full_name ?? ''} onChange={(e) => setStr('full_name', e.target.value)} />
           </label>
@@ -135,6 +155,13 @@ function CardEditor({
           </label>
           <label className="text-xs text-slate-400">nationality
             <input className={field} value={card.nationality ?? ''} onChange={(e) => setStr('nationality', e.target.value)} />
+          </label>
+          {/* birthplace was wired end to end — typed in setStr, initialized in
+              blankCard, carried by the CSV, and *printed on the naipe* — but the
+              input was never written, so the card showed a field no admin could
+              fill and the generator leaves empty on all 518 rows. */}
+          <label className="text-xs text-slate-400">birthplace
+            <input className={field} value={card.birthplace ?? ''} onChange={(e) => setStr('birthplace', e.target.value)} />
           </label>
           <label className="text-xs text-slate-400">birth_date
             <input className={field} value={card.birth_date ?? ''} placeholder="YYYY-MM-DD" onChange={(e) => setStr('birth_date', e.target.value)} />
@@ -162,14 +189,17 @@ function CardEditor({
             <input type="checkbox" checked={card.is_starter} onChange={(e) => set('is_starter', e.target.checked)} />
             is_starter
           </label>
-          <label className="col-span-2 text-xs text-slate-400">image_url
+          <label className="col-span-2 text-xs text-slate-400 md:col-span-4">image_url
             <input className={field} value={card.image_url ?? ''} onChange={(e) => setStr('image_url', e.target.value)} />
           </label>
         </div>
 
         <div className="mt-3">
           <div className="mb-1 text-xs text-slate-400">abilities (0–3)</div>
-          <div className="grid grid-cols-5 gap-2">
+          {/* All 13 in one row above md — which is the shape of the naipe's own
+              factor strip, so the form reads like the thing it edits. Below md
+              it stays 5-wide and ragged; a phone has no room for thirteen. */}
+          <div className="grid grid-cols-5 gap-2 md:grid-cols-[repeat(13,minmax(0,1fr))] md:gap-1.5">
             {ABILITY_ORDER.map((k) => (
               <label key={k} className="text-[10px] text-slate-500">
                 {ABILITY_META[k].abbr}
@@ -207,19 +237,20 @@ function CardEditor({
 
         <div className="mt-4 flex items-center justify-between">
           {!isNew ? (
-            <button onClick={() => void remove()} disabled={busy}
-              className="text-sm text-red-400 hover:text-red-300">Eliminar</button>
+            <button type="button" onClick={() => void remove()} disabled={busy}
+              className="text-sm text-red-400 transition hover:text-red-300">Eliminar</button>
           ) : <span />}
           <div className="flex gap-2">
-            <button onClick={onClose} className="rounded px-3 py-1.5 text-sm text-slate-300">Cancelar</button>
-            <button onClick={() => void save()} disabled={busy}
-              className="rounded bg-grass-500 px-3 py-1.5 text-sm font-semibold text-black disabled:opacity-50">
+            <button type="button" onClick={onClose}
+              className="rounded px-3 py-1.5 text-sm text-slate-300 transition hover:bg-white/5">Cancelar</button>
+            <button type="submit" disabled={busy}
+              className="rounded bg-grass-500 px-3 py-1.5 text-sm font-semibold text-black transition hover:bg-grass-400 disabled:opacity-50">
               {busy ? 'Guardando…' : 'Guardar'}
             </button>
           </div>
         </div>
-      </div>
-    </div>
+      </form>
+    </Sheet>
   )
 }
 
@@ -287,13 +318,73 @@ function CsvImport({ existingIds, onImported }: { existingIds: Set<string>; onIm
   )
 }
 
+// ---------- catalog row ----------
+/**
+ * One catalog row: a real <tr> in a real <table> above md, where the table
+ * elements switch to flex/block below md so the same markup reads as the list it
+ * has always been. Rendering once matters — 518 rows are unvirtualized already,
+ * and a second hidden mobile copy would double the DOM for nothing.
+ */
+function CardRow({ card, onEdit }: { card: Card; onEdit: () => void }) {
+  return (
+    <tr
+      onClick={onEdit}
+      className="flex cursor-pointer items-center gap-3 border-b border-white/5 py-2 transition md:table-row md:border-0 md:py-0 md:hover:bg-white/5 md:[&>td]:border-b md:[&>td]:border-white/5 md:[&>td]:px-2 md:[&>td]:py-1.5"
+    >
+      <td className="block shrink-0 md:table-cell">
+        <span className="block h-8 w-8 overflow-hidden rounded-full bg-white/10">
+          {card.image_url && (
+            <img src={card.image_url} alt="" loading="lazy" className="h-full w-full object-cover" />
+          )}
+        </span>
+      </td>
+      <td className="block min-w-0 flex-1 md:table-cell">
+        {/* The row is clickable for the mouse, but the name stays a real button
+            so keyboard and AT keep the affordance the old full-row button had.
+            stopPropagation because the click would otherwise also reach the row
+            handler — harmless while onEdit is idempotent, a double-fire the day
+            it isn't. */}
+        <button
+          type="button"
+          onClick={(e) => {
+            e.stopPropagation()
+            onEdit()
+          }}
+          className="block max-w-full truncate text-left text-sm font-semibold transition md:hover:text-grass-400"
+        >
+          {card.name}
+        </button>
+        <span className="block truncate text-xs text-slate-500 md:hidden">
+          {card.club ?? '—'} · {positionAbbr(card.position) ?? '—'}
+        </span>
+        <span className="hidden truncate text-xs text-slate-500 lg:block">
+          {card.full_name ?? ''}
+        </span>
+      </td>
+      <td className="hidden font-mono text-xs text-slate-500 lg:table-cell">{card.id}</td>
+      <td className="hidden text-sm text-slate-300 md:table-cell">{card.club ?? '—'}</td>
+      {/* POR/DEF/MED/DEL, not the stored GK/DF/MF/FW: this is a browse view, and
+          the UI is Spanish-only. The editor's <select> keeps the raw codes —
+          there it is editing the stored value, so the code is the right thing. */}
+      <td className="hidden text-sm text-slate-300 md:table-cell">
+        {positionAbbr(card.position) ?? '—'}
+      </td>
+      <td className="block shrink-0 text-right text-xs tabular-nums text-slate-400 md:table-cell">
+        {card.cost}
+      </td>
+      <td className="block shrink-0 text-xs text-slate-400 md:table-cell">{card.rarity}</td>
+      <td className="hidden text-center text-xs lg:table-cell">{card.is_starter ? '✓' : '—'}</td>
+      <td className="hidden text-xs text-slate-500 xl:table-cell">{card.nationality ?? '—'}</td>
+    </tr>
+  )
+}
+
 // ---------- screen ----------
 export function Admin() {
   const { profile } = useAuth()
   const [cards, setCards] = useState<Card[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
-  const [query, setQuery] = useState('')
   const [editing, setEditing] = useState<{ card: Card; isNew: boolean } | null>(null)
 
   function reload() {
@@ -306,12 +397,13 @@ export function Admin() {
   useEffect(reload, [])
 
   const existingIds = useMemo(() => new Set(cards.map((c) => c.id)), [cards])
-  const filtered = useMemo(() => {
-    const q = query.trim().toLowerCase()
-    if (!q) return cards
-    return cards.filter((c) =>
-      [c.id, c.name, c.club].some((f) => f?.toLowerCase().includes(q)))
-  }, [cards, query])
+  // searchId: the admin catalog is the one place that wants to find a card by
+  // its slug. Sorting by name because this is a catalog to look things up in,
+  // not a shop window ranked by ficha.
+  const { filtered, state } = useCardFilters(cards, getCard, {
+    searchId: true,
+    initialSort: 'name',
+  })
 
   if (!profile?.is_admin) {
     return <p className="text-slate-400">No tienes acceso a esta sección.</p>
@@ -326,33 +418,50 @@ export function Admin() {
 
       <CsvImport existingIds={existingIds} onImported={reload} />
 
-      <div className="flex gap-2">
-        <input value={query} onChange={(e) => setQuery(e.target.value)} placeholder="Buscar nombre / club / id…"
-          className="flex-1 rounded bg-black/30 px-3 py-2 text-sm ring-1 ring-white/10" />
-        <button onClick={() => setEditing({ card: blankCard(), isNew: true })}
-          className="rounded bg-grass-500 px-3 py-2 text-sm font-semibold text-black">+ Nueva</button>
-        <button onClick={() => downloadText('cards.csv', cardsToCsv(cards))}
-          className="rounded bg-white/10 px-3 py-2 text-sm text-slate-200">CSV</button>
+      <div className="flex flex-col gap-2 md:flex-row md:items-end md:justify-between">
+        <div className="min-w-0 flex-1">
+          <CardFilters
+            state={state}
+            count={filtered.length}
+            searchLabel="Buscar jugador, club o id"
+          />
+        </div>
+        <div className="flex shrink-0 gap-2">
+          <button onClick={() => setEditing({ card: blankCard(), isNew: true })}
+            className="rounded bg-grass-500 px-3 py-2 text-sm font-semibold text-black transition hover:bg-grass-400">+ Nueva</button>
+          <button onClick={() => downloadText('cards.csv', cardsToCsv(cards))}
+            className="rounded bg-white/10 px-3 py-2 text-sm text-slate-200 transition hover:bg-white/20">CSV</button>
+        </div>
       </div>
 
       {loading && <p className="text-slate-500">Cargando…</p>}
       {error && <p className="text-sm text-red-400">{error}</p>}
 
-      <div className="flex flex-col divide-y divide-white/5">
-        {filtered.map((c) => (
-          <button key={c.id} onClick={() => setEditing({ card: c, isNew: false })}
-            className="flex items-center gap-3 py-2 text-left">
-            <span className="h-8 w-8 shrink-0 overflow-hidden rounded-full bg-white/10">
-              {c.image_url && <img src={c.image_url} alt="" className="h-full w-full object-cover" />}
-            </span>
-            <span className="min-w-0 flex-1">
-              <span className="block truncate text-sm font-semibold">{c.name}</span>
-              <span className="block truncate text-xs text-slate-500">{c.club ?? '—'} · {c.position ?? '—'}</span>
-            </span>
-            <span className="text-xs text-slate-400">{c.rarity} · {c.cost}</span>
-          </button>
-        ))}
-      </div>
+      {/* Separated borders, not the collapsed default: a sticky <thead> loses its
+          borders when a table collapses them in Chrome. Same reason the body
+          draws borders per cell rather than with a divide utility. */}
+      <table className="block w-full md:table md:border-separate md:border-spacing-0">
+        <thead className="hidden md:table-header-group">
+          <tr className="text-left font-display text-xs uppercase tracking-widest text-slate-500 [&>th]:sticky [&>th]:top-topbar [&>th]:z-10 [&>th]:border-b [&>th]:border-white/10 [&>th]:bg-pitch-900 [&>th]:px-2 [&>th]:py-2">
+            {/* Sticky goes on the th's — a <tr> is not a sticky container. With
+                518 unvirtualized rows this is the single biggest win here. */}
+            <th className="w-10" />
+            <th>Nombre</th>
+            <th className="hidden lg:table-cell">id</th>
+            <th>Club</th>
+            <th>Puesto</th>
+            <th className="text-right">Ficha</th>
+            <th>Rareza</th>
+            <th className="hidden text-center lg:table-cell">Titular</th>
+            <th className="hidden xl:table-cell">Nacionalidad</th>
+          </tr>
+        </thead>
+        <tbody className="block md:table-row-group">
+          {filtered.map((c) => (
+            <CardRow key={c.id} card={c} onEdit={() => setEditing({ card: c, isNew: false })} />
+          ))}
+        </tbody>
+      </table>
       {!loading && filtered.length === 0 && <p className="text-slate-500">Sin resultados.</p>}
 
       {editing && (
