@@ -124,6 +124,28 @@ whole thing together:
   SQL into the editor** — a hand-applied schema leaves the ledger empty and the
   integration can't reconcile what's applied (new migrations then silently fail to
   apply). New migrations must have a version above the highest already recorded.
+  The ledger keys on the **version prefix**, not the filename — renaming an
+  already-applied `0012_foo.sql` to `0012_bar.sql` makes `migration up` report
+  `applied: []` and skip it. Locally, `db:reset` is the way out.
+
+## Auth & signup
+
+- **A trigger that raises on `auth.users` is invisible to the browser.**
+  supabase-js turns any 500 into an `AuthRetryableFetchError` and **discards the
+  response body**, so an exception from `handle_new_user` reaches Login as the
+  literal string `"{}"` — however carefully it is worded. (The raw HTTP body does
+  carry it, which makes this easy to "verify" with curl and get wrong.) Anything
+  the user must act on has to be **checked before `signUp`**, as the signup form
+  does via the `username_available` RPC; the trigger's own exception is only the
+  backstop for the race, and stays English and developer-facing.
+- **`profiles.username` is `unique` but nullable, and blank means NULL.**
+  `handle_new_user` maps blank/whitespace to NULL (`0012`), and a unique index
+  accepts unlimited NULLs — that is what lets any number of players skip the
+  field. **Never send a default from the client**: `Login.tsx` doing
+  `username || 'Entrenador'` is precisely what broke signup, because the first
+  blank signup reserved that one name and every later one collided. The
+  'Entrenador' fallback belongs at the **display** sites (`Home.tsx`, the admin
+  list), where it is a label rather than a claim.
 
 ## Card catalog pipeline (real players)
 
