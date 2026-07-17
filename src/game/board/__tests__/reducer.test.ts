@@ -187,7 +187,7 @@ describe('a full AI-vs-AI match always completes', () => {
       const rng = seededFaces(seed)
       let guard = 0
       while (st.phase.kind !== 'fulltime' && guard++ < 20000) {
-        st = apply(st, chooseAction(st, rng), rng).state
+        st = apply(st, chooseAction(st, rng, 'normal'), rng).state
       }
       expect(st.phase.kind).toBe('fulltime')
       expect(st.turno).toBeGreaterThanOrEqual(15)
