@@ -179,10 +179,10 @@ function tuning(difficulty) {
 function marked(mark) {
   return mark === "MH" || mark === "MZ";
 }
-function chooseAttack(rng, pitch, mark, carrier, difficulty) {
+function chooseAttack(rng, pitch, mark, carrier2, difficulty) {
   const t = tuning(difficulty);
-  const dl = abilityValue(carrier, "dl");
-  const rg = abilityValue(carrier, "rg");
+  const dl = abilityValue(carrier2, "dl");
+  const rg = abilityValue(carrier2, "rg");
   if (pitch.canShootRM()) {
     if (mark === "MH" && rng.chance(0.35 + rg * 0.08)) return { kind: "regate" };
     return { kind: "shot", action: "RM" };
@@ -191,14 +191,14 @@ function chooseAttack(rng, pitch, mark, carrier, difficulty) {
     const shootWeight = t.finishing + dl * 0.1;
     if (mark === "MH" && rng.chance(0.3 + rg * 0.08)) return { kind: "regate" };
     if (rng.chance(Math.min(0.85, shootWeight))) return { kind: "shot", action: "DL" };
-    return advanceChoice(rng, mark, carrier);
+    return advanceChoice(rng, mark, carrier2);
   }
   if (mark === "MH" && rng.chance(0.3 + rg * 0.08)) return { kind: "regate" };
-  return advanceChoice(rng, mark, carrier);
+  return advanceChoice(rng, mark, carrier2);
 }
-function advanceChoice(rng, mark, carrier) {
-  const pc = abilityValue(carrier, "pc");
-  const pl = abilityValue(carrier, "pl");
+function advanceChoice(rng, mark, carrier2) {
+  const pc = abilityValue(carrier2, "pc");
+  const pl = abilityValue(carrier2, "pl");
   if (marked(mark) && rng.chance(0.2)) {
     return { kind: "hueco", type: pl >= pc ? "PL" : "PC" };
   }
@@ -619,6 +619,1037 @@ function buildEngineSquad(name, squad, catalog) {
   return { name, outfield, keeper };
 }
 
+// src/game/board/state.ts
+var COLS2 = 5;
+var ROWS2 = 6;
+var STATE_VERSION = 1;
+function playerId(side, index) {
+  return `${side === "home" ? "h" : "a"}${index}`;
+}
+
+// src/ui/positions.ts
+var POSITION_ABBR = {
+  GK: "POR",
+  DF: "DEF",
+  MF: "MED",
+  FW: "DEL"
+};
+var POSITION_ORDER = ["GK", "DF", "MF", "FW"];
+function isPositionGroup(value) {
+  return !!value && value in POSITION_ABBR;
+}
+function positionRank(position) {
+  if (!isPositionGroup(position)) return POSITION_ORDER.length;
+  return POSITION_ORDER.indexOf(position);
+}
+
+// src/game/board/derive.ts
+function keeperCell(side) {
+  return side === "home" ? { col: 2, row: -1 } : { col: 2, row: ROWS2 };
+}
+function isKeeperCell(cell) {
+  return cell.row < 0 || cell.row >= ROWS2;
+}
+function sameCell(a, b) {
+  return a.col === b.col && a.row === b.row;
+}
+function cellKey(cell) {
+  return `${cell.col},${cell.row}`;
+}
+function inBounds(cell) {
+  return cell.col >= 0 && cell.col < COLS2 && cell.row >= 0 && cell.row < ROWS2;
+}
+var ALL_CELLS = Array.from(
+  { length: ROWS2 },
+  (_, row) => Array.from({ length: COLS2 }, (_2, col) => ({ col, row }))
+).flat();
+function neighbours(cell) {
+  const out = [];
+  for (let dc = -1; dc <= 1; dc++) {
+    for (let dr = -1; dr <= 1; dr++) {
+      if (dc === 0 && dr === 0) continue;
+      const next = { col: cell.col + dc, row: cell.row + dr };
+      if (inBounds(next)) out.push(next);
+    }
+  }
+  return out;
+}
+function distance(a, b) {
+  return Math.max(Math.abs(a.col - b.col), Math.abs(a.row - b.row));
+}
+function occupants(state, cell) {
+  return Object.values(state.players).filter((p) => sameCell(p.cell, cell));
+}
+function canOccupy(state, cell, side) {
+  if (isKeeperCell(cell)) return false;
+  const here = occupants(state, cell);
+  if (here.length >= 2) return false;
+  if (here.some((p) => p.side === side)) return false;
+  return true;
+}
+function marcajeOf(state, id) {
+  const opponent = markerOf(state, id);
+  if (!opponent) return "SM";
+  if (state.libre === id) return "LIBRE";
+  return opponent.onTop ? "MH" : "MZ";
+}
+function markerOf(state, id) {
+  const self = state.players[id];
+  return occupants(state, self.cell).find((p) => p.side !== self.side) ?? null;
+}
+function zoneOf(cell) {
+  if (isKeeperCell(cell)) return null;
+  return zoneAt(cell);
+}
+
+// src/game/board/placement.ts
+var HOME_CELLS = [
+  { col: 0, row: 0 },
+  { col: 2, row: 0 },
+  { col: 4, row: 0 },
+  // back three
+  { col: 0, row: 1 },
+  { col: 1, row: 1 },
+  { col: 3, row: 1 },
+  { col: 4, row: 1 },
+  // middle four
+  { col: 1, row: 2 },
+  { col: 2, row: 2 },
+  { col: 3, row: 2 }
+  // front three (2 & 3 adjacent)
+];
+var AWAY_CELLS = HOME_CELLS.map((c) => ({ col: c.col, row: 5 - c.row }));
+function kickoffCarrier(side) {
+  return playerId(side, 9);
+}
+function autoPlace(squad, side) {
+  const cells = side === "home" ? HOME_CELLS : AWAY_CELLS;
+  const outfield = [...squad.outfield].sort(
+    (a, b) => positionRank(a.position) - positionRank(b.position)
+  );
+  const players = {};
+  players[playerId(side, 0)] = {
+    id: playerId(side, 0),
+    side,
+    card: squad.keeper,
+    cell: keeperCell(side),
+    onTop: false
+  };
+  outfield.forEach((card, i) => {
+    const id = playerId(side, i + 1);
+    players[id] = { id, side, card, cell: cells[i], onTop: false };
+  });
+  return players;
+}
+
+// src/game/board/actions.ts
+function actionKey(a) {
+  switch (a.kind) {
+    case "place":
+      return `place:${Object.entries(a.cells).sort(([x], [y]) => x < y ? -1 : 1).map(([id, c]) => `${id}@${cellKey(c)}`).join("|")}`;
+    case "placement_done":
+    case "regate":
+    case "decline":
+    case "decline_advance":
+    case "premove_done":
+      return a.kind;
+    case "pass":
+      return `pass:${a.pass}:${a.to}`;
+    case "hueco":
+      return `hueco:${a.pass}:${cellKey(a.to)}`;
+    case "shot":
+      return `shot:${a.shot}`;
+    case "move":
+      return `move:${a.player}:${cellKey(a.to)}${a.handoff ? ":handoff" : ""}`;
+    case "anticipacion":
+      return `anticipacion:${a.defender}`;
+    case "robo":
+      return `robo:${a.defender}:${a.mode}${a.to ? `:${cellKey(a.to)}` : ""}`;
+    case "robo_advance":
+      return `robo_advance:${cellKey(a.to)}`;
+    case "recover":
+      return `recover:${a.player}`;
+    case "premove":
+      return `premove:${a.player}:${cellKey(a.to)}`;
+    case "keeper_pass":
+      return `keeper_pass:${a.pass}:${a.to}`;
+    case "keeper_hueco":
+      return `keeper_hueco:${a.pass}:${cellKey(a.to)}`;
+  }
+}
+
+// src/game/board/legal.ts
+var isMarked = (m) => m === "MH" || m === "MZ";
+var isUnmarked = (m) => m === "SM" || m === "LIBRE";
+var other2 = (s) => s === "home" ? "away" : "home";
+function playersOf(state, side) {
+  return Object.values(state.players).filter((p) => p.side === side);
+}
+function carrier(state) {
+  return state.players[state.ball.carrier];
+}
+function keeperId(side) {
+  return playerId(side, 0);
+}
+function emptyCellsInRange(state, from, lo, hi) {
+  const out = [];
+  for (const cell of ALL_CELLS) {
+    const d = distance(from, cell);
+    if (d < lo || d > hi) continue;
+    if (occupants(state, cell).length === 0) out.push(cell);
+  }
+  return out;
+}
+function moveAllowed(state, id, cell) {
+  return !(state.antiStall.movedTo[id] ?? []).includes(cellKey(cell));
+}
+function movesFor(state, p) {
+  const out = [];
+  for (const cell of neighbours(p.cell)) {
+    const occ = occupants(state, cell);
+    const hasTeammate = occ.some((o) => o.side === p.side);
+    const enterable = hasTeammate || canOccupy(state, cell, p.side);
+    if (!enterable) continue;
+    if (!moveAllowed(state, p.id, cell)) continue;
+    out.push({ kind: "move", player: p.id, to: cell });
+  }
+  return out;
+}
+function attackerActions(state) {
+  const side = state.attacker;
+  const self = carrier(state);
+  const mark = marcajeOf(state, self.id);
+  const mates = playersOf(state, side).filter((p) => p.id !== self.id && p.id !== keeperId(side));
+  const out = [];
+  for (const t of mates) {
+    const d = distance(self.cell, t.cell);
+    const tMark = marcajeOf(state, t.id);
+    if (d === 1 && isUnmarked(tMark) && !state.antiStall.pdChain.includes(t.id)) {
+      out.push({ kind: "pass", pass: "PD", to: t.id });
+    }
+    if (d === 1 && (isMarked(mark) || isMarked(tMark))) {
+      out.push({ kind: "pass", pass: "PC", to: t.id });
+    }
+    if (d >= 2 && d <= 3) {
+      out.push({ kind: "pass", pass: "PL", to: t.id });
+    }
+  }
+  const keeper = state.players[keeperId(side)];
+  const dk = distance(self.cell, keeper.cell);
+  if (dk === 1) {
+    out.push({ kind: "pass", pass: "PD", to: keeper.id });
+    if (isMarked(mark)) out.push({ kind: "pass", pass: "PC", to: keeper.id });
+  } else if (dk >= 2 && dk <= 3) {
+    out.push({ kind: "pass", pass: "PL", to: keeper.id });
+  }
+  for (const cell of emptyCellsInRange(state, self.cell, 1, 1)) {
+    out.push({ kind: "hueco", pass: "PC", to: cell });
+  }
+  for (const cell of emptyCellsInRange(state, self.cell, 2, 3)) {
+    out.push({ kind: "hueco", pass: "PL", to: cell });
+  }
+  if (isMarked(mark)) out.push({ kind: "regate" });
+  const zone = zoneOf(self.cell);
+  const rmRow = side === "home" ? 5 : 0;
+  const dlRow = side === "home" ? 4 : 1;
+  if (zone === "RM" && self.cell.row === rmRow) out.push({ kind: "shot", shot: "RM" });
+  if (zone === "DL" && self.cell.row === dlRow) out.push({ kind: "shot", shot: "DL" });
+  for (const p of playersOf(state, side)) {
+    if (p.id === self.id && isMarked(mark)) continue;
+    if (p.id === keeperId(side)) continue;
+    out.push(...movesFor(state, p));
+  }
+  if (!isMarked(mark)) {
+    for (const m of movesFor(state, self)) {
+      if (m.kind !== "move") continue;
+      const swaps = occupants(state, m.to).some((o) => o.side === side && o.id !== self.id);
+      if (swaps) out.push({ kind: "move", player: self.id, to: m.to, handoff: true });
+    }
+  }
+  return out;
+}
+function defenderMoveActions(state) {
+  const def = other2(state.attacker);
+  const holder = carrier(state);
+  const out = [{ kind: "decline" }];
+  for (const p of playersOf(state, def)) {
+    if (p.id === keeperId(def)) continue;
+    for (const move of movesFor(state, p)) {
+      if (move.kind !== "move") continue;
+      out.push(move);
+    }
+  }
+  const marker = markerOf(state, holder.id);
+  for (const p of playersOf(state, def)) {
+    if (p.id === keeperId(def)) continue;
+    if (distance(p.cell, holder.cell) === 1 && canOccupy(state, holder.cell, def)) {
+      out.push({ kind: "robo", defender: p.id, mode: "move-onto", to: { ...holder.cell } });
+    }
+  }
+  if (marker && !marker.onTop) {
+    out.push({ kind: "robo", defender: marker.id, mode: "move-onto", to: { ...holder.cell } });
+  }
+  if (marker && marker.onTop) {
+    out.push({ kind: "robo", defender: marker.id, mode: "renounce" });
+  }
+  return out;
+}
+function legalActions(state) {
+  const phase = state.phase;
+  switch (phase.kind) {
+    case "placement":
+      return [{ kind: "placement_done" }];
+    case "kickoff": {
+      const self = carrier(state);
+      return playersOf(state, phase.side).filter((p) => p.id !== self.id && distance(p.cell, self.cell) === 1).map((p) => ({ kind: "pass", pass: "PD", to: p.id }));
+    }
+    case "attack":
+      return attackerActions(state);
+    case "defend_move":
+      return defenderMoveActions(state);
+    case "defend_interrupt": {
+      const receiverMark = marcajeOf(state, phase.receiver);
+      const out = [{ kind: "decline" }];
+      const marker = markerOf(state, phase.receiver);
+      if (marker) {
+        out.push({ kind: "anticipacion", defender: marker.id });
+        if (receiverMark === "MH") out.push({ kind: "robo", defender: marker.id, mode: "after-pass" });
+      }
+      return out;
+    }
+    case "robo_advance": {
+      const self = carrier(state);
+      const out = [{ kind: "decline_advance" }];
+      for (const cell of neighbours(self.cell)) {
+        if (canOccupy(state, cell, self.side) || occupants(state, cell).some((o) => o.side !== self.side)) {
+          out.push({ kind: "robo_advance", to: cell });
+        }
+      }
+      return out;
+    }
+    case "recovery_pick":
+      return phase.candidates.map((id) => ({ kind: "recover", player: id }));
+    case "hueco_move": {
+      const out = [{ kind: "decline" }];
+      for (const p of playersOf(state, phase.side)) {
+        if (p.id === keeperId(phase.side)) continue;
+        out.push(...movesFor(state, p));
+      }
+      return out;
+    }
+    case "restart_move": {
+      const out = [{ kind: "premove_done" }];
+      for (const p of playersOf(state, phase.side)) {
+        if (p.id === keeperId(phase.side)) continue;
+        out.push(...movesFor(state, p).map((m) => ({ ...m, kind: "premove" })));
+      }
+      return out;
+    }
+    case "keeper_restart": {
+      const keeper = state.players[keeperId(phase.side)];
+      const out = [];
+      for (const t of playersOf(state, phase.side)) {
+        if (t.id === keeper.id) continue;
+        const d = distance(keeper.cell, t.cell);
+        const tMark = marcajeOf(state, t.id);
+        if (d <= 2 && isUnmarked(tMark)) out.push({ kind: "keeper_pass", pass: "PD", to: t.id });
+        if (d <= 2) out.push({ kind: "keeper_pass", pass: "PC", to: t.id });
+        if (d >= 3 && d <= 4 && isUnmarked(tMark)) out.push({ kind: "keeper_pass", pass: "PL", to: t.id });
+      }
+      for (const cell of emptyCellsInRange(state, keeper.cell, 1, 2)) {
+        out.push({ kind: "keeper_hueco", pass: "PC", to: cell });
+      }
+      for (const cell of emptyCellsInRange(state, keeper.cell, 3, 4)) {
+        out.push({ kind: "keeper_hueco", pass: "PL", to: cell });
+      }
+      return out;
+    }
+    case "fulltime":
+      return [];
+  }
+}
+
+// src/game/board/reducer.ts
+var TURNO_LIMIT = 15;
+var POSSESSION_CAP = 24;
+var rate = (p, key) => abilityValue(p.card, key);
+function clone(state) {
+  return structuredClone(state);
+}
+function giveBall(state, id) {
+  state.ball = { carrier: id, cell: { ...state.players[id].cell } };
+}
+function stepInto(state, moverId, cell) {
+  const mover = state.players[moverId];
+  const oldCell = mover.cell;
+  const inPlace = sameCell(oldCell, cell);
+  mover.cell = { ...cell };
+  const sharing = occupants(state, cell).filter((o) => o.id !== moverId);
+  mover.onTop = sharing.length > 0;
+  for (const o of sharing) o.onTop = false;
+  if (!inPlace) for (const o of occupants(state, oldCell)) o.onTop = false;
+  if (state.ball.carrier === moverId) state.ball.cell = { ...cell };
+}
+function relevo(state, aId, bId) {
+  const a = state.players[aId];
+  const b = state.players[bId];
+  const ca = { ...a.cell };
+  const cb = { ...b.cell };
+  a.cell = cb;
+  b.cell = ca;
+  for (const mover of [a, b]) {
+    const sharing = occupants(state, mover.cell).filter((o) => o.id !== mover.id);
+    mover.onTop = sharing.length > 0;
+    for (const o of sharing) o.onTop = false;
+  }
+  if (state.ball.carrier === aId) state.ball.cell = { ...a.cell };
+  else if (state.ball.carrier === bId) state.ball.cell = { ...b.cell };
+}
+function endMatch(state, events) {
+  state.phase = { kind: "fulltime" };
+  events.push(ev("fulltime", "home"));
+}
+function advanceTurno(state, events) {
+  state.turno += 1;
+  if (state.turno >= TURNO_LIMIT) {
+    endMatch(state, events);
+    return true;
+  }
+  return false;
+}
+function resetAntiStall(state) {
+  state.antiStall = { pdChain: [], movedTo: {} };
+}
+function changePossession(state, events, grantDefenderMove = false) {
+  state.attacker = other2(state.attacker);
+  resetAntiStall(state);
+  state.possessionJugadas = 0;
+  if (advanceTurno(state, events)) return;
+  state.phase = grantDefenderMove ? { kind: "defend_move", side: other2(state.attacker) } : { kind: "attack", side: state.attacker };
+}
+function breakDown(state, events) {
+  const holder = carrier(state);
+  const taker = playersOf(state, other2(state.attacker)).filter((p) => p.id !== keeperId(other2(state.attacker))).sort((a, b) => distance(a.cell, holder.cell) - distance(b.cell, holder.cell))[0];
+  events.push(ev("turnover", other2(state.attacker), { player: taker.card.name }));
+  giveBall(state, taker.id);
+  state.libre = null;
+  changePossession(state, events);
+}
+function apply(state, action, rng) {
+  const next = clone(state);
+  const events = [];
+  if (!(next.phase.kind === "placement" && action.kind === "place")) {
+    const legal = legalActions(next);
+    if (!legal.some((a) => actionKey(a) === actionKey(action))) {
+      throw new Error(`illegal action in phase ${next.phase.kind}: ${actionKey(action)}`);
+    }
+  }
+  dispatch(next, action, rng, events);
+  return { state: next, events };
+}
+function dispatch(state, action, rng, events) {
+  switch (state.phase.kind) {
+    case "placement":
+      return applyPlacement(state, action);
+    case "kickoff":
+      return applyKickoff(state, action, events);
+    case "attack":
+      return applyAttack(state, action, rng, events);
+    case "defend_move":
+      return applyDefendMove(state, action, rng, events);
+    case "defend_interrupt":
+      return applyInterrupt(state, action, rng, events);
+    case "robo_advance":
+      return applyRoboAdvance(state, action);
+    case "recovery_pick":
+      return applyRecover(state, action, events);
+    case "hueco_move":
+      return applyHuecoMove(state, action, events);
+    case "restart_move":
+      return applyRestartMove(state, action);
+    case "keeper_restart":
+      return applyKeeperRestart(state, action, rng, events);
+    case "fulltime":
+      throw new Error("the match is over");
+  }
+}
+function applyPlacement(state, action) {
+  if (action.kind === "place") {
+    for (const [id, cell] of Object.entries(action.cells)) {
+      if (id === keeperId("home") || id === keeperId("away")) continue;
+      state.players[id] = { ...state.players[id], cell: { ...cell }, onTop: false };
+    }
+    return;
+  }
+  const side = state.attacker;
+  const kicker = kickoffCarrier(side);
+  giveBall(state, kicker);
+  state.phase = { kind: "kickoff", side };
+}
+function applyKickoff(state, action, events) {
+  if (action.kind !== "pass") return;
+  const from = carrier(state);
+  giveBall(state, action.to);
+  state.antiStall.pdChain = [from.id, action.to];
+  events.push(ev("kickoff", state.attacker, { player: from.card.name, target: state.players[action.to].card.name }));
+  state.phase = { kind: "attack", side: state.attacker };
+}
+function applyAttack(state, action, rng, events) {
+  if (state.possessionJugadas >= POSSESSION_CAP) return breakDown(state, events);
+  state.possessionJugadas += 1;
+  switch (action.kind) {
+    case "pass":
+      return applyPass(state, action.pass, action.to, rng, events);
+    case "hueco":
+      return applyHueco(state, action.pass, action.to, rng, events);
+    case "regate":
+      return applyRegate(state, rng, events);
+    case "shot":
+      return applyShot(state, action.shot, rng, events);
+    case "move":
+      return applyMove(state, action.player, action.to, action.handoff ?? false);
+    default:
+      throw new Error(`unexpected attack action ${action.kind}`);
+  }
+}
+function isKeeper(state, id) {
+  return id === keeperId(state.players[id].side);
+}
+function applyPass(state, pass, to, rng, events) {
+  const from = carrier(state);
+  const cesion = isKeeper(state, to);
+  const passerMark = marcajeOf(state, from.id);
+  state.libre = null;
+  if (pass === "PD") {
+    giveBall(state, to);
+    if (!state.antiStall.pdChain.includes(from.id)) state.antiStall.pdChain.push(from.id);
+    state.antiStall.pdChain.push(to);
+    events.push(ev("pass", state.attacker, { player: from.card.name, target: state.players[to].card.name, ability: "pc" }));
+    if (cesion) return keeperFootRestart(state);
+    state.phase = { kind: "attack", side: state.attacker };
+    return;
+  }
+  const receiverMark = marcajeOf(state, to);
+  const ratingKey = pass === "PL" ? "pl" : "pc";
+  const rating = rate(from, ratingKey);
+  const contest = resolvePase(rng, pass, passerMark, receiverMark, rating);
+  state.antiStall.pdChain = [];
+  if (contest.success) {
+    giveBall(state, to);
+    events.push(
+      evContest("pass", state.attacker, {
+        player: from.card.name,
+        target: state.players[to].card.name,
+        ability: ratingKey,
+        contest,
+        cell: state.players[to].cell
+      })
+    );
+    if (cesion) return keeperFootRestart(state);
+    if (receiverMark === "MZ" || receiverMark === "MH") {
+      state.phase = { kind: "defend_interrupt", side: other2(state.attacker), receiver: to };
+      return;
+    }
+    state.phase = { kind: "attack", side: state.attacker };
+    return;
+  }
+  if (cesion) {
+    events.push(evContest("turnover", state.attacker, { player: from.card.name, ability: ratingKey, contest, cell: from.cell }));
+    return concede(state, other2(state.attacker), events);
+  }
+  events.push(evContest("turnover", state.attacker, { player: from.card.name, ability: ratingKey, contest, cell: from.cell }));
+  recoverFailedPass(state, to, receiverMark, events);
+}
+function applyRegate(state, rng, events) {
+  const self = carrier(state);
+  const mark = marcajeOf(state, self.id);
+  const defender = markerOf(state, self.id);
+  state.libre = null;
+  state.antiStall.pdChain = [];
+  const contest = resolveRegate(rng, mark, rate(self, "rg"));
+  events.push(
+    evContest("dribble", state.attacker, {
+      player: self.card.name,
+      ability: "rg",
+      marcaje: mark,
+      contest,
+      cell: self.cell
+    })
+  );
+  if (contest.success) {
+    self.onTop = true;
+    defender.onTop = false;
+    state.libre = self.id;
+    state.phase = { kind: "attack", side: state.attacker };
+    return;
+  }
+  self.onTop = false;
+  defender.onTop = true;
+  giveBall(state, defender.id);
+  state.libre = defender.id;
+  changePossession(state, events);
+}
+function applyShot(state, shot, rng, events) {
+  const self = carrier(state);
+  const mark = marcajeOf(state, self.id);
+  state.libre = null;
+  state.antiStall.pdChain = [];
+  const rating = rate(self, shot === "RM" ? "rm" : "dl");
+  const contest = resolveShot(rng, shot, mark, rating);
+  if (!contest.success) {
+    events.push(evContest("shot", state.attacker, { player: self.card.name, ability: shot === "RM" ? "rm" : "dl", marcaje: mark, contest, cell: self.cell }));
+    return keeperRestartAfterShot(state, events);
+  }
+  const keeper = state.players[keeperId(other2(state.attacker))];
+  const stat = shot === "RM" ? keeperStats(keeper.card).rf : keeperStats(keeper.card).co;
+  const { contest: saveContest, saved } = resolveSave(rng, stat);
+  if (isGoal(true, saved)) {
+    events.push(evContest("goal", state.attacker, { player: self.card.name, ability: shot === "RM" ? "rm" : "dl", contest, cell: self.cell }));
+    return concede(state, state.attacker, events);
+  }
+  events.push(evContest("save", other2(state.attacker), { player: keeper.card.name, ability: shot === "RM" ? "rf" : "co", contest: saveContest, cell: self.cell }));
+  keeperRestartAfterShot(state, events);
+}
+function applyMove(state, playerId2, to, handoff) {
+  var _a;
+  const mover = state.players[playerId2];
+  const wasCarrier = state.ball.carrier === playerId2;
+  const target = occupants(state, to).find((o) => o.side === mover.side && o.id !== playerId2);
+  if (target) relevo(state, playerId2, target.id);
+  else stepInto(state, playerId2, to);
+  if (handoff && wasCarrier && target) giveBall(state, target.id);
+  state.antiStall.pdChain = [];
+  ((_a = state.antiStall.movedTo)[playerId2] ?? (_a[playerId2] = [])).push(cellKey(to));
+  if (wasCarrier) state.libre = null;
+  state.phase = { kind: "defend_move", side: other2(state.attacker) };
+}
+function applyHueco(state, pass, to, rng, events) {
+  const from = carrier(state);
+  state.libre = null;
+  state.antiStall.pdChain = [];
+  const contest = resolvePaseHueco(rng, rate(from, pass === "PL" ? "pl" : "pc"));
+  state.ball = { carrier: null, cell: { ...to } };
+  events.push(evContest("pass", state.attacker, { player: from.card.name, ability: pass === "PL" ? "pl" : "pc", contest, cell: to }));
+  const first = contest.success ? state.attacker : other2(state.attacker);
+  state.phase = { kind: "hueco_move", side: first };
+}
+function recoverFailedPass(state, receiver, receiverMark, events) {
+  const def = other2(state.attacker);
+  if (receiverMark === "MH" || receiverMark === "MZ") {
+    const marker = markerOf(state, receiver);
+    if (marker) {
+      marker.onTop = true;
+      state.players[receiver].onTop = false;
+      giveBall(state, marker.id);
+      state.libre = null;
+      return changePossession(state, events);
+    }
+  }
+  const recCell = state.players[receiver].cell;
+  const attackDir = state.attacker === "home" ? 1 : -1;
+  const goalside = (row) => (row - recCell.row) * attackDir;
+  const candidates = playersOf(state, def).filter((p) => goalside(p.cell.row) >= 0);
+  const minDist = Math.min(...candidates.map((p) => distance(p.cell, recCell)));
+  let best = candidates.filter((p) => distance(p.cell, recCell) === minDist);
+  if (best.length > 1) {
+    const deepest = Math.max(...best.map((p) => goalside(p.cell.row)));
+    const behind = best.filter((p) => goalside(p.cell.row) === deepest);
+    if (behind.length === 1) best = behind;
+  }
+  if (best.length > 1) {
+    state.phase = { kind: "recovery_pick", side: def, candidates: best.map((p) => p.id) };
+    return;
+  }
+  finishRecovery(state, best[0].id, events);
+}
+function finishRecovery(state, recovererId, events) {
+  giveBall(state, recovererId);
+  state.libre = null;
+  changePossession(state, events);
+}
+function applyRecover(state, action, events) {
+  if (action.kind !== "recover") return;
+  finishRecovery(state, action.player, events);
+}
+function applyDefendMove(state, action, rng, events) {
+  if (action.kind === "decline") {
+    state.phase = { kind: "attack", side: state.attacker };
+    return;
+  }
+  if (action.kind === "move") {
+    const mover = state.players[action.player];
+    const target = occupants(state, action.to).find((o) => o.side === mover.side && o.id !== action.player);
+    if (target) relevo(state, action.player, target.id);
+    else stepInto(state, action.player, action.to);
+    state.phase = { kind: "attack", side: state.attacker };
+    return;
+  }
+  if (action.kind === "robo") {
+    if (action.mode === "move-onto" && action.to) stepInto(state, action.defender, action.to);
+    return applyRobo(state, action.defender, rng, events);
+  }
+}
+function applyInterrupt(state, action, rng, events) {
+  if (action.kind === "decline") {
+    state.phase = { kind: "attack", side: state.attacker };
+    return;
+  }
+  if (action.kind === "anticipacion") return applyAnticipacion(state, action.defender, rng, events);
+  if (action.kind === "robo") return applyRobo(state, action.defender, rng, events);
+}
+function applyAnticipacion(state, defenderId, rng, events) {
+  const defender = state.players[defenderId];
+  const receiver = carrier(state);
+  const contest = resolveAnticipacion(rng, rate(defender, "a"));
+  if (contest.success) {
+    defender.onTop = true;
+    receiver.onTop = false;
+    giveBall(state, defender.id);
+    state.libre = defender.id;
+    events.push(evContest("interception", defender.side, { player: defender.card.name, ability: "a", contest, cell: defender.cell }));
+    return changePossession(state, events);
+  }
+  if (defender.onTop) defender.onTop = false;
+  state.libre = receiver.id;
+  events.push(evContest("turnover", defender.side, { ability: "a", contest, cell: defender.cell }));
+  state.phase = { kind: "attack", side: state.attacker };
+}
+function applyRobo(state, defenderId, rng, events) {
+  const defender = state.players[defenderId];
+  const holder = carrier(state);
+  const contest = resolveRobo(rng, rate(defender, "rb"));
+  if (contest.success) {
+    defender.onTop = true;
+    holder.onTop = false;
+    giveBall(state, defender.id);
+    state.libre = null;
+    events.push(evContest("steal", defender.side, { player: defender.card.name, ability: "rb", contest, cell: defender.cell }));
+    return changePossession(state, events);
+  }
+  events.push(evContest("turnover", defender.side, { ability: "rb", contest, cell: defender.cell }));
+  state.phase = { kind: "robo_advance", side: state.attacker };
+}
+function applyRoboAdvance(state, action) {
+  const holder = carrier(state);
+  if (action.kind === "robo_advance") {
+    stepInto(state, holder.id, action.to);
+    state.libre = holder.id;
+    state.phase = { kind: "attack", side: state.attacker };
+    return;
+  }
+  const marker = markerOf(state, holder.id);
+  if (marker) {
+    marker.onTop = false;
+    holder.onTop = true;
+  }
+  state.libre = holder.id;
+  state.phase = { kind: "attack", side: state.attacker };
+}
+function applyHuecoMove(state, action, events) {
+  const looseCell = state.ball.cell;
+  if (action.kind === "move") {
+    stepInto(state, action.player, action.to);
+    if (cellKey(action.to) === cellKey(looseCell)) {
+      const picker = state.players[action.player];
+      giveBall(state, picker.id);
+      if (picker.side === state.attacker) {
+        state.phase = { kind: "defend_move", side: other2(state.attacker) };
+      } else {
+        state.libre = null;
+        return changePossession(state, events, true);
+      }
+      return;
+    }
+  }
+  if (state.ball.carrier === null) {
+    const nearest = nearestTo(state, state.attacker, looseCell);
+    giveBall(state, nearest);
+  }
+  state.phase = { kind: "attack", side: state.attacker };
+}
+function nearestTo(state, side, cell) {
+  return playersOf(state, side).filter((p) => p.id !== keeperId(side)).sort((a, b) => distance(a.cell, cell) - distance(b.cell, cell))[0].id;
+}
+function keeperRestartAfterShot(state, events) {
+  state.attacker = other2(state.attacker);
+  resetAntiStall(state);
+  state.possessionJugadas = 0;
+  if (advanceTurno(state, events)) return;
+  giveBall(state, keeperId(state.attacker));
+  state.phase = { kind: "restart_move", side: state.attacker };
+}
+function keeperFootRestart(state) {
+  const side = state.attacker;
+  giveBall(state, keeperId(side));
+  state.phase = { kind: "keeper_restart", side };
+}
+function applyRestartMove(state, action) {
+  const restartSide = state.attacker;
+  const doneSide = state.phase.side;
+  if (action.kind === "premove") {
+    const mover = state.players[action.player];
+    const target = occupants(state, action.to).find((o) => o.side === mover.side && o.id !== action.player);
+    if (target) relevo(state, action.player, target.id);
+    else stepInto(state, action.player, action.to);
+  }
+  if (doneSide === restartSide) {
+    state.phase = { kind: "restart_move", side: other2(restartSide) };
+  } else {
+    giveBall(state, keeperId(restartSide));
+    state.phase = { kind: "keeper_restart", side: restartSide };
+  }
+}
+function applyKeeperRestart(state, action, rng, events) {
+  const side = state.attacker;
+  const keeper = state.players[keeperId(side)];
+  if (action.kind === "keeper_pass") {
+    const receiver = state.players[action.to];
+    if (action.pass === "PD") {
+      giveBall(state, action.to);
+    } else {
+      const contest = resolvePase(rng, action.pass, "SM", marcajeOf(state, action.to), 0);
+      events.push(evContest("pass", side, { player: keeper.card.name, target: receiver.card.name, ability: action.pass === "PL" ? "pl" : "pc", contest, cell: receiver.cell }));
+      if (!contest.success) return recoverFailedPass(state, action.to, marcajeOf(state, action.to), events);
+      giveBall(state, action.to);
+    }
+    state.phase = { kind: "attack", side };
+    return;
+  }
+  if (action.kind === "keeper_hueco") {
+    const contest = resolvePaseHueco(rng, 0);
+    state.ball = { carrier: null, cell: { ...action.to } };
+    events.push(evContest("pass", side, { player: keeper.card.name, ability: action.pass === "PL" ? "pl" : "pc", contest, cell: action.to }));
+    state.phase = { kind: "hueco_move", side: contest.success ? side : other2(side) };
+    return;
+  }
+}
+function concede(state, scorer, events) {
+  if (scorer === "home") state.score.home += 1;
+  else state.score.away += 1;
+  if (advanceTurno(state, events)) return;
+  const conceding = other2(scorer);
+  state.players = { ...autoPlace(homeSquadOf(state), "home"), ...autoPlace(awaySquadOf(state), "away") };
+  state.attacker = conceding;
+  resetAntiStall(state);
+  state.possessionJugadas = 0;
+  state.libre = null;
+  const kicker = kickoffCarrier(conceding);
+  giveBall(state, kicker);
+  state.phase = { kind: "kickoff", side: conceding };
+}
+function squadOf2(state, side) {
+  const ps = playersOf(state, side).sort((a, b) => a.id.localeCompare(b.id));
+  const keeper = state.players[keeperId(side)].card;
+  const outfield = ps.filter((p) => p.id !== keeperId(side)).map((p) => p.card);
+  return { name: side, outfield, keeper };
+}
+var homeSquadOf = (s) => squadOf2(s, "home");
+var awaySquadOf = (s) => squadOf2(s, "away");
+
+// src/game/board/index.ts
+function createMatch(input) {
+  const players = { ...autoPlace(input.home, "home"), ...autoPlace(input.away, "away") };
+  const carrier2 = kickoffCarrier("home");
+  return {
+    version: STATE_VERSION,
+    players,
+    ball: { carrier: carrier2, cell: players[carrier2].cell },
+    attacker: "home",
+    phase: { kind: "kickoff", side: "home" },
+    libre: null,
+    score: { home: 0, away: 0 },
+    turno: 0,
+    ply: 0,
+    possessionJugadas: 0,
+    antiStall: { pdChain: [], movedTo: {} },
+    difficulty: input.difficulty
+  };
+}
+
+// src/game/board/ai.ts
+var AI_WEIGHTS = {
+  // easy is odds-blind and reckless (barely fears a turnover), so it chases raw upside;
+  // normal reads the odds partially; hard trusts them fully and, trusting them, is
+  // EV-neutral (risk 1) rather than extra-cautious — the true odds already price the
+  // gamble, so piling on aversion only makes it under-shoot.
+  easy: { noise: 26, oddsTrust: 0.1, risk: 0.45, pressure: 0.55 },
+  normal: { noise: 12, oddsTrust: 0.6, risk: 0.9, pressure: 1 },
+  hard: { noise: 4, oddsTrust: 1, risk: 1, pressure: 1.2 }
+};
+var GOAL = 100;
+var KEEP = 18;
+var FWD = 8;
+var REGATE_BONUS = 10;
+var TURN_BASE = 8;
+var TURN_PER = 8;
+var OWN_GOAL = 110;
+var TEMPO = 12;
+var STEAL = 58;
+var STEAL_FAIL = 22;
+var ANTICIP_FAIL = 26;
+var DECLINE_DEF = 14;
+var MOVE_BASE = 8;
+var MOVE_FWD = 3;
+var PRESS_BASE = 6;
+var CLOSE = 9;
+var MARK_BONUS = 24;
+var PICKUP = 90;
+var RECOVER_BASE = 40;
+var KEEPER_BASE = 16;
+function progress(side, cell) {
+  return side === "home" ? cell.row : 5 - cell.row;
+}
+function turnoverCost(me, cell) {
+  return TURN_BASE + progress(me === "home" ? "away" : "home", cell) * TURN_PER;
+}
+function rate2(p, key) {
+  return abilityValue(p.card, key);
+}
+var GE_2D6 = [36, 36, 36, 35, 33, 30, 26, 21, 15, 10, 6, 3, 1];
+function twoDiceProb(rating) {
+  const target = 10 - rating;
+  if (target <= 0) return 1;
+  if (target > 12) return 0;
+  return GE_2D6[target] / 36;
+}
+function oneDieProb(rating) {
+  const need = 5 - rating;
+  if (need <= 1) return 1;
+  if (need > 6) return 0;
+  return (7 - need) / 6;
+}
+function successProb(dice, rating) {
+  if (dice === 0) return 1;
+  return dice === 1 ? oneDieProb(rating) : twoDiceProb(rating);
+}
+function actingSide(state) {
+  return state.phase.side;
+}
+function score(state, action, w) {
+  const me = state.phase.kind === "fulltime" ? "home" : actingSide(state);
+  const players = state.players;
+  const ballCell = state.ball.cell;
+  const mix = (p) => w.oddsTrust * p + (1 - w.oddsTrust) * 0.5;
+  switch (action.kind) {
+    case "shot": {
+      const shooter = players[state.ball.carrier];
+      const mark = forDice(marcajeOf(state, shooter.id));
+      const shotKey = action.shot === "RM" ? "rm" : "dl";
+      const onTarget = successProb(contestDice(mark, action.shot), rate2(shooter, shotKey));
+      const keeper = players[keeperId(other2(me))];
+      const saveKey = action.shot === "RM" ? "rf" : "co";
+      const save = twoDiceProb(rate2(keeper, saveKey));
+      const goalP = onTarget * (1 - save);
+      return GOAL * mix(goalP) - turnoverCost(me, shooter.cell) * mix(1 - goalP) * w.risk;
+    }
+    case "pass": {
+      const from = players[state.ball.carrier];
+      const to = players[action.to];
+      const cesion = to.id === keeperId(me);
+      const forward = progress(me, to.cell) - progress(me, from.cell);
+      const value = KEEP + Math.max(0, forward) * FWD;
+      if (action.pass === "PD") {
+        return cesion ? KEEP * 0.2 : value;
+      }
+      const dice = passDice(forDice(marcajeOf(state, from.id)), forDice(marcajeOf(state, to.id)), action.pass);
+      const ratingKey = action.pass === "PL" ? "pl" : "pc";
+      const p = successProb(dice, rate2(from, ratingKey));
+      const downside = cesion ? OWN_GOAL : turnoverCost(me, from.cell);
+      return value * mix(p) - downside * mix(1 - p) * w.risk;
+    }
+    case "hueco": {
+      const from = players[state.ball.carrier];
+      const ratingKey = action.pass === "PL" ? "pl" : "pc";
+      const p = twoDiceProb(rate2(from, ratingKey));
+      const forward = progress(me, action.to) - progress(me, from.cell);
+      const value = KEEP * 0.7 + Math.max(0, forward) * FWD;
+      return value * mix(p) - TEMPO * mix(1 - p) * w.risk;
+    }
+    case "regate": {
+      const self = players[state.ball.carrier];
+      const mark = forDice(marcajeOf(state, self.id));
+      const p = successProb(contestDice(mark, "RG"), rate2(self, "rg"));
+      return (KEEP + REGATE_BONUS) * mix(p) - turnoverCost(me, self.cell) * mix(1 - p) * w.risk;
+    }
+    case "move": {
+      const mover = players[action.player];
+      if (state.phase.kind === "attack") {
+        const forward = progress(me, action.to) - progress(me, mover.cell);
+        if (state.ball.carrier === action.player) {
+          return KEEP + Math.max(0, forward) * FWD;
+        }
+        return MOVE_BASE + Math.max(0, forward) * MOVE_FWD + progress(me, action.to) * 0.5;
+      }
+      const before = distance(mover.cell, ballCell);
+      const after = distance(action.to, ballCell);
+      const onto = sameCell(action.to, ballCell);
+      const bonus = onto ? state.ball.carrier === null ? PICKUP : MARK_BONUS : 0;
+      return PRESS_BASE + w.pressure * ((before - after) * CLOSE + bonus);
+    }
+    case "anticipacion": {
+      const def = players[action.defender];
+      const p = twoDiceProb(rate2(def, "a"));
+      return STEAL * w.pressure * mix(p) - ANTICIP_FAIL * mix(1 - p);
+    }
+    case "robo": {
+      const def = players[action.defender];
+      const p = twoDiceProb(rate2(def, "rb"));
+      return STEAL * w.pressure * mix(p) - STEAL_FAIL * mix(1 - p);
+    }
+    case "decline":
+      return DECLINE_DEF;
+    case "robo_advance": {
+      const holder = players[state.ball.carrier];
+      const forward = progress(me, action.to) - progress(me, holder.cell);
+      return KEEP + Math.max(0, forward) * FWD + 4;
+    }
+    case "decline_advance":
+      return KEEP - 2;
+    // keeps the ball and stays libre, but gains no ground
+    case "recover": {
+      const p = players[action.player];
+      return RECOVER_BASE - progress(me, p.cell) * 2;
+    }
+    case "keeper_pass": {
+      const to = players[action.to];
+      const dice = passDice("SM", forDice(marcajeOf(state, to.id)), action.pass);
+      const p = successProb(dice, 0);
+      const value = KEEPER_BASE + progress(me, to.cell) * FWD;
+      return value * mix(p) - turnoverCost(me, to.cell) * mix(1 - p);
+    }
+    case "keeper_hueco": {
+      const p = twoDiceProb(0);
+      const value = KEEPER_BASE * 0.6 + progress(me, action.to) * FWD;
+      return value * mix(p) - TEMPO * mix(1 - p);
+    }
+    case "premove": {
+      const mover = players[action.player];
+      const forward = progress(me, action.to) - progress(me, mover.cell);
+      return 4 + Math.max(0, forward) * 2;
+    }
+    case "premove_done":
+      return 8;
+    case "place":
+    case "placement_done":
+      return 0;
+  }
+}
+function chooseAction(state, rng, difficulty) {
+  const options = legalActions(state);
+  if (options.length === 0) throw new Error("AI asked to act with no legal actions");
+  const w = AI_WEIGHTS[difficulty];
+  let best = options[0];
+  let bestScore = -Infinity;
+  for (const a of options) {
+    const s = score(state, a, w) + rng.next() * w.noise;
+    if (s > bestScore) {
+      bestScore = s;
+      best = a;
+    }
+  }
+  return best;
+}
+
 // supabase/functions/_src/play-match.ts
 var CORS_HEADERS = {
   "Access-Control-Allow-Origin": "*",
@@ -631,6 +1662,162 @@ function json(body, status = 200) {
     status,
     headers: { ...CORS_HEADERS, "Content-Type": "application/json" }
   });
+}
+function pickDifficulty(raw) {
+  return DIFFICULTIES.includes(raw) ? raw : "normal";
+}
+function phaseSide(state) {
+  return state.phase.side;
+}
+async function loadHome(userClient) {
+  const { data: squadRow, error: squadErr } = await userClient.from("squads").select("id, name, total_cost").order("is_active", { ascending: false }).limit(1).maybeSingle();
+  if (squadErr) return { error: squadErr.message, status: 400 };
+  if (!squadRow) return { error: "you have no squad yet", status: 400 };
+  const { data: slots, error: slotErr } = await userClient.from("squad_slots").select("card_id, slot").eq("squad_id", squadRow.id).order("slot", { ascending: true });
+  if (slotErr) return { error: slotErr.message, status: 400 };
+  const { data: catalog, error: catErr } = await userClient.from("cards").select("*");
+  if (catErr) return { error: catErr.message, status: 400 };
+  const squad = { ...squadRow, slots: slots ?? [] };
+  const cards = catalog ?? [];
+  let home;
+  try {
+    home = buildEngineSquad(squad.name || "Tu equipo", squad, cards);
+  } catch (err) {
+    return { error: err instanceof Error ? err.message : "invalid squad", status: 400 };
+  }
+  const byId = new Map(cards.map((c) => [c.id, c]));
+  const strength = squad.slots.reduce((sum, s) => {
+    var _a;
+    return sum + (((_a = byId.get(s.card_id)) == null ? void 0 : _a.cost) ?? 0);
+  }, 0);
+  return { home, strength, squadId: squadRow.id };
+}
+async function legacyPlay(userClient, adminClient, uid, difficulty) {
+  const ctx = await loadHome(userClient);
+  if ("error" in ctx) return json({ error: ctx.error }, ctx.status);
+  const seed = seedFrom(Date.now(), difficulty, ctx.squadId);
+  const away = generateOpponent(difficulty, createRng(seedFrom(seed, "opponent")));
+  const outcome = simulateMatch({ home: ctx.home, away, difficulty, seed });
+  const { data: recorded, error: recErr } = await adminClient.rpc("record_match", {
+    p_uid: uid,
+    p_opponent: outcome.opponent,
+    p_difficulty: difficulty,
+    p_result: outcome.result,
+    p_gf: outcome.goals_for,
+    p_ga: outcome.goals_against,
+    p_squad_strength: ctx.strength,
+    p_log: outcome.log
+  });
+  if (recErr) return json({ error: recErr.message }, 500);
+  return json({
+    ...outcome,
+    coins_awarded: recorded.coins_awarded
+  });
+}
+async function startMatch(userClient, adminClient, uid, difficulty) {
+  const { data: active } = await adminClient.from("match_sessions").select("id").eq("user_id", uid).eq("status", "active").maybeSingle();
+  if (active) return json({ error: "active_session", sessionId: active.id }, 409);
+  const ctx = await loadHome(userClient);
+  if ("error" in ctx) return json({ error: ctx.error }, ctx.status);
+  const seed = seedFrom(Date.now(), difficulty, ctx.squadId);
+  const away = generateOpponent(difficulty, createRng(seedFrom(seed, "opponent")));
+  const state = createMatch({ home: ctx.home, away, difficulty });
+  const { data: inserted, error: insErr } = await adminClient.from("match_sessions").insert({
+    user_id: uid,
+    difficulty,
+    status: "active",
+    seed,
+    ply: state.ply,
+    state,
+    away_squad: away,
+    log: [],
+    squad_strength: ctx.strength
+  }).select("id").single();
+  if (insErr) {
+    if (insErr.code === "23505") {
+      const { data: existing } = await adminClient.from("match_sessions").select("id").eq("user_id", uid).eq("status", "active").maybeSingle();
+      return json({ error: "active_session", sessionId: existing == null ? void 0 : existing.id }, 409);
+    }
+    return json({ error: insErr.message }, 500);
+  }
+  return json({ sessionId: inserted.id, ply: state.ply, state, legal: legalActions(state), events: [] });
+}
+async function resumeMatch(userClient, uid) {
+  const { data: session } = await userClient.from("match_sessions").select("id, state, ply").eq("user_id", uid).eq("status", "active").maybeSingle();
+  if (!session) return json({ error: "no_active_session" }, 404);
+  const state = session.state;
+  return json({ sessionId: session.id, ply: session.ply, state, legal: legalActions(state), events: [] });
+}
+async function resignMatch(adminClient, uid) {
+  const { data: session } = await adminClient.from("match_sessions").select("id").eq("user_id", uid).eq("status", "active").maybeSingle();
+  if (!session) return json({ error: "no_active_session" }, 404);
+  const { data: paid, error } = await adminClient.rpc("finish_match_session", {
+    p_uid: uid,
+    p_session_id: session.id,
+    p_forfeit: true
+  });
+  if (error) return json({ error: error.message }, 400);
+  return json({ status: "abandoned", outcome: paid });
+}
+async function finishSession(adminClient, uid, sessionId) {
+  const { data: paid, error } = await adminClient.rpc("finish_match_session", {
+    p_uid: uid,
+    p_session_id: sessionId,
+    p_forfeit: false
+  });
+  if (error) return { error: error.message, status: 400 };
+  return { outcome: paid };
+}
+async function actMatch(adminClient, uid, body) {
+  const sessionId = body.sessionId;
+  if (!sessionId) return json({ error: "sessionId required" }, 400);
+  const { data: session, error: loadErr } = await adminClient.from("match_sessions").select("id, user_id, status, seed, ply, state, difficulty, log").eq("id", sessionId).maybeSingle();
+  if (loadErr) return json({ error: loadErr.message }, 400);
+  if (!session || session.user_id !== uid) return json({ error: "session not found" }, 404);
+  if (session.status !== "active") return json({ error: "session not active" }, 409);
+  if (typeof body.ply === "number" && body.ply !== session.ply) {
+    return json({ error: "stale_ply", ply: session.ply, state: session.state }, 409);
+  }
+  const state = session.state;
+  const difficulty = pickDifficulty(session.difficulty);
+  if (state.phase.kind === "fulltime") {
+    const fin = await finishSession(adminClient, uid, sessionId);
+    if ("error" in fin) return json({ error: fin.error }, fin.status);
+    return json({ state, ply: session.ply, legal: [], events: [], outcome: fin.outcome });
+  }
+  const side = phaseSide(state);
+  let action;
+  if (side === "away") {
+    action = chooseAction(state, createRng(seedFrom(session.seed, session.ply, "ai")), difficulty);
+  } else {
+    if (!body.action || typeof body.action.kind !== "string") {
+      return json({ error: "action required" }, 400);
+    }
+    action = body.action;
+  }
+  const diceRng = createRng(seedFrom(session.seed, session.ply, action.kind));
+  let next;
+  let events;
+  try {
+    const res = apply(state, action, diceRng);
+    next = res.state;
+    events = res.events;
+  } catch (err) {
+    return json({ error: err instanceof Error ? err.message : "illegal action" }, 400);
+  }
+  const newPly = session.ply + 1;
+  next.ply = newPly;
+  const newLog = [...session.log ?? [], ...events];
+  const { data: updated, error: updErr } = await adminClient.from("match_sessions").update({ state: next, ply: newPly, log: newLog, updated_at: (/* @__PURE__ */ new Date()).toISOString() }).eq("id", sessionId).eq("ply", session.ply).eq("status", "active").select("id").maybeSingle();
+  if (updErr) return json({ error: updErr.message }, 500);
+  if (!updated) return json({ error: "stale_ply", ply: session.ply }, 409);
+  let outcome;
+  if (next.phase.kind === "fulltime") {
+    const fin = await finishSession(adminClient, uid, sessionId);
+    if ("error" in fin) return json({ error: fin.error }, fin.status);
+    outcome = fin.outcome;
+  }
+  return json({ state: next, ply: newPly, legal: legalActions(next), events, outcome });
 }
 Deno.serve(async (req) => {
   var _a;
@@ -647,52 +1834,22 @@ Deno.serve(async (req) => {
   const { data: auth } = await userClient.auth.getUser();
   const uid = (_a = auth.user) == null ? void 0 : _a.id;
   if (!uid) return json({ error: "not authenticated" }, 401);
-  let difficulty = "normal";
+  const adminClient = createClient(url, serviceKey);
+  let body = {};
   try {
-    const body = await req.json();
-    if (body && DIFFICULTIES.includes(body.p_difficulty)) difficulty = body.p_difficulty;
+    body = await req.json() ?? {};
   } catch {
   }
-  const { data: squadRow, error: squadErr } = await userClient.from("squads").select("id, name, total_cost").order("is_active", { ascending: false }).limit(1).maybeSingle();
-  if (squadErr) return json({ error: squadErr.message }, 400);
-  if (!squadRow) return json({ error: "you have no squad yet" }, 400);
-  const { data: slots, error: slotErr } = await userClient.from("squad_slots").select("card_id, slot").eq("squad_id", squadRow.id).order("slot", { ascending: true });
-  if (slotErr) return json({ error: slotErr.message }, 400);
-  const { data: catalog, error: catErr } = await userClient.from("cards").select("*");
-  if (catErr) return json({ error: catErr.message }, 400);
-  const squad = { ...squadRow, slots: slots ?? [] };
-  const cards = catalog ?? [];
-  let home;
-  try {
-    home = buildEngineSquad(squad.name || "Tu equipo", squad, cards);
-  } catch (err) {
-    return json({ error: err instanceof Error ? err.message : "invalid squad" }, 400);
+  switch (body.op) {
+    case "start":
+      return startMatch(userClient, adminClient, uid, pickDifficulty(body.difficulty));
+    case "act":
+      return actMatch(adminClient, uid, body);
+    case "resume":
+      return resumeMatch(userClient, uid);
+    case "resign":
+      return resignMatch(adminClient, uid);
+    default:
+      return legacyPlay(userClient, adminClient, uid, pickDifficulty(body.p_difficulty));
   }
-  const seed = seedFrom(Date.now(), difficulty, squad.id);
-  const away = generateOpponent(difficulty, createRng(seedFrom(seed, "opponent")));
-  const outcome = simulateMatch({ home, away, difficulty, seed });
-  const byId = new Map(cards.map((c) => [c.id, c]));
-  const strength = squad.slots.reduce(
-    (sum, s) => {
-      var _a2;
-      return sum + (((_a2 = byId.get(s.card_id)) == null ? void 0 : _a2.cost) ?? 0);
-    },
-    0
-  );
-  const adminClient = createClient(url, serviceKey);
-  const { data: recorded, error: recErr } = await adminClient.rpc("record_match", {
-    p_uid: uid,
-    p_opponent: outcome.opponent,
-    p_difficulty: difficulty,
-    p_result: outcome.result,
-    p_gf: outcome.goals_for,
-    p_ga: outcome.goals_against,
-    p_squad_strength: strength,
-    p_log: outcome.log
-  });
-  if (recErr) return json({ error: recErr.message }, 500);
-  return json({
-    ...outcome,
-    coins_awarded: recorded.coins_awarded
-  });
 });

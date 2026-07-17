@@ -1,24 +1,41 @@
-// play-match — the authoritative match resolver (SOURCE).
+// play-match — the authoritative match server (SOURCE).
 //
-// Runs the SAME pure basic-game engine that lives in `src/game/engine/`, then
-// commits the result through the `record_match` SECURITY DEFINER function using
-// the service-role key. Because `record_match` is revoked from client roles, the
-// scoreline and the coins it pays can only ever originate here — the browser can
-// trigger a match but not forge one.
+// Two protocols share this one function (the name is kept so config.toml's
+// `verify_jwt = true` and the single build:function script don't change):
 //
-// This file imports the engine from the app source (`@/…`). It lives OUTSIDE the
-// deployed function dir (Supabase ignores `_`-prefixed paths) and is NOT deployed
-// directly: `npm run build:function` bundles it (engine inlined) into the
-// self-contained `supabase/functions/play-match/index.ts` that Supabase actually
-// deploys, so the function has no dependency on the repo layout at deploy time.
+//   • LEGACY (no `op`): the old one-shot simulate — build squads, run the pure engine
+//     in `src/game/engine/`, and commit through `record_match`. Still serves the current
+//     non-interactive Play screen; deleted in Phase 6.
+//
+//   • INTERACTIVE (`op: start | act | resume | resign`): the turn-based basic game from
+//     `src/game/board/`. State lives in `match_sessions`; each jugada is one authenticated
+//     call. The invariant that keeps the anti-cheat posture intact across ~100 round trips
+//     instead of one: the client NEVER sends state back and NEVER rolls a die. It sends an
+//     action id and a ply token; the server loads the row, re-derives `legalActions`,
+//     rolls the dice from a seed it owns, applies exactly one step, and persists it. Coins
+//     are still paid only by `record_match`, now via `finish_match_session` (0014) so the
+//     pay + the match-id stamp are one transaction and a win can't be replayed.
+//
+// This file imports the engine from the app source (`@/…`); `npm run build:function`
+// bundles it (engine inlined) into the deployed `../play-match/index.ts`. Never hand-edit
+// that generated file.
 
-import { createClient } from 'npm:@supabase/supabase-js@2.47.10'
+import { createClient, type SupabaseClient } from 'npm:@supabase/supabase-js@2.47.10'
 import type { Card, Squad, SquadSlot, MatchOutcome } from '@/lib/types.ts'
 import type { Difficulty } from '@/game/engine/types.ts'
 import { simulateMatch } from '@/game/engine/index.ts'
 import { buildEngineSquad } from '@/game/engine/squad.ts'
 import { generateOpponent } from '@/game/engine/opponent.ts'
 import { createRng, seedFrom } from '@/game/engine/rng.ts'
+import {
+  createMatch,
+  legalActions,
+  apply,
+  type MatchState,
+  type Action,
+  type Side,
+} from '@/game/board/index.ts'
+import { chooseAction } from '@/game/board/ai.ts'
 
 const CORS_HEADERS = {
   'Access-Control-Allow-Origin': '*',
@@ -35,6 +52,277 @@ function json(body: unknown, status = 200): Response {
   })
 }
 
+function pickDifficulty(raw: unknown): Difficulty {
+  return DIFFICULTIES.includes(raw as Difficulty) ? (raw as Difficulty) : 'normal'
+}
+
+/** Whose input a non-terminal phase needs. */
+function phaseSide(state: MatchState): Side {
+  return (state.phase as { side: Side }).side
+}
+
+// ── shared: build the human squad + its strength from the caller's own data ──────
+
+type HomeContext = { home: ReturnType<typeof buildEngineSquad>; strength: number; squadId: number }
+
+async function loadHome(userClient: SupabaseClient): Promise<HomeContext | { error: string; status: number }> {
+  const { data: squadRow, error: squadErr } = await userClient
+    .from('squads')
+    .select('id, name, total_cost')
+    .order('is_active', { ascending: false })
+    .limit(1)
+    .maybeSingle()
+  if (squadErr) return { error: squadErr.message, status: 400 }
+  if (!squadRow) return { error: 'you have no squad yet', status: 400 }
+
+  const { data: slots, error: slotErr } = await userClient
+    .from('squad_slots')
+    .select('card_id, slot')
+    .eq('squad_id', squadRow.id)
+    .order('slot', { ascending: true })
+  if (slotErr) return { error: slotErr.message, status: 400 }
+
+  const { data: catalog, error: catErr } = await userClient.from('cards').select('*')
+  if (catErr) return { error: catErr.message, status: 400 }
+
+  const squad: Squad = { ...squadRow, slots: (slots ?? []) as SquadSlot[] }
+  const cards = (catalog ?? []) as Card[]
+  let home
+  try {
+    home = buildEngineSquad(squad.name || 'Tu equipo', squad, cards)
+  } catch (err) {
+    return { error: err instanceof Error ? err.message : 'invalid squad', status: 400 }
+  }
+  const byId = new Map(cards.map((c) => [c.id, c]))
+  const strength = squad.slots.reduce((sum, s) => sum + (byId.get(s.card_id)?.cost ?? 0), 0)
+  return { home, strength, squadId: squadRow.id }
+}
+
+// ── legacy one-shot (no op) ──────────────────────────────────────────────────────
+
+async function legacyPlay(
+  userClient: SupabaseClient,
+  adminClient: SupabaseClient,
+  uid: string,
+  difficulty: Difficulty,
+): Promise<Response> {
+  const ctx = await loadHome(userClient)
+  if ('error' in ctx) return json({ error: ctx.error }, ctx.status)
+
+  const seed = seedFrom(Date.now(), difficulty, ctx.squadId)
+  const away = generateOpponent(difficulty, createRng(seedFrom(seed, 'opponent')))
+  const outcome: MatchOutcome = simulateMatch({ home: ctx.home, away, difficulty, seed })
+
+  const { data: recorded, error: recErr } = await adminClient.rpc('record_match', {
+    p_uid: uid,
+    p_opponent: outcome.opponent,
+    p_difficulty: difficulty,
+    p_result: outcome.result,
+    p_gf: outcome.goals_for,
+    p_ga: outcome.goals_against,
+    p_squad_strength: ctx.strength,
+    p_log: outcome.log,
+  })
+  if (recErr) return json({ error: recErr.message }, 500)
+
+  return json({
+    ...outcome,
+    coins_awarded: (recorded as { coins_awarded: number }).coins_awarded,
+  } satisfies MatchOutcome)
+}
+
+// ── interactive: start | act | resume | resign ───────────────────────────────────
+
+async function startMatch(
+  userClient: SupabaseClient,
+  adminClient: SupabaseClient,
+  uid: string,
+  difficulty: Difficulty,
+): Promise<Response> {
+  // One live session per user (the anti-farming spine). Refuse a second; the client must
+  // resume or resign the existing one first.
+  const { data: active } = await adminClient
+    .from('match_sessions')
+    .select('id')
+    .eq('user_id', uid)
+    .eq('status', 'active')
+    .maybeSingle()
+  if (active) return json({ error: 'active_session', sessionId: active.id }, 409)
+
+  const ctx = await loadHome(userClient)
+  if ('error' in ctx) return json({ error: ctx.error }, ctx.status)
+
+  const seed = seedFrom(Date.now(), difficulty, ctx.squadId)
+  const away = generateOpponent(difficulty, createRng(seedFrom(seed, 'opponent')))
+  const state = createMatch({ home: ctx.home, away, difficulty })
+
+  const { data: inserted, error: insErr } = await adminClient
+    .from('match_sessions')
+    .insert({
+      user_id: uid,
+      difficulty,
+      status: 'active',
+      seed,
+      ply: state.ply,
+      state,
+      away_squad: away,
+      log: [],
+      squad_strength: ctx.strength,
+    })
+    .select('id')
+    .single()
+  if (insErr) {
+    // Lost a race on the unique-active index: surface the existing session to resume.
+    if (insErr.code === '23505') {
+      const { data: existing } = await adminClient
+        .from('match_sessions')
+        .select('id')
+        .eq('user_id', uid)
+        .eq('status', 'active')
+        .maybeSingle()
+      return json({ error: 'active_session', sessionId: existing?.id }, 409)
+    }
+    return json({ error: insErr.message }, 500)
+  }
+
+  return json({ sessionId: inserted.id, ply: state.ply, state, legal: legalActions(state), events: [] })
+}
+
+async function resumeMatch(userClient: SupabaseClient, uid: string): Promise<Response> {
+  // Reading your own session is harmless — perfect-information board game, nothing hidden.
+  const { data: session } = await userClient
+    .from('match_sessions')
+    .select('id, state, ply')
+    .eq('user_id', uid)
+    .eq('status', 'active')
+    .maybeSingle()
+  if (!session) return json({ error: 'no_active_session' }, 404)
+  const state = session.state as MatchState
+  return json({ sessionId: session.id, ply: session.ply, state, legal: legalActions(state), events: [] })
+}
+
+async function resignMatch(adminClient: SupabaseClient, uid: string): Promise<Response> {
+  const { data: session } = await adminClient
+    .from('match_sessions')
+    .select('id')
+    .eq('user_id', uid)
+    .eq('status', 'active')
+    .maybeSingle()
+  if (!session) return json({ error: 'no_active_session' }, 404)
+  // A resignation is recorded as a loss (you can't rage-quit out of a defeat).
+  const { data: paid, error } = await adminClient.rpc('finish_match_session', {
+    p_uid: uid,
+    p_session_id: session.id,
+    p_forfeit: true,
+  })
+  if (error) return json({ error: error.message }, 400)
+  return json({ status: 'abandoned', outcome: paid })
+}
+
+/** Pay + record + stamp an over (or forfeited) session. One-transaction guard lives in SQL. */
+async function finishSession(
+  adminClient: SupabaseClient,
+  uid: string,
+  sessionId: string,
+): Promise<{ outcome: unknown } | { error: string; status: number }> {
+  const { data: paid, error } = await adminClient.rpc('finish_match_session', {
+    p_uid: uid,
+    p_session_id: sessionId,
+    p_forfeit: false,
+  })
+  if (error) return { error: error.message, status: 400 }
+  return { outcome: paid }
+}
+
+async function actMatch(
+  adminClient: SupabaseClient,
+  uid: string,
+  body: { sessionId?: string; ply?: number; action?: Action },
+): Promise<Response> {
+  const sessionId = body.sessionId
+  if (!sessionId) return json({ error: 'sessionId required' }, 400)
+
+  // The service-role read is the source of truth (the client's copy is never trusted).
+  const { data: session, error: loadErr } = await adminClient
+    .from('match_sessions')
+    .select('id, user_id, status, seed, ply, state, difficulty, log')
+    .eq('id', sessionId)
+    .maybeSingle()
+  if (loadErr) return json({ error: loadErr.message }, 400)
+  if (!session || session.user_id !== uid) return json({ error: 'session not found' }, 404)
+  if (session.status !== 'active') return json({ error: 'session not active' }, 409)
+
+  // Optimistic-concurrency token: the client must act on the ply it last saw.
+  if (typeof body.ply === 'number' && body.ply !== session.ply) {
+    return json({ error: 'stale_ply', ply: session.ply, state: session.state }, 409)
+  }
+
+  const state = session.state as MatchState
+  const difficulty = pickDifficulty(session.difficulty)
+
+  // A prior act may have reached fulltime but not finished (e.g. a transient on the finish
+  // RPC). Finish it now rather than stranding the session.
+  if (state.phase.kind === 'fulltime') {
+    const fin = await finishSession(adminClient, uid, sessionId)
+    if ('error' in fin) return json({ error: fin.error }, fin.status)
+    return json({ state, ply: session.ply, legal: [], events: [], outcome: fin.outcome })
+  }
+
+  const side = phaseSide(state)
+  let action: Action
+  if (side === 'away') {
+    // The AI's own jugada — the server chooses it (the client cranks with no action). The
+    // choice RNG is addressed separately from the dice so the decision order can't reshuffle
+    // the roll (see the RNG note in the plan).
+    action = chooseAction(state, createRng(seedFrom(session.seed, session.ply, 'ai')), difficulty)
+  } else {
+    // The human's jugada. Trust nothing about it beyond membership in legalActions, which
+    // apply() re-derives and enforces below.
+    if (!body.action || typeof (body.action as Action).kind !== 'string') {
+      return json({ error: 'action required' }, 400)
+    }
+    action = body.action
+  }
+
+  // Dice come from an address unique to (seed, ply, action.kind). apply() re-validates the
+  // action against a freshly recomputed legalActions and throws on anything illegal/forged.
+  const diceRng = createRng(seedFrom(session.seed, session.ply, action.kind))
+  let next: MatchState
+  let events
+  try {
+    const res = apply(state, action, diceRng)
+    next = res.state
+    events = res.events
+  } catch (err) {
+    return json({ error: err instanceof Error ? err.message : 'illegal action' }, 400)
+  }
+
+  const newPly = session.ply + 1
+  next.ply = newPly
+  const newLog = [...((session.log as unknown[]) ?? []), ...events]
+
+  // Persist, guarded on the ply we read: a concurrent advance matches 0 rows → stale.
+  const { data: updated, error: updErr } = await adminClient
+    .from('match_sessions')
+    .update({ state: next, ply: newPly, log: newLog, updated_at: new Date().toISOString() })
+    .eq('id', sessionId)
+    .eq('ply', session.ply)
+    .eq('status', 'active')
+    .select('id')
+    .maybeSingle()
+  if (updErr) return json({ error: updErr.message }, 500)
+  if (!updated) return json({ error: 'stale_ply', ply: session.ply }, 409)
+
+  let outcome: unknown
+  if (next.phase.kind === 'fulltime') {
+    const fin = await finishSession(adminClient, uid, sessionId)
+    if ('error' in fin) return json({ error: fin.error }, fin.status)
+    outcome = fin.outcome
+  }
+
+  return json({ state: next, ply: newPly, legal: legalActions(next), events, outcome })
+}
+
 Deno.serve(async (req: Request): Promise<Response> => {
   if (req.method === 'OPTIONS') return new Response('ok', { headers: CORS_HEADERS })
   if (req.method !== 'POST') return json({ error: 'method not allowed' }, 405)
@@ -46,82 +334,35 @@ Deno.serve(async (req: Request): Promise<Response> => {
   const authHeader = req.headers.get('Authorization')
   if (!authHeader) return json({ error: 'not authenticated' }, 401)
 
-  // User-scoped client: reads run under the caller's RLS (own squad + public cards).
+  // User-scoped client: reads run under the caller's RLS (own squad/session + public cards).
   const userClient = createClient(url, anonKey, {
     global: { headers: { Authorization: authHeader } },
   })
-
   const { data: auth } = await userClient.auth.getUser()
   const uid = auth.user?.id
   if (!uid) return json({ error: 'not authenticated' }, 401)
 
-  // Parse + validate difficulty.
-  let difficulty: Difficulty = 'normal'
-  try {
-    const body = await req.json()
-    if (body && DIFFICULTIES.includes(body.p_difficulty)) difficulty = body.p_difficulty
-  } catch {
-    // empty/invalid body → keep the default
-  }
-
-  // Load the active squad, its slots, and the card catalog (same as src/data/api.ts).
-  const { data: squadRow, error: squadErr } = await userClient
-    .from('squads')
-    .select('id, name, total_cost')
-    .order('is_active', { ascending: false })
-    .limit(1)
-    .maybeSingle()
-  if (squadErr) return json({ error: squadErr.message }, 400)
-  if (!squadRow) return json({ error: 'you have no squad yet' }, 400)
-
-  const { data: slots, error: slotErr } = await userClient
-    .from('squad_slots')
-    .select('card_id, slot')
-    .eq('squad_id', squadRow.id)
-    .order('slot', { ascending: true })
-  if (slotErr) return json({ error: slotErr.message }, 400)
-
-  const { data: catalog, error: catErr } = await userClient.from('cards').select('*')
-  if (catErr) return json({ error: catErr.message }, 400)
-
-  const squad: Squad = { ...squadRow, slots: (slots ?? []) as SquadSlot[] }
-  const cards = (catalog ?? []) as Card[]
-
-  // Build the human squad and a seeded opponent, then run the real engine.
-  let home
-  try {
-    home = buildEngineSquad(squad.name || 'Tu equipo', squad, cards)
-  } catch (err) {
-    return json({ error: err instanceof Error ? err.message : 'invalid squad' }, 400)
-  }
-  const seed = seedFrom(Date.now(), difficulty, squad.id)
-  const away = generateOpponent(difficulty, createRng(seedFrom(seed, 'opponent')))
-  const outcome: MatchOutcome = simulateMatch({ home, away, difficulty, seed })
-
-  // Strength = summed cost of the starters (kept for match history parity).
-  const byId = new Map(cards.map((c) => [c.id, c]))
-  const strength = squad.slots.reduce(
-    (sum, s) => sum + (byId.get(s.card_id)?.cost ?? 0),
-    0,
-  )
-
-  // Commit the outcome authoritatively with the service-role key.
+  // Service-role client: the only thing that may write game state or pay coins.
   const adminClient = createClient(url, serviceKey)
-  const { data: recorded, error: recErr } = await adminClient.rpc('record_match', {
-    p_uid: uid,
-    p_opponent: outcome.opponent,
-    p_difficulty: difficulty,
-    p_result: outcome.result,
-    p_gf: outcome.goals_for,
-    p_ga: outcome.goals_against,
-    p_squad_strength: strength,
-    p_log: outcome.log,
-  })
-  if (recErr) return json({ error: recErr.message }, 500)
 
-  // Reward is server-defined; use what record_match actually paid.
-  return json({
-    ...outcome,
-    coins_awarded: (recorded as { coins_awarded: number }).coins_awarded,
-  } satisfies MatchOutcome)
+  let body: Record<string, unknown> = {}
+  try {
+    body = (await req.json()) ?? {}
+  } catch {
+    // empty/invalid body → treat as legacy with default difficulty
+  }
+
+  switch (body.op) {
+    case 'start':
+      return startMatch(userClient, adminClient, uid, pickDifficulty(body.difficulty))
+    case 'act':
+      return actMatch(adminClient, uid, body as { sessionId?: string; ply?: number; action?: Action })
+    case 'resume':
+      return resumeMatch(userClient, uid)
+    case 'resign':
+      return resignMatch(adminClient, uid)
+    default:
+      // Legacy one-shot Play (no op). Deleted in Phase 6.
+      return legacyPlay(userClient, adminClient, uid, pickDifficulty(body.p_difficulty))
+  }
 })
