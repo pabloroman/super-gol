@@ -260,7 +260,10 @@ export function SquadBuilder() {
             <h2 className="font-display text-xs uppercase tracking-widest text-slate-500">
               Titulares · {starterCards.length}/{STARTER_COUNT}
             </h2>
-            <div className="grid grid-cols-2 gap-3">
+            {/* 6 columns at lg, not Colección's 5: the squad wants tidy, not
+                dense. 11 titulares + the AddSlot is 12, and the bench's 5 + 1 is
+                6 — both tile exactly, with no ragged last row. */}
+            <div className="grid grid-cols-2 gap-3 md:grid-cols-4 lg:grid-cols-6">
               {starterCards.map((card) => (
                 <SquadCard
                   key={card.id}
@@ -279,7 +282,7 @@ export function SquadBuilder() {
             <h2 className="font-display text-xs uppercase tracking-widest text-slate-500">
               Suplentes · {benchCards.length}/{MAX_BENCH}
             </h2>
-            <div className="grid grid-cols-2 gap-3">
+            <div className="grid grid-cols-2 gap-3 md:grid-cols-4 lg:grid-cols-6">
               {benchCards.map((card) => (
                 <SquadCard
                   key={card.id}
@@ -306,7 +309,7 @@ export function SquadBuilder() {
           Te quedan <span className="font-bold text-grass-400">{remaining} pts</span> · no se
           muestran las cartas que no caben
         </p>
-        <div className="grid min-h-0 grid-cols-2 gap-3 overflow-y-auto pb-2">
+        <div className="grid min-h-0 grid-cols-2 gap-3 overflow-y-auto pb-2 md:grid-cols-4">
           {filtered.map((card) => (
             <Naipe
               key={card.id}

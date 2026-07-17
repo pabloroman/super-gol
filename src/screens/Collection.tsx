@@ -42,7 +42,7 @@ export function Collection() {
 
       {loading && <p className="text-slate-500">Cargando…</p>}
 
-      <div className="grid grid-cols-2 gap-3">
+      <div className="grid grid-cols-2 gap-3 md:grid-cols-4 xl:grid-cols-5">
         {filtered.map((e) => (
           <Naipe
             key={e.card.id}

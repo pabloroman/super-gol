@@ -19,7 +19,9 @@ export function Home() {
   const ready = starterCount === 11
 
   return (
-    <div className="flex flex-col gap-5">
+    // app-measure, not the wide default: this screen is a greeting, one summary
+    // card and a CTA. A primary button has no business spanning a monitor.
+    <div className="app-measure flex flex-col gap-5">
       <div>
         <p className="text-slate-400">Hola,</p>
         <h1 className="font-display text-3xl font-bold">

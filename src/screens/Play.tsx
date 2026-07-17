@@ -147,7 +147,9 @@ export function Play() {
   }
 
   return (
-    <div className="flex flex-col gap-4">
+    // The picker is a short list of choices — app-measure. The outcome state
+    // above is the wide one, where the pitch sits beside the crónica.
+    <div className="app-measure flex flex-col gap-4">
       <h1 className="font-display text-2xl font-bold">Elige rival</h1>
       {error && <p className="text-sm text-red-400">{error}</p>}
       {DIFFICULTIES.map((d) => (
@@ -155,7 +157,7 @@ export function Play() {
           key={d.id}
           disabled={busy}
           onClick={() => play(d.id)}
-          className="card-surface flex items-center justify-between p-5 text-left transition active:scale-[0.99] disabled:opacity-50"
+          className="card-surface flex items-center justify-between p-5 text-left transition hover:bg-pitch-700/80 hover:ring-white/10 active:scale-[0.99] disabled:opacity-50"
         >
           <div>
             <div className="font-display text-xl font-bold">{d.label}</div>
