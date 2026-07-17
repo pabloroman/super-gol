@@ -80,13 +80,11 @@ export interface Pack {
 export interface SquadSlot {
   card_id: string
   slot: number
-  is_starter: boolean
 }
 
 export interface Squad {
   id: number
   name: string
-  formation: string
   total_cost: number
   slots: SquadSlot[]
 }

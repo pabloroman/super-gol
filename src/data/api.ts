@@ -59,7 +59,7 @@ export async function fetchActiveSquad(): Promise<Squad | null> {
   const sb = requireSupabase()
   const { data: squad, error } = await sb
     .from('squads')
-    .select('id, name, formation, total_cost')
+    .select('id, name, total_cost')
     .order('is_active', { ascending: false })
     .limit(1)
     .maybeSingle()
@@ -68,7 +68,7 @@ export async function fetchActiveSquad(): Promise<Squad | null> {
 
   const { data: slots, error: slotErr } = await sb
     .from('squad_slots')
-    .select('card_id, slot, is_starter')
+    .select('card_id, slot')
     .eq('squad_id', squad.id)
     .order('slot', { ascending: true })
   if (slotErr) throw new Error(slotErr.message)
@@ -76,17 +76,10 @@ export async function fetchActiveSquad(): Promise<Squad | null> {
   return { ...squad, slots: (slots ?? []) as SquadSlot[] }
 }
 
-export async function saveSquad(
-  name: string,
-  formation: string,
-  starters: string[],
-  bench: string[],
-): Promise<number> {
+export async function saveSquad(name: string, starters: string[]): Promise<number> {
   const { data, error } = await requireSupabase().rpc('save_squad', {
     p_name: name,
-    p_formation: formation,
     p_starters: starters,
-    p_bench: bench,
   })
   if (error) throw new Error(error.message)
   return data as number
