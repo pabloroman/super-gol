@@ -179,6 +179,17 @@ whole thing together:
   by an unauthenticated caller — the deliberate alternative to a plain
   username→email lookup, which would leak PII. A miss returns the generic
   "Usuario o contraseña incorrectos" so username existence is not revealed.
+- **Every auth failure is shown in Spanish; GoTrue's English never leaks.** The
+  app is Spanish-only, so `Login.tsx` never renders `error.message` raw — it
+  routes every caught auth/RPC error through `authErrorMessage`
+  (`src/lib/authErrors.ts`), which branches on the stable `error.code`
+  (`invalid_credentials`, `weak_password`, …) with an English-message fallback
+  and a Spanish generic for anything unrecognised. The mapper also returns a
+  `field` so the message lands under `email`/`password`; client-side validation
+  (handle format via `usernameError`, the `PASSWORD_MIN` check, availability)
+  shows per-field too, with a live hint under the username and password inputs.
+  The signup form is `noValidate` on purpose — native browser bubbles are
+  locale-dependent English, so we own the messages instead.
 
 ## Card catalog pipeline (real players)
 
