@@ -3,6 +3,7 @@ import { useAuth } from '@/auth/AuthProvider'
 import { renderEs } from '@/game/engine/format-es'
 import type { EngineEvent } from '@/game/engine/events'
 import type { MatchState, Action, Side } from '@/game/board'
+import type { AbilityKey } from '@/lib/types'
 import type { Difficulty } from '@/game/engine/types'
 import {
   startMatch,
@@ -16,6 +17,15 @@ import {
 export interface ChronicleLine {
   side: Side
   text: string
+}
+
+/** The most recent contested roll surfaced to the dice reveal. `total` lets the UI
+ *  reconstruct the rulebook breakdown; `ability` labels which factor decided it. */
+export interface Roll {
+  dice: number[]
+  total: number
+  success: boolean
+  ability?: AbilityKey
 }
 
 /** Pace between the away side's jugadas so the human can read its play. */
@@ -63,8 +73,8 @@ export function useInteractiveMatch(difficulty: Difficulty) {
   const [pending, setPending] = useState(false)
   /** The paid, server-defined result — present only once the match has finished. */
   const [finish, setFinish] = useState<MatchFinish | null>(null)
-  /** The faces of the most recent contested roll, for the dice reveal (null before any). */
-  const [lastRoll, setLastRoll] = useState<{ dice: number[]; success: boolean } | null>(null)
+  /** The most recent contested roll, for the dice reveal + breakdown (null before any). */
+  const [lastRoll, setLastRoll] = useState<Roll | null>(null)
 
   const cursor = useRef<{ sessionId: string; ply: number } | null>(null)
   const busy = useRef(false)
@@ -88,9 +98,14 @@ export function useInteractiveMatch(difficulty: Difficulty) {
       else if (lines.length > 0) setChronicle((prev) => [...prev, ...lines])
       // Surface the last actual roll in this batch so the dice HUD can reveal real faces.
       for (let i = snap.events.length - 1; i >= 0; i--) {
-        const dice = snap.events[i].params.dice
-        if (dice && dice.length > 0) {
-          setLastRoll({ dice, success: snap.events[i].params.success === true })
+        const p = snap.events[i].params
+        if (p.dice && p.dice.length > 0) {
+          setLastRoll({
+            dice: p.dice,
+            total: p.total ?? 0,
+            success: p.success === true,
+            ability: p.ability,
+          })
           break
         }
       }
