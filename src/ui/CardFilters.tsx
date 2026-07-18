@@ -41,11 +41,20 @@ export function CardFilters({
   state,
   count,
   searchLabel = 'Buscar jugador o club',
+  positions = POSITION_ORDER,
+  hidePosition = false,
 }: {
   state: CardFilterState
   count: number
   /** What the search actually covers. The admin catalog also matches the id. */
   searchLabel?: string
+  /**
+   * Which position chips to render. Defaults to all four. The squad picker limits
+   * this to the outfield lines, since a keeper can't share an outfield picker.
+   */
+  positions?: PositionGroup[]
+  /** Drop the position row entirely — the GK picker is already scoped to keepers. */
+  hidePosition?: boolean
 }) {
   return (
     <div className="flex flex-col gap-2">
@@ -58,20 +67,22 @@ export function CardFilters({
         className="w-full rounded-xl bg-black/30 px-3 py-2 text-sm outline-none ring-1 ring-white/10 placeholder:text-slate-500 focus:ring-grass-400"
       />
 
-      <div className="flex flex-wrap gap-1.5">
-        <Chip on={state.position === null} onClick={() => state.setPosition(null)}>
-          Todas
-        </Chip>
-        {POSITION_ORDER.map((p: PositionGroup) => (
-          <Chip
-            key={p}
-            on={state.position === p}
-            onClick={() => state.setPosition(state.position === p ? null : p)}
-          >
-            {POSITION_ABBR[p]}
+      {!hidePosition && (
+        <div className="flex flex-wrap gap-1.5">
+          <Chip on={state.position === null} onClick={() => state.setPosition(null)}>
+            Todas
           </Chip>
-        ))}
-      </div>
+          {positions.map((p: PositionGroup) => (
+            <Chip
+              key={p}
+              on={state.position === p}
+              onClick={() => state.setPosition(state.position === p ? null : p)}
+            >
+              {POSITION_ABBR[p]}
+            </Chip>
+          ))}
+        </div>
+      )}
 
       <div className="flex items-center justify-between gap-2">
         <div className="flex items-center gap-1.5">
