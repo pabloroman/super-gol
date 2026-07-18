@@ -61,6 +61,13 @@ export function Home() {
               <div className="text-sm text-slate-400">
                 {squad.total_cost}/100 pts · {starterCount}/11 titulares
               </div>
+              {!ready && (
+                <p className="mt-1 text-sm text-slate-500">
+                  Te {11 - starterCount === 1 ? 'falta' : 'faltan'}{' '}
+                  {11 - starterCount}{' '}
+                  {11 - starterCount === 1 ? 'titular' : 'titulares'} para jugar.
+                </p>
+              )}
             </div>
             <Link to="/squad" className="btn-ghost text-sm">
               Editar
@@ -68,7 +75,12 @@ export function Home() {
           </div>
         ) : (
           <div className="mt-2">
-            <p className="text-slate-400">Aún no has formado tu equipo.</p>
+            <p className="text-slate-300">
+              Ya tienes una plantilla inicial de 55 cartas para empezar.
+            </p>
+            <p className="mt-0.5 text-sm text-slate-500">
+              Elige tu once titular y salta al campo.
+            </p>
             <Link to="/squad" className="btn-primary mt-3 w-full">
               Formar equipo
             </Link>
@@ -76,17 +88,14 @@ export function Home() {
         )}
       </div>
 
-      <Link
-        to="/play"
-        className={`btn-primary h-16 text-lg ${ready ? '' : 'pointer-events-none opacity-50'}`}
-      >
-        <PlayIcon className="h-6 w-6" aria-hidden />
-        Jugar partido
-      </Link>
-      {!ready && !loading && (
-        <p className="-mt-2 text-center text-xs text-slate-500">
-          Necesitas 11 titulares para jugar.
-        </p>
+      {/* The Play CTA appears only when the squad is match-ready. Before that the
+          next action is Formar equipo / Editar in the card above — a greyed-out
+          button here just reads as "locked" to a new user. */}
+      {ready && (
+        <Link to="/play" className="btn-primary h-16 text-lg">
+          <PlayIcon className="h-6 w-6" aria-hidden />
+          Jugar partido
+        </Link>
       )}
 
       {matches.length > 0 && (
