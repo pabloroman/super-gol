@@ -1,7 +1,9 @@
 import { Link, NavLink, Route, Routes } from 'react-router-dom'
+import { Cog6ToothIcon } from '@heroicons/react/24/outline'
 import { isSupabaseConfigured } from '@/lib/supabase'
 import { useAuth } from '@/auth/AuthProvider'
 import { BottomNav } from '@/ui/BottomNav'
+import { Coin } from '@/ui/Coin'
 import { TABS } from '@/ui/nav'
 import { Login } from '@/screens/Login'
 import { Home } from '@/screens/Home'
@@ -46,7 +48,7 @@ function TopBar() {
                     }`
                   }
                 >
-                  <span aria-hidden>{tab.icon}</span>
+                  <tab.icon className="h-5 w-5" aria-hidden />
                   {tab.label}
                 </NavLink>
               </li>
@@ -58,14 +60,15 @@ function TopBar() {
           {profile?.is_admin && (
             <Link
               to="/admin"
-              className="text-xs text-slate-400 transition hover:text-slate-200"
+              className="text-slate-400 transition hover:text-slate-200"
               title="Admin"
+              aria-label="Admin"
             >
-              ⚙️
+              <Cog6ToothIcon className="h-5 w-5" aria-hidden />
             </Link>
           )}
           <span className="flex items-center gap-1 rounded-full bg-black/40 px-3 py-1 text-sm font-bold text-rare">
-            <span aria-hidden>🪙</span>
+            <Coin />
             {profile?.coins ?? 0}
           </span>
           <button

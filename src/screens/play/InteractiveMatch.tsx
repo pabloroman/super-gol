@@ -1,4 +1,6 @@
 import { useEffect, useMemo, useState } from 'react'
+import { CheckIcon, XMarkIcon } from '@heroicons/react/24/solid'
+import { Coin } from '@/ui/Coin'
 import type { Action, Cell, MatchState, Side } from '@/game/board'
 import { cellKey, occupants } from '@/game/board'
 import { describeAction, phasePrompt, type ActionGroup } from '@/game/board/describe'
@@ -272,7 +274,7 @@ export function InteractiveMatch({
               </p>
               {finish && (
                 <p className="mt-2 inline-block rounded-full bg-black/40 px-4 py-1 font-bold text-rare">
-                  +{finish.coins_awarded} 🪙
+                  +{finish.coins_awarded} <Coin />
                 </p>
               )}
               {error && <p className="mt-2 text-sm text-red-400">{error}</p>}
@@ -360,7 +362,11 @@ function DiceReveal({
       {roll.dice.map((f, i) => (
         <Die key={i} face={f} tone={roll.success ? 'ok' : 'bad'} />
       ))}
-      <span className={roll.success ? 'text-grass-400' : 'text-red-400'}>{roll.success ? '✓' : '✗'}</span>
+      {roll.success ? (
+        <CheckIcon className="h-4 w-4 text-grass-400" aria-label="Éxito" />
+      ) : (
+        <XMarkIcon className="h-4 w-4 text-red-400" aria-label="Fallo" />
+      )}
     </div>
   )
 }

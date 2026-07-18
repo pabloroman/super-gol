@@ -1,7 +1,16 @@
+import type { ComponentType, SVGProps } from 'react'
+import {
+  HomeIcon,
+  UserGroupIcon,
+  RectangleStackIcon,
+  ShoppingCartIcon,
+} from '@heroicons/react/24/outline'
+
 export interface NavTab {
   to: string
   label: string
-  icon: string
+  /** A heroicons SVG component, rendered by each chrome at its own size. */
+  icon: ComponentType<SVGProps<SVGSVGElement>>
   /** Exact-match the route — only `/` needs it, or it lights up everywhere. */
   end: boolean
 }
@@ -18,8 +27,8 @@ export interface NavTab {
  * not a player destination.
  */
 export const TABS: NavTab[] = [
-  { to: '/', label: 'Inicio', icon: '⚽', end: true },
-  { to: '/squad', label: 'Equipo', icon: '👕', end: false },
-  { to: '/collection', label: 'Colección', icon: '🗂️', end: false },
-  { to: '/store', label: 'Tienda', icon: '🛒', end: false },
+  { to: '/', label: 'Inicio', icon: HomeIcon, end: true },
+  { to: '/squad', label: 'Equipo', icon: UserGroupIcon, end: false },
+  { to: '/collection', label: 'Colección', icon: RectangleStackIcon, end: false },
+  { to: '/store', label: 'Tienda', icon: ShoppingCartIcon, end: false },
 ]

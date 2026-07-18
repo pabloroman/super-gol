@@ -22,6 +22,7 @@
   "dependencies": {
     "@fontsource/barlow-condensed": "^5.2.8",
     "@fontsource/inter": "^5.2.8",
+    "@heroicons/react": "^2.2.0",
     "@supabase/supabase-js": "^2.47.10",
     "papaparse": "^5.5.4",
     "react": "^19.0.0",

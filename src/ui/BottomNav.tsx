@@ -25,7 +25,7 @@ export function BottomNav() {
                 }`
               }
             >
-              <span className="text-xl leading-none">{tab.icon}</span>
+              <tab.icon className="h-6 w-6" aria-hidden />
               {tab.label}
             </NavLink>
           </li>

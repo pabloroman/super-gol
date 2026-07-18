@@ -1,7 +1,9 @@
 import { useEffect, useMemo, useState } from 'react'
+import { CheckIcon } from '@heroicons/react/24/solid'
 import { useAuth } from '@/auth/AuthProvider'
 import { adminAdjustCoins, adminListUsers, adminSetAdmin } from '@/data/api'
 import { Sheet } from '@/ui/Sheet'
+import { Coin } from '@/ui/Coin'
 import type { AdminUser } from '@/lib/types'
 
 function fmtDate(iso: string): string {
@@ -55,7 +57,7 @@ function UserEditor({
       onUpdated(next)
       setAmount('')
       setReason('')
-      setDone(`Saldo actualizado: ${coins} 🪙`)
+      setDone(`Saldo actualizado: ${coins}`)
     } catch (e) {
       setError((e as Error).message)
     } finally {
@@ -114,7 +116,7 @@ function UserEditor({
         <div>
           <div className="flex items-baseline justify-between">
             <h3 className="font-display text-sm font-bold">Saldo</h3>
-            <span className="text-sm font-bold tabular-nums text-rare">{user.coins} 🪙</span>
+            <span className="text-sm font-bold tabular-nums text-rare">{user.coins} <Coin /></span>
           </div>
           {/* Signed amount, matching transactions.amount (+ingreso / -gasto)
               rather than a separate add/remove mode — the ledger this writes to
@@ -147,7 +149,7 @@ function UserEditor({
                 <>
                   Nuevo saldo:{' '}
                   <span className={nextBalance < 0 ? 'text-red-400' : 'text-slate-300'}>
-                    {nextBalance} 🪙
+                    {nextBalance} <Coin />
                   </span>
                 </>
               ) : (
@@ -194,7 +196,11 @@ function UserEditor({
         </div>
 
         {error && <p className="mt-3 text-sm text-red-400">{error}</p>}
-        {done && <p className="mt-3 text-sm text-grass-400">{done}</p>}
+        {done && (
+          <p className="mt-3 text-sm text-grass-400">
+            {done} <Coin />
+          </p>
+        )}
 
         <div className="mt-4 flex justify-end">
           <button
@@ -248,7 +254,11 @@ function UserRow({ user, isSelf, onEdit }: { user: AdminUser; isSelf: boolean; o
         {user.matches_played}
       </td>
       <td className="block shrink-0 text-center text-xs md:table-cell">
-        {user.is_admin ? <span className="text-grass-400">✓</span> : <span className="text-slate-600">—</span>}
+        {user.is_admin ? (
+          <CheckIcon className="inline-block h-4 w-4 text-grass-400" aria-label="Sí" />
+        ) : (
+          <span className="text-slate-600">—</span>
+        )}
       </td>
       <td className="hidden text-xs text-slate-500 xl:table-cell">{fmtDate(user.created_at)}</td>
     </tr>

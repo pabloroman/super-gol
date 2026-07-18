@@ -3,6 +3,7 @@ import { useAuth } from '@/auth/AuthProvider'
 import { fetchCatalog, fetchPacks, openPack } from '@/data/api'
 import { Naipe } from '@/ui/naipe/Naipe'
 import { CardSheet } from '@/ui/naipe/CardSheet'
+import { Coin } from '@/ui/Coin'
 import type { Card, Pack } from '@/lib/types'
 
 export function Store() {
@@ -91,7 +92,7 @@ export function Store() {
                 </div>
               </div>
               <span className="shrink-0 rounded-full bg-black/40 px-3 py-1 text-sm font-bold text-rare">
-                {pack.price} 🪙
+                {pack.price} <Coin />
               </span>
             </div>
             <button
