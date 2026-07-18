@@ -1,5 +1,5 @@
 import type { MatchState, MatchPlayer, Cell } from '@/game/board'
-import { occupants, cellKey, keeperCell } from '@/game/board'
+import { occupants, cellKey, keeperCell, sameCell } from '@/game/board'
 import { ZONE_MAP, COLS, ROWS, type Zone } from '@/game/engine/pitch'
 
 /**
@@ -10,6 +10,12 @@ import { ZONE_MAP, COLS, ROWS, type Zone } from '@/game/engine/pitch'
  *
  * The board is a container: pips are sized in `cqw`, so it fills whatever width it is
  * given (unlike the fixed-px replay board, which caps at 22rem).
+ *
+ * Every tap — on an empty square OR on any pip — routes through the ONE cell handler
+ * `onCell(cell)`; the parent decides select-vs-move from the cell's contents. Pips are
+ * therefore visual only: if they swallowed the click (as a nested button would), a move
+ * onto an opponent-occupied cell — how you mark a man, page 4 — would be unreachable,
+ * since the occupant's pip would eat every tap on its square.
  */
 
 const ZONE_FILL: Record<Zone, string> = {
@@ -33,35 +39,25 @@ function Pip({
   hasBall,
   selected,
   half,
-  onClick,
 }: {
   player: MatchPlayer
   hasBall: boolean
   selected: boolean
   half: 'top' | 'bottom' | 'full'
-  onClick?: () => void
 }) {
   const home = player.side === 'home'
   const height = half === 'full' ? 'h-[16cqw]' : 'h-[8cqw]'
   return (
-    <button
-      type="button"
-      onClick={
-        onClick &&
-        ((e) => {
-          e.stopPropagation() // don't also fire the cell's move handler
-          onClick()
-        })
-      }
+    <span
       className={`relative flex ${height} w-[16cqw] items-center justify-center rounded-[3cqw] text-[7cqw] font-bold leading-none ${
         home ? 'bg-white text-pitch-950' : 'bg-rare text-white'
-      } ${selected ? 'ring-[1.5cqw] ring-amber-300' : 'ring-1 ring-black/30'}`}
+      } ${selected ? 'z-10 ring-[1.5cqw] ring-amber-300' : 'ring-1 ring-black/30'}`}
     >
       {shirtNumber(player)}
       {hasBall && (
         <span className="absolute -right-[2cqw] -top-[2cqw] h-[6cqw] w-[6cqw] rounded-full bg-amber-400 ring-2 ring-pitch-950" />
       )}
-    </button>
+    </span>
   )
 }
 
@@ -69,27 +65,17 @@ function CellStack({
   players,
   ballCarrier,
   selectedPlayer,
-  onSelectPlayer,
 }: {
   players: MatchPlayer[]
   ballCarrier: string | null
   selectedPlayer: string | null
-  onSelectPlayer?: (id: string) => void
 }) {
   if (players.length === 0) return null
   if (players.length === 1) {
     const p = players[0]
-    return (
-      <Pip
-        player={p}
-        half="full"
-        hasBall={ballCarrier === p.id}
-        selected={selectedPlayer === p.id}
-        onClick={onSelectPlayer && (() => onSelectPlayer(p.id))}
-      />
-    )
+    return <Pip player={p} half="full" hasBall={ballCarrier === p.id} selected={selectedPlayer === p.id} />
   }
-  // Two players: the one "encima" (onTop) sits in the upper half.
+  // Two players: the one "encima" (onTop) sits in the upper half — that offset IS the marcaje.
   const top = players.find((p) => p.onTop) ?? players[0]
   const bottom = players.find((p) => p.id !== top.id)!
   return (
@@ -101,7 +87,6 @@ function CellStack({
           half={i === 0 ? 'top' : 'bottom'}
           hasBall={ballCarrier === p.id}
           selected={selectedPlayer === p.id}
-          onClick={onSelectPlayer && (() => onSelectPlayer(p.id))}
         />
       ))}
     </div>
@@ -112,22 +97,27 @@ export function InteractivePitchBoard({
   state,
   selectedPlayer = null,
   highlight,
-  onSelectPlayer,
-  onSelectCell,
+  onCell,
 }: {
   state: MatchState
   selectedPlayer?: string | null
   highlight?: Set<string>
-  onSelectPlayer?: (id: string) => void
-  onSelectCell?: (cell: Cell) => void
+  /** A tap on a square (empty or occupied); the parent decides select vs move. */
+  onCell?: (cell: Cell) => void
 }) {
   const ballCarrier = state.ball.carrier
+  // The ball is loose (a pase al hueco in flight) → draw it on its cell, since no pip holds it.
+  const looseBall = ballCarrier === null ? state.ball.cell : null
 
   function Porteria({ side }: { side: 'home' | 'away' }) {
     const cell = keeperCell(side)
     const keeper = occupants(state, cell)[0]
     return (
-      <div className="flex items-center justify-center py-[1cqw]">
+      <div
+        role={onCell ? 'button' : undefined}
+        onClick={onCell && (() => onCell(cell))}
+        className="flex items-center justify-center py-[1cqw]"
+      >
         <div className="h-[3cqw] w-[40cqw] rounded-full bg-white/40" />
         {keeper && (
           <div className="absolute">
@@ -136,7 +126,6 @@ export function InteractivePitchBoard({
               half="full"
               hasBall={ballCarrier === keeper.id}
               selected={selectedPlayer === keeper.id}
-              onClick={onSelectPlayer && (() => onSelectPlayer(keeper.id))}
             />
           </div>
         )}
@@ -158,19 +147,17 @@ export function InteractivePitchBoard({
               return (
                 <div
                   role="button"
-                  tabIndex={onSelectCell ? 0 : undefined}
+                  tabIndex={onCell ? 0 : undefined}
                   key={`${row}-${col}`}
-                  onClick={onSelectCell && (() => onSelectCell(cell))}
+                  onClick={onCell && (() => onCell(cell))}
                   className={`relative flex aspect-square cursor-pointer items-center justify-center rounded-[2cqw] ${ZONE_FILL[zone]} ${
                     lit ? 'ring-[1.5cqw] ring-amber-300/80' : ''
                   }`}
                 >
-                  <CellStack
-                    players={here}
-                    ballCarrier={ballCarrier}
-                    selectedPlayer={selectedPlayer}
-                    onSelectPlayer={onSelectPlayer}
-                  />
+                  <CellStack players={here} ballCarrier={ballCarrier} selectedPlayer={selectedPlayer} />
+                  {looseBall && sameCell(cell, looseBall) && (
+                    <span className="pointer-events-none absolute h-[7cqw] w-[7cqw] rounded-full bg-amber-400 ring-2 ring-pitch-950" />
+                  )}
                 </div>
               )
             }),

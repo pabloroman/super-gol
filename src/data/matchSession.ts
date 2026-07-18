@@ -24,6 +24,8 @@ export interface MatchSnapshot {
   state: MatchState
   legal: Action[]
   events: EngineEvent[]
+  /** The generated rival's club name (from `away_squad`); stable for the whole match. */
+  opponent: string
 }
 
 /** The result of one jugada. `outcome` is present only when the match just finished. */

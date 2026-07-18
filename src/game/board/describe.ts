@@ -7,6 +7,7 @@
 
 import type { Action } from './actions'
 import type { MatchState } from './state'
+import { occupants } from './derive'
 
 const PASS_LABEL: Record<string, string> = { PD: 'Pase directo', PC: 'Pase corto', PL: 'Pase largo' }
 
@@ -36,8 +37,16 @@ export function describeAction(state: MatchState, action: Action): ActionLabel {
       return { label: `${action.pass === 'PL' ? 'Pase largo' : 'Pase corto'} al hueco`, group: 'pase' }
     case 'regate':
       return { label: 'Regate', group: 'regate' }
-    case 'move':
+    case 'move': {
+      // A relevo con balón by the carrier can hand the ball to the swapped teammate
+      // ("dejándoselo a este último", page 4) — a distinct choice from carrying it in.
+      if (action.handoff) {
+        const mover = state.players[action.player]
+        const mate = mover && occupants(state, action.to).find((o) => o.side === mover.side && o.id !== mover.id)
+        return { label: mate ? `Relevo, dejar el balón a ${name(state, mate.id)}` : 'Relevo con balón', group: 'mover' }
+      }
       return { label: `Mover a ${name(state, action.player)}`, group: 'mover' }
+    }
     case 'anticipacion':
       return { label: `Anticipación (${name(state, action.defender)})`, group: 'defensa' }
     case 'robo':

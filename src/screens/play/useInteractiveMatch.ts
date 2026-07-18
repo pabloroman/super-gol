@@ -1,98 +1,224 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
-import { createRng, type Rng } from '@/game/engine/rng'
+import { useAuth } from '@/auth/AuthProvider'
 import { renderEs } from '@/game/engine/format-es'
 import type { EngineEvent } from '@/game/engine/events'
-import { apply, type MatchState, type Action, type Side } from '@/game/board'
-import { chooseAction } from '@/game/board/ai'
-import { startInteractiveMatch } from '@/game/interactiveEngine'
+import type { MatchState, Action, Side } from '@/game/board'
 import type { Difficulty } from '@/game/engine/types'
+import {
+  startMatch,
+  resumeMatch,
+  actMatch,
+  resignMatch,
+  MatchProtocolError,
+  type MatchFinish,
+} from '@/data/matchSession'
 
 export interface ChronicleLine {
   side: Side
   text: string
 }
 
-/** Pause between AI jugadas so the human can follow the away side's play. */
-const AI_DELAY_MS = 650
+/** Pace between the away side's jugadas so the human can read its play. */
+const AI_DELAY_MS = 550
 
 /** Whose input the current phase needs; `null` at fulltime. */
 function actorOf(state: MatchState): Side | null {
   return state.phase.kind === 'fulltime' ? null : (state.phase as { side: Side }).side
 }
 
+function errMessage(err: unknown): string {
+  if (err instanceof MatchProtocolError) {
+    switch (err.code) {
+      case 'no_active_session':
+        return 'No hay ningún partido en curso'
+      case 'active_session':
+        return 'Ya tienes un partido en curso'
+      default:
+        return 'Se perdió la conexión con el partido'
+    }
+  }
+  return err instanceof Error ? err.message : 'No se pudo jugar el partido'
+}
+
 /**
- * Drives an interactive match on the client: the human acts through `act`, and the away
- * side is played automatically by the heuristic AI a beat later. All dice come from a
- * single persisted RNG (not authoritative — a preview path until the server owns it).
+ * Drives an interactive match against the SERVER: every jugada is one authenticated
+ * round trip through the `play-match` Edge Function (`@/data/matchSession`). The client
+ * never rolls a die or sends state back — it sends an action id (or nothing, to crank the
+ * AI's own turn) plus the `ply` it last saw, and the server returns the next snapshot.
+ * That is what makes the coins un-forgeable across the ~100 round trips of a full match.
+ *
+ * `cursor` (sessionId + last-seen ply) and `busy` (the in-flight guard) live in refs so
+ * the async crank/act read the latest without re-subscribing; the React mirrors below
+ * are only for rendering.
  */
 export function useInteractiveMatch(difficulty: Difficulty) {
+  const { refreshProfile } = useAuth()
   const [state, setState] = useState<MatchState | null>(null)
+  const [legal, setLegal] = useState<Action[]>([])
   const [chronicle, setChronicle] = useState<ChronicleLine[]>([])
   const [opponent, setOpponent] = useState('')
   const [error, setError] = useState<string | null>(null)
   const [loading, setLoading] = useState(true)
-  const rng = useRef<Rng | null>(null)
+  /** A jugada round trip is in flight — the dice are rolling; the action bar is locked. */
+  const [pending, setPending] = useState(false)
+  /** The paid, server-defined result — present only once the match has finished. */
+  const [finish, setFinish] = useState<MatchFinish | null>(null)
+  /** The faces of the most recent contested roll, for the dice reveal (null before any). */
+  const [lastRoll, setLastRoll] = useState<{ dice: number[]; success: boolean } | null>(null)
 
-  const record = useCallback((events: EngineEvent[]) => {
-    if (events.length === 0) return
-    setChronicle((prev) => [...prev, ...events.map((e) => ({ side: e.side, text: renderEs(e) }))])
-  }, [])
+  const cursor = useRef<{ sessionId: string; ply: number } | null>(null)
+  const busy = useRef(false)
+
+  /**
+   * Fold a snapshot into state. An `act` returns only the NEW events → `mode: 'append'`.
+   * A `start`/`resume` returns the WHOLE log (the server replays it so a refresh restores
+   * the crónica) → `mode: 'replace'`, or it would pile the full history on top of itself
+   * (and a StrictMode double-mount would double it). `sessionId` is absent on an `act`.
+   */
+  const applySnapshot = useCallback(
+    (
+      snap: { sessionId?: string; ply: number; state: MatchState; legal: Action[]; events: EngineEvent[] },
+      mode: 'append' | 'replace' = 'append',
+    ) => {
+      cursor.current = { sessionId: snap.sessionId ?? cursor.current!.sessionId, ply: snap.ply }
+      setState(snap.state)
+      setLegal(snap.legal)
+      const lines = snap.events.map((e) => ({ side: e.side, text: renderEs(e) }))
+      if (mode === 'replace') setChronicle(lines)
+      else if (lines.length > 0) setChronicle((prev) => [...prev, ...lines])
+      // Surface the last actual roll in this batch so the dice HUD can reveal real faces.
+      for (let i = snap.events.length - 1; i >= 0; i--) {
+        const dice = snap.events[i].params.dice
+        if (dice && dice.length > 0) {
+          setLastRoll({ dice, success: snap.events[i].params.success === true })
+          break
+        }
+      }
+    },
+    [],
+  )
 
   const start = useCallback(async () => {
+    // Guard concurrent starts: a StrictMode double-mount would otherwise fire two starts,
+    // each creating-or-resuming a session (the second racing the first's insert).
+    if (busy.current) return
+    busy.current = true
     setLoading(true)
     setError(null)
+    setFinish(null)
+    setChronicle([])
+    setLastRoll(null)
+    cursor.current = null
     try {
-      const { state: initial, seed, opponent: name } = await startInteractiveMatch(difficulty)
-      rng.current = createRng(seed)
-      setOpponent(name)
-      setChronicle([])
-      setState(initial)
+      // One live session at a time (the anti-farming spine): a start that collides with an
+      // existing session resumes it rather than clobbering it — which also makes a mid-match
+      // refresh a plain resume.
+      let snap
+      try {
+        snap = await startMatch(difficulty)
+      } catch (err) {
+        if (err instanceof MatchProtocolError && err.code === 'active_session') {
+          snap = await resumeMatch()
+        } else throw err
+      }
+      setOpponent(snap.opponent)
+      applySnapshot(snap, 'replace')
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'No se pudo empezar el partido')
+      setError(errMessage(err))
     } finally {
+      busy.current = false
       setLoading(false)
     }
-  }, [difficulty])
+  }, [difficulty, applySnapshot])
 
   useEffect(() => {
     void start()
   }, [start])
 
-  /**
-   * Apply one action and fold in its events. Kept OUT of the setState updater on
-   * purpose: React double-invokes updaters in StrictMode, so recording the chronicle
-   * there would log every jugada twice. `apply` is pure, so computing next state here
-   * from the current `state` is correct — the human acts one click at a time, and the
-   * AI effect below re-derives from its own `state` dependency each tick.
-   */
-  const step = useCallback(
-    (base: MatchState, action: Action) => {
-      if (!rng.current) return
-      const { state: next, events } = apply(base, action, rng.current)
-      setState(next)
-      record(events)
+  /** One jugada. `action` present = the human acts; omitted = crank the AI's own turn. */
+  const advance = useCallback(
+    async (action?: Action) => {
+      const cur = cursor.current
+      if (!cur || busy.current) return
+      busy.current = true
+      setPending(true)
+      try {
+        const res = await actMatch(cur.sessionId, cur.ply, action)
+        applySnapshot(res)
+        if (res.outcome) {
+          setFinish(res.outcome)
+          await refreshProfile()
+        }
+      } catch (err) {
+        // A stale ply means our cursor drifted (a double-submit, or another tab advanced the
+        // same session): re-read the authoritative snapshot rather than surfacing an error.
+        if (err instanceof MatchProtocolError && err.code === 'stale_ply') {
+          try {
+            applySnapshot(await resumeMatch(), 'replace')
+          } catch (resumeErr) {
+            setError(errMessage(resumeErr))
+          }
+        } else {
+          setError(errMessage(err))
+        }
+      } finally {
+        busy.current = false
+        setPending(false)
+      }
     },
-    [record],
+    [applySnapshot, refreshProfile],
   )
 
-  /** Apply one human action (the caller guarantees it is currently the human's turn). */
+  // The away side plays itself: one crank per away ply, paced so the human can follow.
+  // State changing re-runs this, so a whole away possession chains crank → crank → …
+  // until control returns to the human or the match ends.
+  useEffect(() => {
+    if (!state || actorOf(state) !== 'away') return
+    const id = setTimeout(() => void advance(), AI_DELAY_MS)
+    return () => clearTimeout(id)
+  }, [state, advance])
+
   const act = useCallback(
     (action: Action) => {
-      if (state) step(state, action)
+      void advance(action)
     },
-    [state, step],
+    [advance],
   )
 
-  // The away side plays itself, one jugada per tick, until control returns to the human
-  // or the match ends.
-  useEffect(() => {
-    if (!state || !rng.current || actorOf(state) !== 'away') return
-    const id = setTimeout(() => step(state, chooseAction(state, rng.current!, state.difficulty)), AI_DELAY_MS)
-    return () => clearTimeout(id)
-  }, [state, step])
+  const resign = useCallback(async () => {
+    if (busy.current) return
+    busy.current = true
+    setPending(true)
+    try {
+      const { outcome } = await resignMatch()
+      setFinish(outcome)
+      setState((s) => (s ? { ...s, phase: { kind: 'fulltime' } } : s))
+      await refreshProfile()
+    } catch (err) {
+      setError(errMessage(err))
+    } finally {
+      busy.current = false
+      setPending(false)
+    }
+  }, [refreshProfile])
 
-  const humanTurn = state != null && actorOf(state) === 'home'
-  const finished = state != null && state.phase.kind === 'fulltime'
+  const humanTurn = state != null && actorOf(state) === 'home' && !pending && finish == null
+  const finished = finish != null || (state != null && state.phase.kind === 'fulltime')
 
-  return { state, chronicle, opponent, error, loading, act, restart: start, humanTurn, finished }
+  return {
+    state,
+    legal,
+    chronicle,
+    opponent,
+    error,
+    loading,
+    pending,
+    finish,
+    lastRoll,
+    act,
+    resign,
+    restart: start,
+    humanTurn,
+    finished,
+  }
 }
