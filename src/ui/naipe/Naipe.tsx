@@ -89,7 +89,7 @@ function Demarcacion({ grid }: { grid: boolean[][] }) {
       className="grid shrink-0 gap-px bg-black/40 p-px"
       style={{
         gridTemplateColumns: `repeat(${grid[0]?.length ?? 5}, 1fr)`,
-        width: '27cqw',
+        width: '21cqw',
       }}
       aria-hidden
     >
@@ -141,7 +141,7 @@ export function Naipe({
     <Tag
       {...(onClick ? { type: 'button' as const, onClick, 'aria-label': card.name } : {})}
       style={{ containerType: 'inline-size' }}
-      className={`aspect-naipe w-full rounded-[8%] bg-naipe-white p-[2.8%] shadow-lg shadow-black/50 ${
+      className={`aspect-naipe w-full rounded-[4.5%] bg-naipe-white p-[2.8%] shadow-lg shadow-black/50 ${
         onClick
           ? 'transition md:hover:-translate-y-0.5 md:hover:shadow-xl md:hover:shadow-black/60 active:scale-[0.98]'
           : ''
@@ -154,7 +154,7 @@ export function Naipe({
         <div className="flex shrink-0 items-center justify-between gap-1 bg-gradient-to-b from-naipe-band to-naipe-band-dark px-[4%] py-[2%]">
           <span
             className="truncate font-display font-bold uppercase leading-tight text-white"
-            style={{ fontSize: '11.5cqw' }}
+            style={{ fontSize: '13cqw' }}
           >
             {card.name}
           </span>
@@ -179,7 +179,7 @@ export function Naipe({
               that keep «23/03/68 - 1,87. 84 kg» from truncating mid-value. */}
           <span
             className="min-w-0 flex-1 font-display leading-snug text-white"
-            style={{ fontSize: '5.4cqw' }}
+            style={{ fontSize: '6.6cqw' }}
           >
             {card.full_name && <span className="block truncate">{card.full_name}</span>}
             {card.birthplace && <span className="block truncate">{card.birthplace}</span>}
