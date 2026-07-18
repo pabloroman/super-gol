@@ -18,7 +18,7 @@
     "push:cards": "tsx scripts/cards/push.ts",
     "export:cards:csv": "tsx scripts/cards/export-csv.ts",
     "db:reset": "supabase db reset",
-    "db:reset:linked": "supabase db reset --linked",
+    "db:reset:linked": "supabase db reset --linked --no-seed",
     "db:push": "supabase db push"
   },
   "dependencies": {

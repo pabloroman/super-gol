@@ -359,14 +359,15 @@ none of; a name/email substring is the whole of what it needs.
 - `npm run dev` — dev server
 - `npx supabase start` / `stop` / `status` — local Supabase stack (needs Docker).
   The CLI is a devDependency, so it needs the `npx` prefix. `start` applies all
-  migrations + `seed.sql`; point the app at it with a `.env.local` override.
-  `seed.sql` carries **no game data** (the catalog, starter deck and packs are all
-  owned by migrations) — only two local dev accounts, `admin@supergol.test` and
-  `coach@supergol.test` / `password123`, documented in `INSTALL.md`. It creates
-  them by inserting into `auth.users` and letting `handle_new_user` do the rest, so
-  they are built by the same path as a live signup; a guard raises unless the
-  database is the local stack, because `db:reset:linked` would otherwise seed a
-  published admin password onto the remote.
+  migrations, then the seed files (`seed_cards.sql` + `seed.sql`, in that order);
+  point the app at it with a `.env.local` override. The catalog and starter deck are
+  a **local seed** (`seed_cards.sql`, generated); packs are a migration (`0008`); and
+  `seed.sql` itself only seeds two local dev accounts, `admin@supergol.test` and
+  `coach@supergol.test` / `password123`, documented in `INSTALL.md`. It creates them
+  by inserting into `auth.users` and letting `handle_new_user` do the rest, so they
+  are built by the same path as a live signup; a guard raises unless the database is
+  the local stack. `npm run db:reset:linked` passes `--no-seed` so the seed never runs
+  on a remote; the guard is the backstop for a bare `supabase db reset --linked`.
 - `npm run typecheck` — `tsc -b --noEmit` (also checks tests)
 - `npm run test` — Vitest run (engine tests in `src/game/engine/__tests__/`,
   catalog inference + CSV tests in `src/cards/__tests__/`)
