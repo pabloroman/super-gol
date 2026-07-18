@@ -34,6 +34,29 @@ function shirtNumber(p: MatchPlayer): string {
   return String(dorsal(p.id))
 }
 
+/**
+ * A classic black-and-white football, drawn as an SVG so it stays crisp at any `cqw`
+ * size and looks identical on every device (an emoji would render differently per
+ * platform and blend into the white home pips). The dark seams double as its outline,
+ * so it reads against both the white home pip and the red away pip; a drop shadow lifts
+ * it off either. Never amber — that shared the away team's colour.
+ */
+function Ball({ className }: { className?: string }) {
+  return (
+    <svg viewBox="0 0 24 24" className={className} aria-hidden focusable="false">
+      <circle cx="12" cy="12" r="11" fill="#fff" stroke="#12130f" strokeWidth="1.5" />
+      <path d="M12 8.8 L15.04 11.01 L13.88 14.59 L10.12 14.59 L8.96 11.01 Z" fill="#12130f" />
+      <path
+        d="M12 8.8 L12 2.5 M15.04 11.01 L21.03 9.06 M13.88 14.59 L17.58 19.69 M10.12 14.59 L6.42 19.69 M8.96 11.01 L2.97 9.06"
+        stroke="#12130f"
+        strokeWidth="1.3"
+        strokeLinecap="round"
+        fill="none"
+      />
+    </svg>
+  )
+}
+
 function Pip({
   player,
   hasBall,
@@ -55,7 +78,7 @@ function Pip({
     >
       {shirtNumber(player)}
       {hasBall && (
-        <span className="absolute -right-[2cqw] -top-[2cqw] h-[6cqw] w-[6cqw] rounded-full bg-amber-400 ring-2 ring-pitch-950" />
+        <Ball className="absolute -right-[3cqw] -top-[3cqw] h-[8cqw] w-[8cqw] drop-shadow-[0_0.5cqw_0.5cqw_rgba(0,0,0,0.5)]" />
       )}
     </span>
   )
@@ -116,11 +139,11 @@ export function InteractivePitchBoard({
       <div
         role={onCell ? 'button' : undefined}
         onClick={onCell && (() => onCell(cell))}
-        className="flex items-center justify-center py-[1cqw]"
+        className="relative flex h-[16cqw] items-center justify-center"
       >
         <div className="h-[3cqw] w-[40cqw] rounded-full bg-white/40" />
         {keeper && (
-          <div className="absolute">
+          <div className="absolute left-1/2 -translate-x-1/2">
             <Pip
               player={keeper}
               half="full"
@@ -156,7 +179,7 @@ export function InteractivePitchBoard({
                 >
                   <CellStack players={here} ballCarrier={ballCarrier} selectedPlayer={selectedPlayer} />
                   {looseBall && sameCell(cell, looseBall) && (
-                    <span className="pointer-events-none absolute h-[7cqw] w-[7cqw] rounded-full bg-amber-400 ring-2 ring-pitch-950" />
+                    <Ball className="pointer-events-none absolute h-[10cqw] w-[10cqw] drop-shadow-[0_0.5cqw_0.5cqw_rgba(0,0,0,0.5)]" />
                   )}
                 </div>
               )
