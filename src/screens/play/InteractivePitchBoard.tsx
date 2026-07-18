@@ -116,11 +116,11 @@ export function InteractivePitchBoard({
       <div
         role={onCell ? 'button' : undefined}
         onClick={onCell && (() => onCell(cell))}
-        className="flex items-center justify-center py-[1cqw]"
+        className="relative flex h-[16cqw] items-center justify-center"
       >
         <div className="h-[3cqw] w-[40cqw] rounded-full bg-white/40" />
         {keeper && (
-          <div className="absolute">
+          <div className="absolute left-1/2 -translate-x-1/2">
             <Pip
               player={keeper}
               half="full"
