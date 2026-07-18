@@ -1,12 +1,13 @@
--- Username becomes a required, uniquely-owned, format-checked PUBLIC handle,
--- and login by username is enabled without leaking the private email.
+-- Username is a required, uniquely-owned, format-checked PUBLIC handle, and login by
+-- username is enabled without leaking the private email. This migration also owns the
+-- new-user path: it defines handle_new_user() and the on_auth_user_created trigger —
+-- the single definition (0003 points here) — because the trigger enforces exactly the
+-- username rules added below.
 --
--- Why this reverses 0012's "blank -> NULL": 0012 made the coach name optional so
--- blank signups could not collide. The product has since moved on — the username
--- is the identifier a coach is matched by in 1v1, so it is now mandatory, unique,
--- and restricted to an Instagram-style character set. The uniqueness is
--- CASE-INSENSITIVE ('Pablo' and 'pablo' are the same handle); the stored casing
--- is whatever the user typed.
+-- The username is the identifier a coach is matched by in 1v1, so it is mandatory,
+-- unique, and restricted to an Instagram-style character set. Uniqueness is
+-- CASE-INSENSITIVE ('Pablo' and 'pablo' are the same handle); the stored casing is
+-- whatever the user typed.
 --
 -- Client mirror: src/lib/username.ts (format) and username_available() below.
 -- The DB is the authority; the client copies exist only to say something true in
@@ -16,7 +17,8 @@
 -- ---------------------------------------------------------------------------
 -- 1. Backfill: give every legacy row a valid, unique username so NOT NULL and
 --    the unique index below cannot fail on existing data. NULL/blank handles
---    (allowed by 0012) become 'user<hex-of-id>' — all-alphanumeric, 20 chars,
+--    (legacy, from when the coach name was nullable) become 'user<hex-of-id>' —
+--    all-alphanumeric, 20 chars,
 --    unique by construction. Runs BEFORE the CHECK is added, so it is never
 --    rejected by the new format rule.
 -- ---------------------------------------------------------------------------
@@ -137,6 +139,14 @@ begin
   return new;
 end;
 $$;
+
+-- The trigger that runs handle_new_user() on every new auth.users row — moved here
+-- from 0003 so the new-user path has a single home alongside the rules it enforces.
+-- No migration inserts an auth.users row, so it first fires at seed time.
+drop trigger if exists on_auth_user_created on auth.users;
+create trigger on_auth_user_created
+  after insert on auth.users
+  for each row execute function public.handle_new_user();
 
 -- ---------------------------------------------------------------------------
 -- 5. email_for_login(): resolve a username to its account email for sign-in,

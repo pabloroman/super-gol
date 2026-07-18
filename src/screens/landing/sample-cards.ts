@@ -4,7 +4,7 @@ import { ZONE_GRIDS } from '@/cards/positions'
 /**
  * Three real LaLiga cards for the landing hero, one per big club so the crests
  * differ. The values are lifted verbatim from the generated catalog
- * (`supabase/migrations/0005_cards_laliga_2025.sql`) so the naipe renders exactly
+ * (`supabase/seed_cards.sql`) so the naipe renders exactly
  * as it does in-app — photo via `image_url`, crest via `crestUrl(club_slug)`.
  * Purely decorative; if a photo 404s the naipe falls back to the player initial.
  */

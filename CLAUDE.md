@@ -198,7 +198,12 @@ inference core lives in **`src/cards/`** (shared by the app and the generator,
 like `src/game/engine/`); the offline generator in **`scripts/cards/`** reads a
 vendored snapshot of the [virtua-fc](https://github.com/pabloroman/virtua-fc)
 project's `data/2025/ESP1/teams.json` (Transfermarkt rosters + market value) and
-emits `supabase/migrations/0005_cards_laliga_2025.sql`. Because the source has no
+emits two artifacts from one shared row builder: the local catalog **seed**
+`supabase/seed_cards.sql` (`build:cards`) and the admin-import CSV
+`scripts/cards/data/laliga-2025-cards.csv` (`export:cards:csv`). **The catalog is
+not a migration** — it is a dynamic, admin-owned table, seeded locally for
+`db:reset` and bootstrapped/refreshed on production through the admin CSV import.
+Because the source has no
 ability breakdown, factors are **inferred**: market value + age → a single
 overall (`src/cards/valuation.ts`, a faithful port of virtua-fc's
 `PlayerValuationService`) → a **sparse, position-coherent** set of factors via
@@ -212,7 +217,7 @@ for both emitters.
 Photos hotlink virtua-fc's own public CDN: `photos.ts` maps each Transfermarkt id
 → SofaScore id and stores the direct `assets.virtuafc.com/players/{sofascoreId}.webp`
 URL in `image_url` (identical on every environment, so it's baked straight into
-the migration). `Naipe` renders it with a silhouette fallback.
+the seed and the CSV). `Naipe` renders it with a silhouette fallback.
 
 **The inferred factors are still a partial model** — a tracked gap, not a bug to
 fix incidentally. The rulebook defines **17** factors (pages 2–3) but `AbilityKey`
@@ -227,25 +232,29 @@ more; any per-card variety or extra attributes are added **by hand**, not rolled
 row id — the hand-editable source of truth. `npm run reseed:cards` writes it from
 the deterministic generator (the ONLY writer; re-running is an empty diff, so it
 can't silently churn hand-edits); thereafter you edit it directly. Both emitters
-read it, so a hand-edit flows into `0005` (fresh `db:reset`) and, via
-`npm run push:cards`, into an already-migrated database. `push:cards` writes ONLY
+read it, so a hand-edit flows into `seed_cards.sql` (fresh local `db:reset`) and the
+CSV, and via `npm run push:cards` into a live database. `push:cards` writes ONLY
 the `abilities` column with the **service_role** key (bypasses RLS; the
 `admin_upsert_cards` RPC is unusable — its `require_admin()` needs an `auth.uid()`
 a service key lacks), is **dry-run by default**, and knowingly overwrites in-app
-admin ability edits for the cards it touches. Regenerating `0005` stays seed-only
-(the ledger keys on version prefix, so it never re-runs on prod); prod ability
-changes go exclusively through `push:cards`, and both derive from `abilities.json`
-so `db reset` and a push converge.
+admin ability edits for the cards it touches. Because the catalog is a local-only
+seed (`seed_cards.sql`, guarded off hosted DBs) plus the admin CSV import on prod,
+never a migration, prod catalog and ability changes go through the admin importer
+and `push:cards`; local `db reset` and a push both derive from `abilities.json`, so
+they converge.
 
 - `npm run reseed:cards` — (re)write `abilities.json` from the deterministic core.
   Run once to bootstrap, or after re-vendoring a roster to bake in new players
   (existing cards diff empty). **This clobbers hand-edits** — it's the reset button.
-- `npm run build:cards` — regenerate the catalog SQL from `abilities.json` (offline;
-  no credentials). Never hand-edit the generated migration — edit `abilities.json`
-  (abilities) or `scripts/cards/` + `src/cards/` (everything else) and re-run.
-  Refresh a season by re-vendoring the JSON snapshots under `scripts/cards/data/`.
-- `npm run export:cards:csv` — emit `scripts/cards/data/laliga-2025-cards.csv`,
-  the same catalog in the admin importer's column shape.
+- `npm run build:cards` — regenerate the local catalog **seed**
+  `supabase/seed_cards.sql` from `abilities.json` (offline; no credentials). Never
+  hand-edit the generated seed — edit `abilities.json` (abilities) or `scripts/cards/`
+  + `src/cards/` (everything else) and re-run. Refresh a season by re-vendoring the
+  JSON snapshots under `scripts/cards/data/`.
+- `npm run export:cards:csv` — emit `scripts/cards/data/laliga-2025-cards.csv`, the
+  same catalog in the admin importer's column shape, carrying `is_starter` so
+  importing it into a fresh (e.g. wiped prod) DB bootstraps the catalog **and** the
+  55-card starter deck (`scripts/cards/data/starter-deck.ts`).
 - `npm run push:cards` — apply `abilities.json`'s abilities to a live DB (dry-run
   unless `-- --commit`; needs `SUPABASE_URL` + `SUPABASE_SERVICE_ROLE_KEY`).
 
@@ -306,7 +315,8 @@ SECURITY DEFINER RPCs `admin_upsert_cards` / `admin_delete_card`
 the economy RPCs; `cards` RLS is unchanged. CSV parsing/serialization is
 `src/cards/csv.ts` (one column per field + one per ability; `zone_grid` derived
 from `position`). **Once cards are edited in-app the DB is the source of truth** —
-`0005` is just the initial seed, and a `db reset` would revert admin edits.
+`seed_cards.sql` is just the local initial seed, and a local `db reset` would revert
+admin edits (prod is never reset from it — its catalog comes from the CSV import).
 
 The catalog is a list below `md` and a real `<table>` above it, from **one render**
 (`CardRow`) — the 518 rows are unvirtualized, so a second hidden mobile copy would

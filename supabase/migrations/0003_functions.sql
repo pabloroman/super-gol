@@ -3,41 +3,12 @@
 -- SECURITY DEFINER functions, so the client can *call* them but never forge them.
 
 -- ============================================================
--- New user: create profile, grant starting coins + the basic-game cards.
+-- New user: handle_new_user() — create the profile, grant 500 coins and the
+-- is_starter "juego básico" deck — and its on_auth_user_created trigger live in
+-- 0017_username_constraints.sql. That migration finalizes the username rules the
+-- trigger enforces, so the function has a single definition there rather than being
+-- created here and rewritten twice downstream.
 -- ============================================================
-create or replace function public.handle_new_user()
-returns trigger
-language plpgsql
-security definer
-set search_path = public
-as $$
-declare
-  v_start_coins constant bigint := 500;
-begin
-  insert into public.profiles (id, username, coins)
-  values (
-    new.id,
-    coalesce(new.raw_user_meta_data ->> 'username', 'Entrenador'),
-    v_start_coins
-  );
-
-  insert into public.transactions (user_id, amount, kind, ref)
-  values (new.id, v_start_coins, 'starter_grant', 'welcome');
-
-  -- Grant the "juego básico": every card flagged is_starter.
-  insert into public.user_cards (user_id, card_id, quantity)
-  select new.id, c.id, 1
-  from public.cards c
-  where c.is_starter;
-
-  return new;
-end;
-$$;
-
-drop trigger if exists on_auth_user_created on auth.users;
-create trigger on_auth_user_created
-  after insert on auth.users
-  for each row execute function public.handle_new_user();
 
 -- ============================================================
 -- open_pack: charge coins, roll cards by rarity weights, grant them.

@@ -1,7 +1,8 @@
 // Reseed the hand-editable ability source of truth — scripts/cards/data/abilities.json —
 // from the deterministic generator. This is the ONLY writer of that file: after the first
 // run it is owned by hand (tweak a card's attributes, then `npm run build:cards` bakes the
-// edits into 0005 and `npm run push:cards` applies them to a live DB). Because the core is
+// edits into the local seed `seed_cards.sql` and `npm run push:cards` applies them to a live
+// DB). Because the core is
 // fully deterministic (value follows overall, presence follows position, no randomness),
 // re-running yields an empty diff — an accidental reseed can't silently churn hand-edits.
 // Run: `npm run reseed:cards`. Offline; no credentials.

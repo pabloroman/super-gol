@@ -2,9 +2,9 @@
 --
 -- `npm run push:cards` reads scripts/cards/data/abilities.json (the hand-editable
 -- source of truth for card factors) and applies it to an already-migrated database.
--- Regenerating 0005 is seed-only and never re-runs on prod (the migration ledger
--- keys on the version prefix), so this RPC is the one channel for ability changes
--- there — 0005 (fresh db:reset) and a push both derive from abilities.json.
+-- The catalog is not a migration but a local seed (seed_cards.sql) plus the admin CSV
+-- import on prod, so this RPC is the one channel for ability changes on a hosted DB —
+-- the local seed (fresh db:reset) and a push both derive from abilities.json.
 --
 -- Posture matches record_match (0004) and finish_match_session (0014): server-only
 -- writes go through a SECURITY DEFINER function granted to service_role alone, never
