@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
+import { CheckIcon, XMarkIcon } from '@heroicons/react/24/solid'
 import { useAuth } from '@/auth/AuthProvider'
 import { fetchActiveSquad, fetchCollection, saveSquad } from '@/data/api'
 import { Naipe } from '@/ui/naipe/Naipe'
@@ -77,9 +78,9 @@ function SquadCard({ card, onRemove }: { card: Card; onRemove: () => void }) {
         type="button"
         onClick={onRemove}
         aria-label={`Quitar a ${card.name} del equipo`}
-        className="absolute -right-1.5 -top-1.5 grid h-6 w-6 place-items-center rounded-full bg-black/85 text-xs text-slate-300 ring-1 ring-white/20 transition hover:bg-red-500 hover:text-white"
+        className="absolute -right-1.5 -top-1.5 grid h-6 w-6 place-items-center rounded-full bg-black/85 text-slate-300 ring-1 ring-white/20 transition hover:bg-red-500 hover:text-white"
       >
-        ✕
+        <XMarkIcon className="h-4 w-4" aria-hidden />
       </button>
     </div>
   )
@@ -326,7 +327,7 @@ export function SquadBuilder() {
     try {
       await saveSquad(name, pickedIds)
       await refreshProfile()
-      setMessage('Equipo guardado ✓')
+      setMessage('Equipo guardado')
     } catch (e) {
       setError(e instanceof Error ? e.message : 'No se pudo guardar')
     } finally {
@@ -384,7 +385,12 @@ export function SquadBuilder() {
         </button>
       </div>
 
-      {message && <p className="text-sm text-grass-400">{message}</p>}
+      {message && (
+        <p className="flex items-center gap-1.5 text-sm text-grass-400">
+          <CheckIcon className="h-4 w-4 shrink-0" aria-hidden />
+          {message}
+        </p>
+      )}
       {error && <p className="text-sm text-red-400">{error}</p>}
       {!validation.ok && validation.errors.length > 0 && (
         <ul className="space-y-0.5 text-xs text-slate-500">

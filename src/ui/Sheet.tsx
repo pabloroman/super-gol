@@ -1,5 +1,6 @@
 import { useEffect, useRef, type ReactNode } from 'react'
 import { createPortal } from 'react-dom'
+import { XMarkIcon } from '@heroicons/react/24/outline'
 
 /**
  * The app's only overlay primitive: a bottom sheet on a phone, a centered dialog
@@ -127,7 +128,7 @@ export function Sheet({
             aria-label="Cerrar"
             className="rounded-lg px-2 py-1 text-slate-400 transition hover:bg-white/5 hover:text-slate-100"
           >
-            ✕
+            <XMarkIcon className="h-5 w-5" aria-hidden />
           </button>
         </div>
         {children}

@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
+import { CheckIcon } from '@heroicons/react/24/solid'
 import { adminDeleteCard, adminUpsertCards, fetchCatalog } from '@/data/api'
 import { ABILITY_META, ABILITY_ORDER } from '@/game/abilities'
 import { ZONE_GRIDS, type PositionGroup } from '@/cards/positions'
@@ -372,7 +373,13 @@ function CardRow({ card, onEdit }: { card: Card; onEdit: () => void }) {
         {card.cost}
       </td>
       <td className="block shrink-0 text-xs text-slate-400 md:table-cell">{card.rarity}</td>
-      <td className="hidden text-center text-xs lg:table-cell">{card.is_starter ? '✓' : '—'}</td>
+      <td className="hidden text-center text-xs lg:table-cell">
+        {card.is_starter ? (
+          <CheckIcon className="inline-block h-4 w-4 text-grass-400" aria-label="Sí" />
+        ) : (
+          '—'
+        )}
+      </td>
       <td className="hidden text-xs text-slate-500 xl:table-cell">{card.nationality ?? '—'}</td>
     </tr>
   )

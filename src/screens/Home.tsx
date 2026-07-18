@@ -1,7 +1,9 @@
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
+import { PlayIcon } from '@heroicons/react/24/solid'
 import { useAuth } from '@/auth/AuthProvider'
 import { fetchActiveSquad, fetchMatches } from '@/data/api'
+import { Coin } from '@/ui/Coin'
 import type { Match, MatchResultKind, Squad } from '@/lib/types'
 
 /** Result badge: a single letter (Victoria / Empate / Derrota) in the result's colour. */
@@ -78,7 +80,8 @@ export function Home() {
         to="/play"
         className={`btn-primary h-16 text-lg ${ready ? '' : 'pointer-events-none opacity-50'}`}
       >
-        ⚽ Jugar partido
+        <PlayIcon className="h-6 w-6" aria-hidden />
+        Jugar partido
       </Link>
       {!ready && !loading && (
         <p className="-mt-2 text-center text-xs text-slate-500">
@@ -109,7 +112,7 @@ export function Home() {
                     <div className="text-xs text-slate-500">{matchDate(m.created_at)}</div>
                   </div>
                   <span className="shrink-0 text-xs font-bold text-rare">
-                    +{m.coins_awarded} 🪙
+                    +{m.coins_awarded} <Coin />
                   </span>
                 </li>
               )

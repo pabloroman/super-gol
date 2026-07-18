@@ -141,7 +141,7 @@ export function Naipe({
     <Tag
       {...(onClick ? { type: 'button' as const, onClick, 'aria-label': card.name } : {})}
       style={{ containerType: 'inline-size' }}
-      className={`aspect-naipe w-full rounded-[4.5%] bg-naipe-white p-[2.8%] shadow-lg shadow-black/50 ${
+      className={`aspect-naipe w-full rounded-[3%] bg-naipe-white p-[4%] shadow-lg shadow-black/50 ${
         onClick
           ? 'transition md:hover:-translate-y-0.5 md:hover:shadow-xl md:hover:shadow-black/60 active:scale-[0.98]'
           : ''
