@@ -12,6 +12,7 @@ import { useInteractiveMatch, type Roll } from './useInteractiveMatch'
 import { InteractivePitchBoard } from './InteractivePitchBoard'
 import { HowToPlay } from './HowToPlay'
 import { SquadPanel } from './SquadPanel'
+import { GoalCelebration } from './GoalCelebration'
 
 /** A "pase/saque al hueco" of one pass type: tap one of its empty target cells to commit. */
 interface HuecoMode {
@@ -90,7 +91,7 @@ export function InteractiveMatch({
 }) {
   const match = useInteractiveMatch(difficulty)
   const { state, legal, chronicle, opponent, error, loading, pending, finish, lastRoll } = match
-  const { act, resign, restart, humanTurn, finished } = match
+  const { act, resign, restart, humanTurn, finished, goalFlash, clearGoal } = match
 
   const [selected, setSelected] = useState<string | null>(null)
   const [huecoKey, setHuecoKey] = useState<string | null>(null)
@@ -333,6 +334,7 @@ export function InteractiveMatch({
 
       <SquadPanel open={showSquad} onClose={() => setShowSquad(false)} state={state} />
       <HowToPlay open={showRules} onClose={() => setShowRules(false)} />
+      <GoalCelebration flash={goalFlash} onSeguir={clearGoal} />
     </div>
   )
 }
