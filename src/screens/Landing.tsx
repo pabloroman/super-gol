@@ -79,13 +79,13 @@ export function Landing({
 
         {/* Decorative fan of sample cards */}
         <div className="mt-10 flex items-end justify-center" aria-hidden>
-          <div className="w-24 -mr-5 -rotate-[8deg] translate-y-2 md:w-28">
+          <div className="w-24 -mr-5 -rotate-[8deg] translate-y-2 md:-mr-8 md:w-40">
             <Naipe card={SAMPLE_CARDS[0]} />
           </div>
-          <div className="z-10 w-28 -translate-y-1 md:w-32">
+          <div className="z-10 w-28 -translate-y-1 md:w-48">
             <Naipe card={SAMPLE_CARDS[1]} />
           </div>
-          <div className="w-24 -ml-5 rotate-[8deg] translate-y-2 md:w-28">
+          <div className="w-24 -ml-5 rotate-[8deg] translate-y-2 md:-ml-8 md:w-40">
             <Naipe card={SAMPLE_CARDS[2]} />
           </div>
         </div>
