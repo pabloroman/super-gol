@@ -40,8 +40,12 @@ export interface Roll {
   ability?: AbilityKey
 }
 
-/** Pace between the away side's jugadas so the human can read its play. */
-const AI_DELAY_MS = 550
+/** Pace between the away side's jugadas so the human can read its play. Two tiers:
+ *  a plain step between ordinary AI jugadas, and a longer hold after a jugada that
+ *  surfaced a contested dice roll (steal, shot, anticipación…) so its ✓/✗ reveal and
+ *  crónica line linger before the next crank flips the dice HUD back to spinning. */
+const AI_STEP_MS = 850
+const AI_ROLL_HOLD_MS = 1600
 
 /** Whose input the current phase needs; `null` at fulltime. */
 function actorOf(state: MatchState): Side | null {
@@ -94,6 +98,9 @@ export function useInteractiveMatch(difficulty: Difficulty) {
   const busy = useRef(false)
   /** The score we last folded, to detect a goal by diff (own goals emit no `goal` event). */
   const prevScore = useRef<{ home: number; away: number }>({ home: 0, away: 0 })
+  /** Whether the last folded jugada surfaced a contested roll — the next AI crank holds
+   *  longer (`AI_ROLL_HOLD_MS`) so the dice reveal can be read. */
+  const lastFoldHadRoll = useRef(false)
 
   /**
    * Fold a snapshot into state. An `act` returns only the NEW events → `mode: 'append'`.
@@ -112,7 +119,9 @@ export function useInteractiveMatch(difficulty: Difficulty) {
       const lines = snap.events.map((e) => ({ side: e.side, text: renderEs(e) }))
       if (mode === 'replace') setChronicle(lines)
       else if (lines.length > 0) setChronicle((prev) => [...prev, ...lines])
-      // Surface the last actual roll in this batch so the dice HUD can reveal real faces.
+      // Surface the last actual roll in this batch so the dice HUD can reveal real faces,
+      // and remember whether this fold rolled at all so the next AI crank can hold longer.
+      lastFoldHadRoll.current = false
       for (let i = snap.events.length - 1; i >= 0; i--) {
         const p = snap.events[i].params
         if (p.dice && p.dice.length > 0) {
@@ -122,6 +131,7 @@ export function useInteractiveMatch(difficulty: Difficulty) {
             success: p.success === true,
             ability: p.ability,
           })
+          lastFoldHadRoll.current = true
           break
         }
       }
@@ -226,12 +236,15 @@ export function useInteractiveMatch(difficulty: Difficulty) {
 
   // The away side plays itself: one crank per away ply, paced so the human can follow.
   // State changing re-runs this, so a whole away possession chains crank → crank → …
-  // until control returns to the human or the match ends. A pending goal celebration
-  // holds the match — the next crank waits until the overlay is dismissed (`clearGoal`
-  // nulls `goalFlash`, which re-runs this effect and resumes play).
+  // until control returns to the human or the match ends. The delay holds longer after a
+  // jugada that rolled the dice (read fresh from the ref set during that same fold) so its
+  // result lingers — this is what gives you time to read your own failed steal before the
+  // AI continues. A pending goal celebration holds the match — the next crank waits until
+  // the overlay is dismissed (`clearGoal` nulls `goalFlash`, re-running this effect).
   useEffect(() => {
     if (!state || actorOf(state) !== 'away' || goalFlash) return
-    const id = setTimeout(() => void advance(), AI_DELAY_MS)
+    const delay = lastFoldHadRoll.current ? AI_ROLL_HOLD_MS : AI_STEP_MS
+    const id = setTimeout(() => void advance(), delay)
     return () => clearTimeout(id)
   }, [state, advance, goalFlash])
 
