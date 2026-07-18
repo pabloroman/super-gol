@@ -26,6 +26,15 @@ $$;
 
 -- Upsert a batch of cards from a jsonb array of card objects (the client's Card
 -- shape). Returns the number of rows written.
+--
+-- is_starter is "sticky" across catalog imports. The starter deck (the 55 cards
+-- flagged is_starter, granted to new users) is defined by scripts/cards/data/
+-- starter-deck.ts — seeded locally by seed_cards.sql, and imported into a fresh
+-- hosted DB via the is_starter column of the admin CSV. So a routine catalog refresh
+-- must NOT reset it: the bulk upsert never touches is_starter, and a second pass then
+-- applies is_starter ONLY for payload rows that explicitly provide it (the per-card
+-- editor, or a CSV that carries the column). A CSV without the column leaves the deck
+-- untouched; new rows still default to false.
 create or replace function public.admin_upsert_cards(p_cards jsonb)
 returns integer
 language plpgsql
@@ -60,10 +69,19 @@ begin
     birthplace = excluded.birthplace, birth_date = excluded.birth_date,
     height_cm = excluded.height_cm, weight_kg = excluded.weight_kg,
     position = excluded.position, cost = excluded.cost, rarity = excluded.rarity,
-    is_starter = excluded.is_starter, abilities = excluded.abilities,
-    zone_grid = excluded.zone_grid, image_url = excluded.image_url;
+    abilities = excluded.abilities, zone_grid = excluded.zone_grid,
+    image_url = excluded.image_url;
+    -- NOTE: is_starter intentionally omitted here — see the second pass below.
 
   get diagnostics v_count = row_count;
+
+  -- Apply is_starter only where the payload explicitly provides it, so an import
+  -- that omits the column never disturbs the starter deck.
+  update public.cards c
+  set is_starter = x.is_starter
+  from jsonb_to_recordset(p_cards) as x(id text, is_starter boolean)
+  where c.id = x.id and x.is_starter is not null;
+
   return v_count;
 end;
 $$;

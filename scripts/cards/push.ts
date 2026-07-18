@@ -1,11 +1,12 @@
 // Push the hand-edited scripts/cards/data/abilities.json to a live Super Gol database.
 //
-// This is the ONLY channel that changes card attributes on an already-migrated database:
-// regenerating 0005 is seed-only and never re-runs on prod (the migration ledger keys on
-// the version prefix), so a future `db reset` and this push both derive from abilities.json
-// and converge. It writes ONLY the `abilities` column — the migration-owned starter deck and
-// every other field (name, cost, rarity, photo, zone grid) are left untouched. It DOES
-// overwrite any in-app admin edits to abilities for the cards it touches; that is the point.
+// This is the ONLY channel that changes card attributes on a live (hosted) database: the
+// catalog is not a migration — it is a local seed (seed_cards.sql) plus the admin CSV import
+// on prod — so a local `db reset` and this push both derive from abilities.json and converge.
+// It writes ONLY the `abilities` column — the starter deck (owned by starter-deck.ts, applied
+// via the seed and the CSV's is_starter column) and every other field (name, cost, rarity,
+// photo, zone grid) are left untouched. It DOES overwrite any in-app admin edits to abilities
+// for the cards it touches; that is the point.
 //
 // Auth: uses the service_role key to call service_set_card_abilities (0018), a SECURITY DEFINER
 // RPC granted to service_role alone. (admin_upsert_cards is unusable here — its require_admin()

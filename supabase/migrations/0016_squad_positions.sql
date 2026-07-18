@@ -6,7 +6,7 @@
 --
 -- The rule: exactly one GK, and at least one player in each outfield line
 -- (DF/MF/FW). The basic game has no formation, so the remaining outfielders are
--- unconstrained. cards.position stores the catalog's GK/DF/MF/FW codes (0005).
+-- unconstrained. cards.position stores the generated catalog's GK/DF/MF/FW codes.
 --
 -- This mirrors the client validator in src/game/squad.ts; the client is what
 -- users read, these exceptions are the developer-facing backstop. Recreate the
