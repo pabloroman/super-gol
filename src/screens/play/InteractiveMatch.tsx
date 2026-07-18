@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from 'react'
 import { CheckIcon, XMarkIcon } from '@heroicons/react/24/solid'
+import { useAuth } from '@/auth/AuthProvider'
 import { Coin } from '@/ui/Coin'
 import type { AbilityKey } from '@/lib/types'
 import { ABILITY_META } from '@/game/abilities'
@@ -89,6 +90,11 @@ export function InteractiveMatch({
   difficulty: Difficulty
   onExit: () => void
 }) {
+  const { profile } = useAuth()
+  // The human's display name (never a claim — mirrors Home.tsx's fallback), used
+  // wherever the home side is labelled instead of the generic "Tú".
+  const teamName = profile?.username ?? 'Entrenador'
+
   const match = useInteractiveMatch(difficulty)
   const { state, legal, chronicle, opponent, error, loading, pending, finish, lastRoll } = match
   const { act, resign, restart, humanTurn, finished, goalFlash, clearGoal } = match
@@ -194,7 +200,7 @@ export function InteractiveMatch({
     <div className="flex flex-col gap-4">
       <div className="card-surface flex flex-wrap items-center justify-between gap-x-3 gap-y-2 p-3 text-sm">
         <span className="font-semibold">
-          Tú {state.score.home} – {state.score.away} {opponent}
+          {teamName} {state.score.home} – {state.score.away} {opponent}
         </span>
         <div className="flex items-center gap-2">
           <span className="text-slate-400">Turno {Math.min(state.turno + 1, 15)}/15</span>
@@ -334,7 +340,7 @@ export function InteractiveMatch({
 
       <SquadPanel open={showSquad} onClose={() => setShowSquad(false)} state={state} />
       <HowToPlay open={showRules} onClose={() => setShowRules(false)} />
-      <GoalCelebration flash={goalFlash} onSeguir={clearGoal} />
+      <GoalCelebration flash={goalFlash} teamName={teamName} opponentName={opponent} onSeguir={clearGoal} />
     </div>
   )
 }

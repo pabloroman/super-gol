@@ -20,9 +20,15 @@ import type { GoalFlash } from './useInteractiveMatch'
  */
 export function GoalCelebration({
   flash,
+  teamName,
+  opponentName,
   onSeguir,
 }: {
   flash: GoalFlash | null
+  /** The human's name, shown as the scoring team on their goal (never "Tú"). */
+  teamName: string
+  /** The rival's club name, shown on a conceded goal. */
+  opponentName: string
   onSeguir: () => void
 }) {
   const seguirRef = useRef<HTMLButtonElement>(null)
@@ -64,7 +70,7 @@ export function GoalCelebration({
             home ? 'text-grass-400' : 'text-slate-500'
           }`}
         >
-          {home ? 'Tú' : 'Rival'}
+          {home ? teamName : opponentName}
         </p>
 
         {home && (
