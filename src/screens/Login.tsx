@@ -1,5 +1,6 @@
 import { useEffect, useState, type FormEvent } from 'react'
 import { requireSupabase } from '@/lib/supabase'
+import { usernameError } from '@/lib/username'
 
 /**
  * Where Supabase should send the user after they confirm their email. We pass
@@ -45,6 +46,8 @@ export function Login({
 } = {}) {
   const [mode, setMode] = useState<'signin' | 'signup'>(initialMode)
   const [email, setEmail] = useState('')
+  // Sign-in accepts either a username or an email in one field.
+  const [loginId, setLoginId] = useState('')
   const [password, setPassword] = useState('')
   const [username, setUsername] = useState('')
   const [busy, setBusy] = useState(false)
@@ -74,34 +77,34 @@ export function Login({
       if (mode === 'signup') {
         const trimmed = username.trim()
 
-        // Check the name BEFORE signing up, not by reading the error after.
-        // handle_new_user still refuses a duplicate (0012), but supabase-js turns
-        // the resulting 500 into an AuthRetryableFetchError and throws the body
-        // away — whatever the trigger raises reaches us as the string "{}". So
-        // this is the only point at which we can say something true to the user.
-        // A name claimed between here and the insert loses the race and surfaces
-        // as the generic failure below; rare, and the retry is correct.
-        if (trimmed) {
-          const { data: free, error: checkError } = await sb.rpc('username_available', {
-            p_username: trimmed,
-          })
-          if (checkError) throw checkError
-          if (!free) {
-            setError('Ese nombre de entrenador ya está en uso. Elige otro.')
-            return
-          }
+        // Validate the handle before the round trip. The DB is the authority
+        // (CHECK + trigger in 0017), but a trigger exception reaches supabase-js
+        // as the string "{}", so client-side is the only place we can say what is
+        // actually wrong. src/lib/username.ts is the shared source of the rule.
+        const formatError = usernameError(trimmed)
+        if (formatError) {
+          setError(formatError)
+          return
+        }
+
+        // Check availability BEFORE signing up, not by reading the error after —
+        // same reason. A name claimed between here and the insert loses the race
+        // and surfaces as the generic failure below; rare, and the retry is right.
+        const { data: free, error: checkError } = await sb.rpc('username_available', {
+          p_username: trimmed,
+        })
+        if (checkError) throw checkError
+        if (!free) {
+          setError('Ese nombre de usuario ya está en uso. Elige otro.')
+          return
         }
 
         const { data, error } = await sb.auth.signUp({
           email,
           password,
           options: {
-            // Send it blank if it is blank: handle_new_user turns blank into a
-            // NULL username. Defaulting to 'Entrenador' here is what broke
-            // signup — profiles.username is unique, so the first blank signup
-            // reserved that name and every later one collided. Home and the
-            // admin list already render 'Entrenador' for a null, so the fallback
-            // lives there, where it is a label and not a claim.
+            // handle_new_user reads this, btrims it, and now REQUIRES it (0017):
+            // the username is a public 1v1 handle, unique and format-checked.
             data: { username: trimmed },
             emailRedirectTo: emailRedirectTo(),
           },
@@ -111,7 +114,26 @@ export function Login({
           setMessage('Cuenta creada. Revisa tu correo para confirmarla.')
         }
       } else {
-        const { error } = await sb.auth.signInWithPassword({ email, password })
+        // Login by username OR email. An input with '@' is an email and goes
+        // straight to Auth. Otherwise it is a username: email_for_login (0017)
+        // hands back the account email ONLY when the password already verifies,
+        // so the private email is never exposed to an unauthenticated caller.
+        const id = loginId.trim()
+        let signInEmail = id
+        if (!id.includes('@')) {
+          const { data: resolved, error: resolveError } = await sb.rpc('email_for_login', {
+            p_identifier: id,
+            p_password: password,
+          })
+          if (resolveError) throw resolveError
+          if (!resolved) {
+            // Deliberately generic: do not reveal whether the username exists.
+            setError('Usuario o contraseña incorrectos.')
+            return
+          }
+          signInEmail = resolved as string
+        }
+        const { error } = await sb.auth.signInWithPassword({ email: signInEmail, password })
         if (error) throw error
       }
     } catch (err) {
@@ -122,7 +144,10 @@ export function Login({
   }
 
   async function resendConfirmation() {
-    if (!email) {
+    // Sign-in collects "usuario o correo", so fall back to loginId when it is an
+    // email; resend has no way to reach an account addressed by username alone.
+    const target = (email || loginId).trim()
+    if (!target.includes('@')) {
       setError('Introduce tu correo para reenviar la confirmación.')
       return
     }
@@ -133,7 +158,7 @@ export function Login({
     try {
       const { error } = await sb.auth.resend({
         type: 'signup',
-        email,
+        email: target,
         options: { emailRedirectTo: emailRedirectTo() },
       })
       if (error) throw error
@@ -164,23 +189,36 @@ export function Login({
       </div>
 
       <form onSubmit={submit} className="card-surface flex flex-col gap-3 p-5">
-        {mode === 'signup' && (
+        {mode === 'signup' ? (
+          <>
+            <input
+              required
+              autoComplete="username"
+              className="rounded-xl bg-black/30 px-4 py-3 outline-none ring-1 ring-white/10 focus:ring-grass-400"
+              placeholder="Usuario"
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
+            />
+            <input
+              type="email"
+              required
+              autoComplete="email"
+              className="rounded-xl bg-black/30 px-4 py-3 outline-none ring-1 ring-white/10 focus:ring-grass-400"
+              placeholder="Correo"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+            />
+          </>
+        ) : (
           <input
+            required
+            autoComplete="username"
             className="rounded-xl bg-black/30 px-4 py-3 outline-none ring-1 ring-white/10 focus:ring-grass-400"
-            placeholder="Nombre de entrenador"
-            value={username}
-            onChange={(e) => setUsername(e.target.value)}
+            placeholder="Usuario o correo"
+            value={loginId}
+            onChange={(e) => setLoginId(e.target.value)}
           />
         )}
-        <input
-          type="email"
-          required
-          autoComplete="email"
-          className="rounded-xl bg-black/30 px-4 py-3 outline-none ring-1 ring-white/10 focus:ring-grass-400"
-          placeholder="Correo"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-        />
         <input
           type="password"
           required
