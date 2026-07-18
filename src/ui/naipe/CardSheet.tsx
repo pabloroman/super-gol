@@ -1,7 +1,7 @@
 import type { Card, Rarity } from '@/lib/types'
 import { Sheet } from '@/ui/Sheet'
 import { Naipe } from './Naipe'
-import { ageFrom, isForeign } from './card-data'
+import { ageFrom } from './card-data'
 
 const RARITY_LABEL: Record<Rarity, string> = {
   comun: 'Común',
@@ -59,10 +59,7 @@ export function CardSheet({
           <Fact label="Rareza" value={RARITY_LABEL[card.rarity]} />
           {card.club && <Fact label="Club" value={card.club} />}
           {card.nationality && (
-            <Fact
-              label="Nacionalidad"
-              value={isForeign(card) ? `${card.nationality} · extranjero` : card.nationality}
-            />
+            <Fact label="Nacionalidad" value={card.nationality} />
           )}
           {age !== null && <Fact label="Edad" value={`${age} años`} />}
         </dl>
