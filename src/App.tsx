@@ -3,6 +3,7 @@ import { Cog6ToothIcon } from '@heroicons/react/24/outline'
 import { isSupabaseConfigured } from '@/lib/supabase'
 import { useAuth } from '@/auth/AuthProvider'
 import { BottomNav } from '@/ui/BottomNav'
+import { Footer } from '@/ui/Footer'
 import { Coin } from '@/ui/Coin'
 import { TABS } from '@/ui/nav'
 import { Login } from '@/screens/Login'
@@ -111,6 +112,7 @@ export default function App() {
           <Route path="/admin" element={<Admin />} />
         </Routes>
       </main>
+      <Footer />
       <BottomNav />
     </div>
   )
