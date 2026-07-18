@@ -1,3 +1,4 @@
+import { useState } from 'react'
 import { Link, NavLink, Route, Routes } from 'react-router-dom'
 import { Cog6ToothIcon } from '@heroicons/react/24/outline'
 import { isSupabaseConfigured } from '@/lib/supabase'
@@ -7,6 +8,7 @@ import { Footer } from '@/ui/Footer'
 import { Coin } from '@/ui/Coin'
 import { TABS } from '@/ui/nav'
 import { Login } from '@/screens/Login'
+import { Landing } from '@/screens/Landing'
 import { Home } from '@/screens/Home'
 import { Collection } from '@/screens/Collection'
 import { SquadBuilder } from '@/screens/SquadBuilder'
@@ -84,6 +86,51 @@ function TopBar() {
   )
 }
 
+/**
+ * True when we arrived via a Supabase auth-error hash (e.g. an expired email
+ * confirmation link, `#error=access_denied&error_code=otp_expired&…`). A valid
+ * `access_token` hash is consumed by supabase-js `detectSessionInUrl` before we
+ * render — that path yields a session and never reaches here — so only the error
+ * case matters: we start on the auth form so Login can surface it and offer a
+ * resend, instead of hiding it behind the landing page.
+ */
+function hasAuthHash(): boolean {
+  if (typeof window === 'undefined') return false
+  const hash = window.location.hash.replace(/^#/, '')
+  if (!hash) return false
+  const params = new URLSearchParams(hash)
+  return Boolean(params.get('error') || params.get('error_code'))
+}
+
+/**
+ * The unauthenticated view: a marketing landing page with the auth form one tap
+ * away. A local toggle (not a route) keeps the existing all-or-nothing gate and
+ * leaves Login's URL-hash handling untouched. `onStart`/`onSignIn` seed the auth
+ * form's mode so the CTA the visitor pressed matches what they see.
+ */
+function Unauthenticated() {
+  const [view, setView] = useState<'landing' | 'auth'>(
+    hasAuthHash() ? 'auth' : 'landing',
+  )
+  const [mode, setMode] = useState<'signin' | 'signup'>('signin')
+
+  if (view === 'auth') {
+    return <Login initialMode={mode} onBack={() => setView('landing')} />
+  }
+  return (
+    <Landing
+      onStart={() => {
+        setMode('signup')
+        setView('auth')
+      }}
+      onSignIn={() => {
+        setMode('signin')
+        setView('auth')
+      }}
+    />
+  )
+}
+
 export default function App() {
   const { session, loading } = useAuth()
 
@@ -97,7 +144,7 @@ export default function App() {
     )
   }
 
-  if (!session) return <Login />
+  if (!session) return <Unauthenticated />
 
   return (
     <div className="flex min-h-screen flex-col">
