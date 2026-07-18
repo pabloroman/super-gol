@@ -35,25 +35,16 @@ function shirtNumber(p: MatchPlayer): string {
 }
 
 /**
- * A classic black-and-white football, drawn as an SVG so it stays crisp at any `cqw`
- * size and looks identical on every device (an emoji would render differently per
- * platform and blend into the white home pips). The dark seams double as its outline,
- * so it reads against both the white home pip and the red away pip; a drop shadow lifts
- * it off either. Never amber — that shared the away team's colour.
+ * The ball is the ⚽ emoji, sized in `cqw` so it scales with the board. It's never amber
+ * (that shared the away team's colour) and reads on both the white home pip and the red
+ * away pip; a drop shadow lifts it off either. `className` sets the font-size the glyph
+ * scales to, plus any positioning.
  */
 function Ball({ className }: { className?: string }) {
   return (
-    <svg viewBox="0 0 24 24" className={className} aria-hidden focusable="false">
-      <circle cx="12" cy="12" r="11" fill="#fff" stroke="#12130f" strokeWidth="1.5" />
-      <path d="M12 8.8 L15.04 11.01 L13.88 14.59 L10.12 14.59 L8.96 11.01 Z" fill="#12130f" />
-      <path
-        d="M12 8.8 L12 2.5 M15.04 11.01 L21.03 9.06 M13.88 14.59 L17.58 19.69 M10.12 14.59 L6.42 19.69 M8.96 11.01 L2.97 9.06"
-        stroke="#12130f"
-        strokeWidth="1.3"
-        strokeLinecap="round"
-        fill="none"
-      />
-    </svg>
+    <span aria-hidden className={`leading-none ${className ?? ''}`}>
+      ⚽
+    </span>
   )
 }
 
@@ -78,7 +69,7 @@ function Pip({
     >
       {shirtNumber(player)}
       {hasBall && (
-        <Ball className="absolute -right-[3cqw] -top-[3cqw] h-[8cqw] w-[8cqw] drop-shadow-[0_0.5cqw_0.5cqw_rgba(0,0,0,0.5)]" />
+        <Ball className="absolute -right-[3cqw] -top-[3cqw] text-[9cqw] drop-shadow-[0_0.5cqw_0.5cqw_rgba(0,0,0,0.5)]" />
       )}
     </span>
   )
@@ -179,7 +170,7 @@ export function InteractivePitchBoard({
                 >
                   <CellStack players={here} ballCarrier={ballCarrier} selectedPlayer={selectedPlayer} />
                   {looseBall && sameCell(cell, looseBall) && (
-                    <Ball className="pointer-events-none absolute h-[10cqw] w-[10cqw] drop-shadow-[0_0.5cqw_0.5cqw_rgba(0,0,0,0.5)]" />
+                    <Ball className="pointer-events-none absolute text-[12cqw] drop-shadow-[0_0.5cqw_0.5cqw_rgba(0,0,0,0.5)]" />
                   )}
                 </div>
               )
