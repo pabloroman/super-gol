@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from 'react'
 import { CheckIcon, XMarkIcon } from '@heroicons/react/24/solid'
-import { useAuth } from '@/auth/AuthProvider'
+import { fetchActiveSquad } from '@/data/api'
 import { Coin } from '@/ui/Coin'
 import type { AbilityKey } from '@/lib/types'
 import { ABILITY_META } from '@/game/abilities'
@@ -90,10 +90,21 @@ export function InteractiveMatch({
   difficulty: Difficulty
   onExit: () => void
 }) {
-  const { profile } = useAuth()
-  // The human's display name (never a claim — mirrors Home.tsx's fallback), used
-  // wherever the home side is labelled instead of the generic "Tú".
-  const teamName = profile?.username ?? 'Entrenador'
+  // The name the player gave their squad in SquadBuilder (its «Nombre del equipo»
+  // field), shown wherever the home side is labelled instead of the generic "Tú".
+  // Fetched once from the active squad; 'Mi equipo' is SquadBuilder's own default.
+  const [teamName, setTeamName] = useState('Mi equipo')
+  useEffect(() => {
+    let alive = true
+    fetchActiveSquad()
+      .then((squad) => {
+        if (alive && squad?.name.trim()) setTeamName(squad.name.trim())
+      })
+      .catch(() => {})
+    return () => {
+      alive = false
+    }
+  }, [])
 
   const match = useInteractiveMatch(difficulty)
   const { state, legal, chronicle, opponent, error, loading, pending, finish, lastRoll } = match

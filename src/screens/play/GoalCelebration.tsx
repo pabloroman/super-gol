@@ -25,7 +25,7 @@ export function GoalCelebration({
   onSeguir,
 }: {
   flash: GoalFlash | null
-  /** The human's name, shown as the scoring team on their goal (never "Tú"). */
+  /** The player's squad name, shown as the scoring team on their goal (never "Tú"). */
   teamName: string
   /** The rival's club name, shown on a conceded goal. */
   opponentName: string
