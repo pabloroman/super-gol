@@ -4,7 +4,6 @@ import { ageAt, marketValueToOverall, parseMarketValue } from '../valuation'
 import { buildAbilities, costFor, deriveCard, rarityFor } from '../factors'
 import { roleProfile } from '../positions'
 
-const OUTFIELD: AbilityKey[] = ['rb', 'a', 'rc', 'd', 'rg', 'v', 'pc', 'pl', 'pa', 'dl', 'rm']
 const POSITIONS = [
   'Goalkeeper',
   'Centre-Back',
@@ -84,9 +83,30 @@ describe('factor invariants', () => {
     }
   })
 
-  it('gives every outfield card all eleven outfield factors at >=1', () => {
-    const ab = buildAbilities(72, roleProfile('Central Midfield'))
-    for (const k of OUTFIELD) expect(ab[k]).toBeGreaterThanOrEqual(1)
+  it('emits sparse, position-coherent sets — only the role\'s core factors', () => {
+    // robo (rb) belongs to defenders / defensive-mids, never to attackers.
+    const cf = buildAbilities(88, roleProfile('Centre-Forward'))
+    expect(cf.rb).toBeUndefined()
+    expect(cf.rm).toBeGreaterThanOrEqual(1)
+    expect(buildAbilities(85, roleProfile('Left Winger')).rb).toBeUndefined()
+    // remate (rm) belongs to attackers, never to a centre-back.
+    const cb = buildAbilities(85, roleProfile('Centre-Back'))
+    expect(cb.rm).toBeUndefined()
+    expect(cb.rb).toBeGreaterThanOrEqual(1)
+    // A keeper carries only rf/co — no outfield keys at all.
+    expect(Object.keys(buildAbilities(88, roleProfile('Goalkeeper'))).sort()).toEqual(['co', 'rf'])
+  })
+
+  it('never emits a key outside the role\'s core, at any overall', () => {
+    for (const pos of POSITIONS) {
+      const profile = roleProfile(pos)
+      const core = new Set<AbilityKey>(profile.core)
+      for (let ov = 50; ov <= 95; ov += 5) {
+        for (const k of Object.keys(buildAbilities(ov, profile)) as AbilityKey[]) {
+          expect(core.has(k)).toBe(true)
+        }
+      }
+    }
   })
 
   it('is deterministic', () => {
@@ -115,7 +135,7 @@ describe('role calibration (signature factors track the position)', () => {
     const ab = buildAbilities(86, roleProfile('Goalkeeper'))
     expect(ab.rf).toBeGreaterThanOrEqual(2)
     expect(ab.co).toBeGreaterThanOrEqual(2)
-    expect(ab.rm).toBeLessThanOrEqual(1)
+    expect(ab.rm).toBeUndefined()
   })
   it('a journeyman is mostly baseline', () => {
     const ab = buildAbilities(60, roleProfile('Central Midfield'))

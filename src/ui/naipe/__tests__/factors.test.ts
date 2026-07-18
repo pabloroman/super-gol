@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import type { Card } from '../../../lib/types'
-import { naipeFactors, OUTFIELD_FACTOR_COUNT } from '../factors'
+import { naipeFactors } from '../factors'
 
 function card(over: Partial<Card>): Card {
   return {
@@ -26,24 +26,20 @@ function card(over: Partial<Card>): Card {
 }
 
 describe('naipeFactors', () => {
-  it('prints at most six factors for an outfielder', () => {
-    // A real generated blob: every outfield key present, floored at 1.
-    const mbappe = card({
+  it('prints exactly the present outfield factors, in rulebook display order', () => {
+    // A sparse, position-coherent blob — a centre-forward's core (rm/d/rc/dl/v).
+    const striker = card({
       position: 'FW',
-      abilities: {
-        rb: 1, a: 1, rc: 3, d: 3, rg: 1, v: 2, pc: 1, pl: 1, pa: 1, dl: 3, rm: 3,
-      },
+      abilities: { rm: 3, d: 3, rc: 2, dl: 2, v: 1 },
     })
-    const keys = naipeFactors(mbappe)
-    expect(keys).toHaveLength(OUTFIELD_FACTOR_COUNT)
-    // Highest first; the four 3s lead, then the 2.
-    expect(keys.slice(0, 5)).toEqual(['rc', 'd', 'dl', 'rm', 'v'])
+    // Order follows OUTFIELD_ABILITY_KEYS, not value: rc, d, v, dl, rm.
+    expect(naipeFactors(striker)).toEqual(['rc', 'd', 'v', 'dl', 'rm'])
   })
 
-  it('orders by value, breaking ties on the rulebook display order', () => {
+  it('keeps the rulebook display order regardless of value', () => {
     const c = card({ abilities: { rm: 2, rb: 2, pc: 3 } })
-    // pc leads on value; rb precedes rm in ABILITY_ORDER despite equal values.
-    expect(naipeFactors(c)).toEqual(['pc', 'rb', 'rm'])
+    // rb, then pc, then rm — their fixed order, ignoring the higher pc value.
+    expect(naipeFactors(c)).toEqual(['rb', 'pc', 'rm'])
   })
 
   it('omits factors the player does not have — a missing factor is zero (page 6)', () => {
@@ -51,14 +47,12 @@ describe('naipeFactors', () => {
     expect(naipeFactors(c)).toEqual(['rb'])
   })
 
-  it('prints only the keeper ratings on a portero, never the outfield padding', () => {
-    // The generator gives keepers all 11 outfield keys pinned at 1 plus rf/co.
+  it('prints only the keeper ratings on a portero, never any outfield keys', () => {
+    // Generated keepers are sparse (just rf/co), but even a keeper carrying stray
+    // outfield keys must show only its keeper ratings — the branch is on position.
     const courtois = card({
       position: 'GK',
-      abilities: {
-        rb: 1, a: 1, rc: 1, d: 1, rg: 1, v: 1, pc: 1, pl: 1, pa: 1, dl: 1, rm: 1,
-        rf: 3, co: 2,
-      },
+      abilities: { rb: 1, pc: 1, rm: 1, rf: 3, co: 2 },
     })
     expect(naipeFactors(courtois)).toEqual(['rf', 'co'])
   })

@@ -1,0 +1,3477 @@
+{
+  "cards": {
+    "aaron-escandell-ovi-2526": {
+      "rf": 2,
+      "co": 2
+    },
+    "abde-ezzalzouli-bet-2526": {
+      "d": 2,
+      "rg": 3,
+      "v": 3,
+      "pc": 2,
+      "rm": 2
+    },
+    "abde-rebbach-ala-2526": {
+      "d": 2,
+      "rg": 2,
+      "v": 2,
+      "pc": 2,
+      "rm": 1
+    },
+    "abdel-abqar-get-2526": {
+      "rb": 2,
+      "a": 2,
+      "rc": 2,
+      "pl": 2,
+      "pa": 2
+    },
+    "abdon-prats-mll-2526": {
+      "rc": 2,
+      "d": 2,
+      "v": 1,
+      "dl": 2,
+      "rm": 2
+    },
+    "abdul-mumin-ray-2526": {
+      "rb": 2,
+      "a": 2,
+      "rc": 2,
+      "pl": 2,
+      "pa": 2
+    },
+    "abel-bretones-osa-2526": {
+      "rb": 2,
+      "a": 2,
+      "rg": 2,
+      "v": 2,
+      "pc": 2
+    },
+    "abel-ruiz-gir-2526": {
+      "rc": 2,
+      "d": 2,
+      "v": 1,
+      "dl": 2,
+      "rm": 2
+    },
+    "abu-kamara-get-2526": {
+      "d": 2,
+      "rg": 2,
+      "v": 2,
+      "pc": 2,
+      "rm": 2
+    },
+    "adam-boayar-elc-2526": {
+      "d": 2,
+      "rg": 2,
+      "pc": 1,
+      "dl": 1,
+      "rm": 2
+    },
+    "adama-boiro-ath-2526": {
+      "rb": 2,
+      "a": 2,
+      "rg": 2,
+      "v": 2,
+      "pc": 2
+    },
+    "ademola-lookman-atm-2526": {
+      "d": 3,
+      "rg": 2,
+      "pc": 2,
+      "dl": 2,
+      "rm": 3
+    },
+    "adnan-januzaj-sev-2526": {
+      "d": 2,
+      "rg": 2,
+      "v": 2,
+      "pc": 2,
+      "rm": 1
+    },
+    "adria-pedrosa-elc-2526": {
+      "rb": 2,
+      "a": 2,
+      "rg": 2,
+      "v": 2,
+      "pc": 2
+    },
+    "adrian-dela-lev-2526": {
+      "rb": 2,
+      "a": 2,
+      "rc": 2,
+      "pl": 2,
+      "pa": 2
+    },
+    "adrian-liso-get-2526": {
+      "d": 2,
+      "rg": 2,
+      "v": 2,
+      "pc": 2,
+      "rm": 2
+    },
+    "adrian-san-miguel-bet-2526": {
+      "rf": 2,
+      "co": 2
+    },
+    "aihen-munoz-rso-2526": {
+      "rb": 2,
+      "a": 2,
+      "rg": 2,
+      "v": 2,
+      "pc": 2
+    },
+    "aimar-oroz-osa-2526": {
+      "d": 2,
+      "rg": 2,
+      "pc": 2,
+      "pl": 2,
+      "dl": 2
+    },
+    "aitor-fernandez-osa-2526": {
+      "rf": 2,
+      "co": 2
+    },
+    "aitor-manas-ala-2526": {
+      "rc": 2,
+      "d": 2,
+      "v": 1,
+      "dl": 1,
+      "rm": 2
+    },
+    "aitor-paredes-ath-2526": {
+      "rb": 3,
+      "a": 2,
+      "rc": 2,
+      "pl": 2,
+      "pa": 2
+    },
+    "aitor-ruibal-bet-2526": {
+      "d": 2,
+      "rg": 2,
+      "v": 2,
+      "pc": 2,
+      "rm": 2
+    },
+    "akor-adams-sev-2526": {
+      "rc": 2,
+      "d": 2,
+      "v": 2,
+      "dl": 2,
+      "rm": 3
+    },
+    "alan-matturro-lev-2526": {
+      "rb": 2,
+      "a": 2,
+      "rc": 2,
+      "pl": 2,
+      "pa": 2
+    },
+    "alberto-moleiro-vil-2526": {
+      "d": 2,
+      "rg": 3,
+      "v": 3,
+      "pc": 2,
+      "rm": 2
+    },
+    "alberto-reina-ovi-2526": {
+      "a": 2,
+      "rg": 2,
+      "pc": 2,
+      "pl": 2,
+      "dl": 1
+    },
+    "aleix-febas-elc-2526": {
+      "a": 2,
+      "rg": 2,
+      "pc": 2,
+      "pl": 2,
+      "dl": 2
+    },
+    "alejandro-balde-fcb-2526": {
+      "rb": 3,
+      "a": 3,
+      "rg": 2,
+      "v": 2,
+      "pc": 2
+    },
+    "alejandro-catena-osa-2526": {
+      "rb": 2,
+      "a": 2,
+      "rc": 2,
+      "pl": 2,
+      "pa": 2
+    },
+    "alejandro-frances-gir-2526": {
+      "rb": 2,
+      "a": 2,
+      "rc": 2,
+      "pl": 2,
+      "pa": 2
+    },
+    "alejandro-iturbe-elc-2526": {
+      "rf": 2,
+      "co": 2
+    },
+    "alejandro-rego-ath-2526": {
+      "a": 2,
+      "rg": 2,
+      "pc": 2,
+      "pl": 2,
+      "dl": 2
+    },
+    "alemao-ray-2526": {
+      "rc": 2,
+      "d": 2,
+      "v": 2,
+      "dl": 2,
+      "rm": 2
+    },
+    "alex-baena-atm-2526": {
+      "d": 2,
+      "rg": 3,
+      "v": 3,
+      "pc": 2,
+      "rm": 2
+    },
+    "alex-berenguer-ath-2526": {
+      "d": 2,
+      "rg": 2,
+      "v": 2,
+      "pc": 2,
+      "rm": 2
+    },
+    "alex-fores-ovi-2526": {
+      "rc": 2,
+      "d": 2,
+      "v": 1,
+      "dl": 1,
+      "rm": 2
+    },
+    "alex-freeman-vil-2526": {
+      "rb": 2,
+      "a": 2,
+      "rg": 2,
+      "v": 2,
+      "pc": 2
+    },
+    "alex-moreno-gir-2526": {
+      "rb": 2,
+      "a": 2,
+      "rg": 2,
+      "v": 2,
+      "pc": 2
+    },
+    "alex-padilla-ath-2526": {
+      "rf": 2,
+      "co": 2
+    },
+    "alex-remiro-rso-2526": {
+      "rf": 3,
+      "co": 2
+    },
+    "alex-sancris-get-2526": {
+      "d": 2,
+      "rg": 2,
+      "v": 2,
+      "pc": 2,
+      "rm": 1
+    },
+    "alexander-s-rloth-atm-2526": {
+      "rc": 2,
+      "d": 3,
+      "v": 2,
+      "dl": 2,
+      "rm": 3
+    },
+    "alexis-sanchez-sev-2526": {
+      "d": 2,
+      "rg": 2,
+      "pc": 2,
+      "dl": 2,
+      "rm": 2
+    },
+    "alfon-gonzalez-vil-2526": {
+      "d": 2,
+      "rg": 2,
+      "v": 2,
+      "pc": 2,
+      "rm": 2
+    },
+    "alfonso-espino-ray-2526": {
+      "rb": 2,
+      "a": 2,
+      "rg": 1,
+      "v": 2,
+      "pc": 2
+    },
+    "alfonso-pedraza-vil-2526": {
+      "rb": 2,
+      "a": 2,
+      "rg": 2,
+      "v": 2,
+      "pc": 2
+    },
+    "allan-nyom-get-2526": {
+      "rb": 2,
+      "a": 2,
+      "rg": 1,
+      "v": 2,
+      "pc": 1
+    },
+    "alvaro-carreras-rma-2526": {
+      "rb": 3,
+      "a": 3,
+      "rg": 2,
+      "v": 3,
+      "pc": 2
+    },
+    "alvaro-fidalgo-bet-2526": {
+      "a": 2,
+      "rg": 2,
+      "pc": 3,
+      "pl": 2,
+      "dl": 2
+    },
+    "alvaro-garcia-ray-2526": {
+      "d": 2,
+      "rg": 2,
+      "v": 2,
+      "pc": 2,
+      "rm": 2
+    },
+    "alvaro-nunez-cel-2526": {
+      "rb": 2,
+      "a": 2,
+      "rg": 2,
+      "v": 2,
+      "pc": 2
+    },
+    "alvaro-odriozola-rso-2526": {
+      "rb": 2,
+      "a": 2,
+      "rg": 1,
+      "v": 2,
+      "pc": 2
+    },
+    "alvaro-rodriguez-elc-2526": {
+      "rc": 2,
+      "d": 2,
+      "v": 2,
+      "dl": 2,
+      "rm": 2
+    },
+    "alvaro-valles-bet-2526": {
+      "rf": 3,
+      "co": 2
+    },
+    "ander-barrenetxea-rso-2526": {
+      "d": 2,
+      "rg": 2,
+      "v": 3,
+      "pc": 2,
+      "rm": 2
+    },
+    "ander-guevara-ala-2526": {
+      "a": 2,
+      "rg": 2,
+      "pc": 2,
+      "pl": 2,
+      "dl": 2
+    },
+    "andoni-gorosabel-ath-2526": {
+      "rb": 2,
+      "a": 2,
+      "rg": 2,
+      "v": 2,
+      "pc": 2
+    },
+    "andre-almeida-val-2526": {
+      "d": 2,
+      "rg": 2,
+      "pc": 2,
+      "pl": 2,
+      "dl": 2
+    },
+    "andre-silva-elc-2526": {
+      "rc": 2,
+      "d": 2,
+      "v": 2,
+      "dl": 2,
+      "rm": 2
+    },
+    "andreas-christensen-fcb-2526": {
+      "rb": 3,
+      "a": 2,
+      "rc": 2,
+      "pl": 2,
+      "pa": 2
+    },
+    "andrei-ratiu-ray-2526": {
+      "rb": 3,
+      "a": 2,
+      "rg": 2,
+      "v": 2,
+      "pc": 2
+    },
+    "andres-castrin-sev-2526": {
+      "rb": 2,
+      "a": 2,
+      "rc": 2,
+      "pl": 1,
+      "pa": 2
+    },
+    "andriy-lunin-rma-2526": {
+      "rf": 3,
+      "co": 2
+    },
+    "angel-fortuno-esp-2526": {
+      "rf": 2,
+      "co": 1
+    },
+    "angel-ortiz-bet-2526": {
+      "rb": 2,
+      "a": 2,
+      "rg": 2,
+      "v": 2,
+      "pc": 2
+    },
+    "angel-perez-ala-2526": {
+      "d": 2,
+      "rg": 2,
+      "v": 2,
+      "pc": 2,
+      "rm": 1
+    },
+    "ante-budimir-osa-2526": {
+      "rc": 2,
+      "d": 2,
+      "v": 2,
+      "dl": 2,
+      "rm": 2
+    },
+    "antoine-griezmann-atm-2526": {
+      "d": 3,
+      "rg": 2,
+      "pc": 2,
+      "dl": 2,
+      "rm": 3
+    },
+    "antonio-blanco-ala-2526": {
+      "rb": 3,
+      "a": 2,
+      "rg": 2,
+      "pc": 2,
+      "pl": 2
+    },
+    "antonio-raillo-mll-2526": {
+      "rb": 2,
+      "a": 2,
+      "rc": 2,
+      "pl": 2,
+      "pa": 2
+    },
+    "antonio-rudiger-rma-2526": {
+      "rb": 3,
+      "a": 2,
+      "rc": 2,
+      "pl": 2,
+      "pa": 2
+    },
+    "antonio-sanchez-mll-2526": {
+      "a": 2,
+      "rg": 2,
+      "pc": 2,
+      "pl": 2,
+      "dl": 2
+    },
+    "antonio-sivera-ala-2526": {
+      "rf": 3,
+      "co": 2
+    },
+    "antoniu-roca-esp-2526": {
+      "d": 2,
+      "rg": 2,
+      "v": 2,
+      "pc": 2,
+      "rm": 1
+    },
+    "antony-bet-2526": {
+      "d": 2,
+      "rg": 3,
+      "v": 3,
+      "pc": 2,
+      "rm": 2
+    },
+    "arda-guler-rma-2526": {
+      "d": 2,
+      "rg": 3,
+      "pc": 3,
+      "pl": 2,
+      "dl": 3
+    },
+    "aritz-elustondo-rso-2526": {
+      "rb": 2,
+      "a": 2,
+      "rc": 2,
+      "pl": 2,
+      "pa": 2
+    },
+    "arnau-martinez-gir-2526": {
+      "rb": 3,
+      "a": 2,
+      "rg": 2,
+      "v": 2,
+      "pc": 2
+    },
+    "arnau-tenas-vil-2526": {
+      "rf": 2,
+      "co": 2
+    },
+    "arnaut-danjuma-val-2526": {
+      "d": 2,
+      "rg": 2,
+      "v": 2,
+      "pc": 2,
+      "rm": 2
+    },
+    "arsen-zakharyan-rso-2526": {
+      "d": 2,
+      "rg": 2,
+      "pc": 3,
+      "pl": 2,
+      "dl": 2
+    },
+    "asier-osambela-osa-2526": {
+      "a": 2,
+      "rg": 2,
+      "pc": 2,
+      "pl": 2,
+      "dl": 1
+    },
+    "augusto-batalla-ray-2526": {
+      "rf": 3,
+      "co": 2
+    },
+    "aurelien-tchouameni-rma-2526": {
+      "rb": 3,
+      "a": 3,
+      "rg": 2,
+      "pc": 3,
+      "pl": 2
+    },
+    "axel-witsel-gir-2526": {
+      "rb": 2,
+      "a": 2,
+      "rg": 2,
+      "pc": 2,
+      "pl": 2
+    },
+    "aymeric-laporte-ath-2526": {
+      "rb": 3,
+      "a": 2,
+      "rc": 2,
+      "pl": 2,
+      "pa": 2
+    },
+    "ayoze-perez-vil-2526": {
+      "rc": 2,
+      "d": 2,
+      "v": 2,
+      "dl": 2,
+      "rm": 3
+    },
+    "azzedine-ounahi-gir-2526": {
+      "a": 2,
+      "rg": 2,
+      "pc": 3,
+      "pl": 2,
+      "dl": 2
+    },
+    "baptiste-santamaria-val-2526": {
+      "rb": 2,
+      "a": 2,
+      "rg": 2,
+      "pc": 2,
+      "pl": 2
+    },
+    "batista-mendy-sev-2526": {
+      "rb": 3,
+      "a": 2,
+      "rg": 2,
+      "pc": 2,
+      "pl": 2
+    },
+    "benat-prados-ath-2526": {
+      "a": 2,
+      "rg": 2,
+      "pc": 3,
+      "pl": 2,
+      "dl": 2
+    },
+    "benat-turrientes-rso-2526": {
+      "a": 2,
+      "rg": 2,
+      "pc": 3,
+      "pl": 2,
+      "dl": 2
+    },
+    "borja-iglesias-cel-2526": {
+      "rc": 2,
+      "d": 2,
+      "v": 2,
+      "dl": 2,
+      "rm": 2
+    },
+    "borja-mayoral-get-2526": {
+      "rc": 2,
+      "d": 2,
+      "v": 2,
+      "dl": 2,
+      "rm": 2
+    },
+    "brahim-diaz-rma-2526": {
+      "d": 2,
+      "rg": 3,
+      "v": 3,
+      "pc": 2,
+      "rm": 2
+    },
+    "brais-mendez-rso-2526": {
+      "d": 2,
+      "rg": 2,
+      "pc": 3,
+      "pl": 2,
+      "dl": 2
+    },
+    "bryan-gil-gir-2526": {
+      "d": 2,
+      "rg": 2,
+      "v": 3,
+      "pc": 2,
+      "rm": 2
+    },
+    "buba-sangare-elc-2526": {
+      "rb": 2,
+      "a": 2,
+      "rg": 1,
+      "v": 2,
+      "pc": 2
+    },
+    "calebe-ala-2526": {
+      "d": 1,
+      "rg": 2,
+      "pc": 2,
+      "pl": 2,
+      "dl": 2
+    },
+    "carl-starfelt-cel-2526": {
+      "rb": 2,
+      "a": 2,
+      "rc": 2,
+      "pl": 2,
+      "pa": 2
+    },
+    "carles-alena-ala-2526": {
+      "a": 2,
+      "rg": 2,
+      "pc": 2,
+      "pl": 2,
+      "dl": 2
+    },
+    "carlos-alvarez-lev-2526": {
+      "d": 2,
+      "rg": 2,
+      "pc": 3,
+      "pl": 2,
+      "dl": 2
+    },
+    "carlos-dominguez-cel-2526": {
+      "rb": 2,
+      "a": 2,
+      "rc": 2,
+      "pl": 2,
+      "pa": 2
+    },
+    "carlos-espi-lev-2526": {
+      "rc": 2,
+      "d": 2,
+      "v": 1,
+      "dl": 2,
+      "rm": 2
+    },
+    "carlos-macia-vil-2526": {
+      "a": 2,
+      "rg": 2,
+      "pc": 2,
+      "pl": 2,
+      "dl": 2
+    },
+    "carlos-martin-ray-2526": {
+      "d": 2,
+      "rg": 2,
+      "v": 2,
+      "pc": 2,
+      "rm": 1
+    },
+    "carlos-protesoni-ala-2526": {
+      "rb": 2,
+      "a": 2,
+      "rg": 1,
+      "pc": 2,
+      "pl": 2
+    },
+    "carlos-romero-esp-2526": {
+      "rb": 3,
+      "a": 3,
+      "rg": 2,
+      "v": 2,
+      "pc": 2
+    },
+    "carlos-soler-rso-2526": {
+      "a": 2,
+      "rg": 2,
+      "pc": 3,
+      "pl": 2,
+      "dl": 2
+    },
+    "cedric-bakambu-bet-2526": {
+      "rc": 2,
+      "d": 2,
+      "v": 2,
+      "dl": 2,
+      "rm": 2
+    },
+    "cesar-azpilicueta-sev-2526": {
+      "rb": 2,
+      "a": 2,
+      "rc": 2,
+      "pl": 2,
+      "pa": 2
+    },
+    "cesar-tarrega-val-2526": {
+      "rb": 3,
+      "a": 2,
+      "rc": 2,
+      "pl": 2,
+      "pa": 2
+    },
+    "charles-pickel-esp-2526": {
+      "rb": 2,
+      "a": 2,
+      "rg": 2,
+      "pc": 2,
+      "pl": 2
+    },
+    "chidera-ejuke-sev-2526": {
+      "d": 2,
+      "rg": 2,
+      "v": 2,
+      "pc": 2,
+      "rm": 2
+    },
+    "chimy-avila-bet-2526": {
+      "rc": 2,
+      "d": 2,
+      "v": 2,
+      "dl": 2,
+      "rm": 2
+    },
+    "claudio-echeverri-gir-2526": {
+      "d": 2,
+      "rg": 2,
+      "pc": 3,
+      "pl": 2,
+      "dl": 2
+    },
+    "clemens-riedel-esp-2526": {
+      "rb": 2,
+      "a": 2,
+      "rc": 2,
+      "pl": 2,
+      "pa": 2
+    },
+    "clement-lenglet-atm-2526": {
+      "rb": 2,
+      "a": 2,
+      "rc": 2,
+      "pl": 2,
+      "pa": 2
+    },
+    "cristhian-stuani-gir-2526": {
+      "rc": 2,
+      "d": 2,
+      "v": 2,
+      "dl": 2,
+      "rm": 2
+    },
+    "cristian-rivero-val-2526": {
+      "rf": 2,
+      "co": 1
+    },
+    "cucho-hernandez-bet-2526": {
+      "rc": 2,
+      "d": 2,
+      "v": 2,
+      "dl": 2,
+      "rm": 3
+    },
+    "cyril-ngonge-esp-2526": {
+      "d": 2,
+      "rg": 2,
+      "v": 2,
+      "pc": 2,
+      "rm": 2
+    },
+    "dakonam-djene-get-2526": {
+      "rb": 2,
+      "a": 2,
+      "rc": 2,
+      "pl": 2,
+      "pa": 2
+    },
+    "daley-blind-gir-2526": {
+      "rb": 2,
+      "a": 2,
+      "rc": 2,
+      "pl": 2,
+      "pa": 2
+    },
+    "dani-calvo-ovi-2526": {
+      "rb": 2,
+      "a": 2,
+      "rc": 2,
+      "pl": 1,
+      "pa": 2
+    },
+    "dani-cardenas-ray-2526": {
+      "rf": 2,
+      "co": 2
+    },
+    "dani-ceballos-rma-2526": {
+      "a": 2,
+      "rg": 2,
+      "pc": 3,
+      "pl": 2,
+      "dl": 2
+    },
+    "dani-olmo-fcb-2526": {
+      "d": 2,
+      "rg": 3,
+      "pc": 3,
+      "pl": 2,
+      "dl": 3
+    },
+    "dani-parejo-vil-2526": {
+      "a": 2,
+      "rg": 2,
+      "pc": 2,
+      "pl": 2,
+      "dl": 2
+    },
+    "dani-raba-val-2526": {
+      "d": 2,
+      "rg": 2,
+      "pc": 1,
+      "dl": 2,
+      "rm": 2
+    },
+    "dani-vivian-ath-2526": {
+      "rb": 3,
+      "a": 3,
+      "rc": 2,
+      "pl": 2,
+      "pa": 2
+    },
+    "daniel-carvajal-rma-2526": {
+      "rb": 3,
+      "a": 2,
+      "rg": 2,
+      "v": 2,
+      "pc": 2
+    },
+    "david-affengruber-elc-2526": {
+      "rb": 2,
+      "a": 2,
+      "rc": 2,
+      "pl": 2,
+      "pa": 2
+    },
+    "david-alaba-rma-2526": {
+      "rb": 2,
+      "a": 2,
+      "rc": 2,
+      "pl": 2,
+      "pa": 2
+    },
+    "david-carmo-ovi-2526": {
+      "rb": 2,
+      "a": 2,
+      "rc": 2,
+      "pl": 2,
+      "pa": 2
+    },
+    "david-costas-ovi-2526": {
+      "rb": 2,
+      "a": 2,
+      "rc": 2,
+      "pl": 1,
+      "pa": 2
+    },
+    "david-hancko-atm-2526": {
+      "rb": 3,
+      "a": 3,
+      "rc": 2,
+      "pl": 2,
+      "pa": 2
+    },
+    "david-lopez-gir-2526": {
+      "rb": 2,
+      "a": 2,
+      "rc": 2,
+      "pl": 2,
+      "pa": 2
+    },
+    "david-lopez-mll-2526": {
+      "rb": 2,
+      "a": 2,
+      "rc": 2,
+      "pl": 1,
+      "pa": 2
+    },
+    "david-soria-get-2526": {
+      "rf": 3,
+      "co": 2
+    },
+    "davinchi-get-2526": {
+      "rb": 2,
+      "a": 2,
+      "rg": 1,
+      "v": 2,
+      "pc": 2
+    },
+    "dean-huijsen-rma-2526": {
+      "rb": 3,
+      "a": 3,
+      "rc": 2,
+      "pl": 2,
+      "pa": 2
+    },
+    "denis-suarez-ala-2526": {
+      "d": 1,
+      "rg": 2,
+      "pc": 2,
+      "pl": 2,
+      "dl": 2
+    },
+    "diego-conde-vil-2526": {
+      "rf": 2,
+      "co": 2
+    },
+    "diego-kochen-fcb-2526": {
+      "rf": 2,
+      "co": 2
+    },
+    "diego-llorente-bet-2526": {
+      "rb": 2,
+      "a": 2,
+      "rc": 2,
+      "pl": 2,
+      "pa": 2
+    },
+    "diego-lopez-val-2526": {
+      "d": 2,
+      "rg": 2,
+      "v": 3,
+      "pc": 2,
+      "rm": 2
+    },
+    "diego-pampin-lev-2526": {
+      "rb": 2,
+      "a": 2,
+      "rg": 1,
+      "v": 2,
+      "pc": 2
+    },
+    "diego-rico-get-2526": {
+      "rb": 2,
+      "a": 2,
+      "rg": 1,
+      "v": 2,
+      "pc": 2
+    },
+    "dimitri-foulquier-val-2526": {
+      "rb": 2,
+      "a": 2,
+      "rg": 1,
+      "v": 2,
+      "pc": 2
+    },
+    "djibril-sow-sev-2526": {
+      "a": 2,
+      "rg": 2,
+      "pc": 2,
+      "pl": 2,
+      "dl": 2
+    },
+    "domingos-duarte-get-2526": {
+      "rb": 2,
+      "a": 2,
+      "rc": 2,
+      "pl": 1,
+      "pa": 2
+    },
+    "donny-van-de-beek-gir-2526": {
+      "a": 2,
+      "rg": 2,
+      "pc": 2,
+      "pl": 2,
+      "dl": 1
+    },
+    "duje-caleta-car-rso-2526": {
+      "rb": 2,
+      "a": 2,
+      "rc": 2,
+      "pl": 2,
+      "pa": 2
+    },
+    "eder-militao-rma-2526": {
+      "rb": 3,
+      "a": 3,
+      "rc": 2,
+      "pl": 2,
+      "pa": 2
+    },
+    "edu-exposito-esp-2526": {
+      "a": 2,
+      "rg": 2,
+      "pc": 2,
+      "pl": 2,
+      "dl": 2
+    },
+    "eduardo-camavinga-rma-2526": {
+      "a": 2,
+      "rg": 2,
+      "pc": 3,
+      "pl": 3,
+      "dl": 2
+    },
+    "enzo-boyomo-osa-2526": {
+      "rb": 3,
+      "a": 2,
+      "rc": 2,
+      "pl": 2,
+      "pa": 2
+    },
+    "eray-comert-val-2526": {
+      "rb": 2,
+      "a": 2,
+      "rc": 2,
+      "pl": 1,
+      "pa": 2
+    },
+    "eric-bailly-ovi-2526": {
+      "rb": 2,
+      "a": 2,
+      "rc": 2,
+      "pl": 2,
+      "pa": 2
+    },
+    "eric-garcia-fcb-2526": {
+      "rb": 3,
+      "a": 3,
+      "rc": 2,
+      "pl": 2,
+      "pa": 2
+    },
+    "fabio-cardoso-sev-2526": {
+      "rb": 2,
+      "a": 2,
+      "rc": 2,
+      "pl": 2,
+      "pa": 2
+    },
+    "facundo-garces-ala-2526": {
+      "rb": 2,
+      "a": 2,
+      "rc": 1,
+      "pl": 1,
+      "pa": 1
+    },
+    "federico-gattoni-sev-2526": {
+      "rb": 2,
+      "a": 2,
+      "rc": 2,
+      "pl": 1,
+      "pa": 2
+    },
+    "federico-redondo-elc-2526": {
+      "rb": 2,
+      "a": 2,
+      "rg": 2,
+      "pc": 2,
+      "pl": 2
+    },
+    "federico-valverde-rma-2526": {
+      "a": 3,
+      "rg": 3,
+      "pc": 3,
+      "pl": 3,
+      "dl": 2
+    },
+    "federico-vinas-ovi-2526": {
+      "rc": 2,
+      "d": 2,
+      "v": 2,
+      "dl": 2,
+      "rm": 2
+    },
+    "fer-lopez-cel-2526": {
+      "d": 2,
+      "rg": 2,
+      "pc": 3,
+      "pl": 2,
+      "dl": 2
+    },
+    "ferland-mendy-rma-2526": {
+      "rb": 3,
+      "a": 2,
+      "rg": 2,
+      "v": 2,
+      "pc": 2
+    },
+    "fermin-lopez-fcb-2526": {
+      "d": 2,
+      "rg": 3,
+      "pc": 3,
+      "pl": 2,
+      "dl": 3
+    },
+    "fernando-calero-esp-2526": {
+      "rb": 2,
+      "a": 2,
+      "rc": 2,
+      "pl": 2,
+      "pa": 2
+    },
+    "ferran-jutgla-cel-2526": {
+      "rc": 2,
+      "d": 2,
+      "v": 2,
+      "dl": 2,
+      "rm": 2
+    },
+    "ferran-torres-fcb-2526": {
+      "rc": 2,
+      "d": 3,
+      "v": 2,
+      "dl": 2,
+      "rm": 3
+    },
+    "filip-ugrinic-val-2526": {
+      "a": 2,
+      "rg": 2,
+      "pc": 2,
+      "pl": 2,
+      "dl": 2
+    },
+    "florian-lejeune-ray-2526": {
+      "rb": 2,
+      "a": 2,
+      "rc": 2,
+      "pl": 2,
+      "pa": 2
+    },
+    "fran-beltran-gir-2526": {
+      "a": 2,
+      "rg": 2,
+      "pc": 2,
+      "pl": 2,
+      "dl": 2
+    },
+    "fran-garcia-rma-2526": {
+      "rb": 3,
+      "a": 2,
+      "rg": 2,
+      "v": 2,
+      "pc": 2
+    },
+    "fran-gonzalez-rma-2526": {
+      "rf": 2,
+      "co": 2
+    },
+    "fran-perez-ray-2526": {
+      "d": 2,
+      "rg": 2,
+      "v": 2,
+      "pc": 2,
+      "rm": 2
+    },
+    "franco-cervi-cel-2526": {
+      "d": 2,
+      "rg": 2,
+      "v": 2,
+      "pc": 2,
+      "rm": 1
+    },
+    "franco-mastantuono-rma-2526": {
+      "d": 2,
+      "rg": 3,
+      "v": 3,
+      "pc": 2,
+      "rm": 2
+    },
+    "frenkie-de-jong-fcb-2526": {
+      "a": 2,
+      "rg": 2,
+      "pc": 3,
+      "pl": 3,
+      "dl": 2
+    },
+    "gabriel-suazo-sev-2526": {
+      "rb": 2,
+      "a": 2,
+      "rg": 2,
+      "v": 2,
+      "pc": 2
+    },
+    "gavi-fcb-2526": {
+      "a": 2,
+      "rg": 2,
+      "pc": 3,
+      "pl": 3,
+      "dl": 2
+    },
+    "georges-mikautadze-vil-2526": {
+      "rc": 2,
+      "d": 3,
+      "v": 2,
+      "dl": 2,
+      "rm": 3
+    },
+    "gerard-gumbau-ray-2526": {
+      "rb": 2,
+      "a": 2,
+      "rg": 1,
+      "pc": 2,
+      "pl": 2
+    },
+    "gerard-martin-fcb-2526": {
+      "rb": 3,
+      "a": 3,
+      "rg": 2,
+      "v": 2,
+      "pc": 2
+    },
+    "gerard-moreno-vil-2526": {
+      "rc": 2,
+      "d": 2,
+      "v": 2,
+      "dl": 2,
+      "rm": 2
+    },
+    "german-valera-elc-2526": {
+      "d": 2,
+      "rg": 2,
+      "v": 2,
+      "pc": 2,
+      "rm": 2
+    },
+    "giovani-lo-celso-bet-2526": {
+      "d": 2,
+      "rg": 2,
+      "pc": 3,
+      "pl": 2,
+      "dl": 2
+    },
+    "giuliano-simeone-atm-2526": {
+      "d": 2,
+      "rg": 3,
+      "v": 3,
+      "pc": 2,
+      "rm": 2
+    },
+    "goncalo-guedes-rso-2526": {
+      "d": 2,
+      "rg": 2,
+      "v": 2,
+      "pc": 2,
+      "rm": 2
+    },
+    "gonzalo-garcia-rma-2526": {
+      "rc": 2,
+      "d": 3,
+      "v": 2,
+      "dl": 2,
+      "rm": 3
+    },
+    "gonzalo-villar-elc-2526": {
+      "a": 2,
+      "rg": 2,
+      "pc": 2,
+      "pl": 2,
+      "dl": 1
+    },
+    "gorka-guruzeta-ath-2526": {
+      "rc": 2,
+      "d": 2,
+      "v": 2,
+      "dl": 2,
+      "rm": 2
+    },
+    "grady-diangana-elc-2526": {
+      "d": 2,
+      "rg": 2,
+      "v": 2,
+      "pc": 2,
+      "rm": 1
+    },
+    "guido-rodriguez-val-2526": {
+      "rb": 2,
+      "a": 2,
+      "rg": 2,
+      "pc": 2,
+      "pl": 2
+    },
+    "haissem-hassan-ovi-2526": {
+      "d": 2,
+      "rg": 2,
+      "v": 2,
+      "pc": 2,
+      "rm": 2
+    },
+    "hector-bellerin-bet-2526": {
+      "rb": 2,
+      "a": 2,
+      "rg": 2,
+      "v": 2,
+      "pc": 2
+    },
+    "hector-fort-elc-2526": {
+      "rb": 3,
+      "a": 2,
+      "rg": 2,
+      "v": 2,
+      "pc": 2
+    },
+    "horatiu-moldovan-ovi-2526": {
+      "rf": 2,
+      "co": 2
+    },
+    "hugo-alvarez-cel-2526": {
+      "d": 2,
+      "rg": 2,
+      "v": 2,
+      "pc": 2,
+      "rm": 2
+    },
+    "hugo-duro-val-2526": {
+      "rc": 2,
+      "d": 2,
+      "v": 2,
+      "dl": 2,
+      "rm": 3
+    },
+    "hugo-lopez-vil-2526": {
+      "d": 2,
+      "rg": 2,
+      "v": 2,
+      "pc": 2,
+      "rm": 1
+    },
+    "hugo-rincon-gir-2526": {
+      "rb": 2,
+      "a": 2,
+      "rg": 2,
+      "v": 2,
+      "pc": 2
+    },
+    "hugo-sotelo-cel-2526": {
+      "a": 2,
+      "rg": 2,
+      "pc": 2,
+      "pl": 2,
+      "dl": 2
+    },
+    "iago-aspas-cel-2526": {
+      "rc": 2,
+      "d": 2,
+      "v": 2,
+      "dl": 2,
+      "rm": 3
+    },
+    "ibrahim-diabate-ala-2526": {
+      "rc": 2,
+      "d": 2,
+      "v": 1,
+      "dl": 2,
+      "rm": 2
+    },
+    "igor-zubeldia-rso-2526": {
+      "rb": 3,
+      "a": 2,
+      "rc": 2,
+      "pl": 2,
+      "pa": 2
+    },
+    "iker-benito-osa-2526": {
+      "d": 2,
+      "rg": 2,
+      "v": 2,
+      "pc": 2,
+      "rm": 1
+    },
+    "iker-losada-lev-2526": {
+      "d": 2,
+      "rg": 2,
+      "pc": 1,
+      "dl": 2,
+      "rm": 2
+    },
+    "iker-munoz-osa-2526": {
+      "rb": 2,
+      "a": 2,
+      "rg": 1,
+      "pc": 2,
+      "pl": 2
+    },
+    "ilaix-moriba-cel-2526": {
+      "a": 2,
+      "rg": 2,
+      "pc": 3,
+      "pl": 2,
+      "dl": 2
+    },
+    "ilias-akhomach-ray-2526": {
+      "d": 2,
+      "rg": 2,
+      "v": 3,
+      "pc": 2,
+      "rm": 2
+    },
+    "ilyas-chaira-ovi-2526": {
+      "d": 2,
+      "rg": 2,
+      "v": 2,
+      "pc": 2,
+      "rm": 2
+    },
+    "inaki-pena-elc-2526": {
+      "rf": 3,
+      "co": 2
+    },
+    "inaki-williams-ath-2526": {
+      "d": 2,
+      "rg": 2,
+      "v": 3,
+      "pc": 2,
+      "rm": 2
+    },
+    "inigo-arguibide-osa-2526": {
+      "rb": 2,
+      "a": 2,
+      "rg": 1,
+      "v": 2,
+      "pc": 1
+    },
+    "inigo-lekue-ath-2526": {
+      "rb": 2,
+      "a": 2,
+      "rg": 1,
+      "v": 2,
+      "pc": 2
+    },
+    "inigo-ruiz-de-galarreta-ath-2526": {
+      "a": 2,
+      "rg": 2,
+      "pc": 2,
+      "pl": 2,
+      "dl": 2
+    },
+    "ionut-radu-cel-2526": {
+      "rf": 3,
+      "co": 2
+    },
+    "isaac-romero-sev-2526": {
+      "rc": 2,
+      "d": 2,
+      "v": 2,
+      "dl": 2,
+      "rm": 2
+    },
+    "isco-bet-2526": {
+      "d": 2,
+      "rg": 2,
+      "pc": 3,
+      "pl": 2,
+      "dl": 2
+    },
+    "isi-palazon-ray-2526": {
+      "d": 2,
+      "rg": 2,
+      "pc": 2,
+      "dl": 2,
+      "rm": 2
+    },
+    "ismael-bekhoucha-get-2526": {
+      "rb": 2,
+      "a": 2,
+      "rg": 1,
+      "v": 1,
+      "pc": 1
+    },
+    "ivan-balliu-ray-2526": {
+      "rb": 2,
+      "a": 2,
+      "rg": 2,
+      "v": 2,
+      "pc": 2
+    },
+    "ivan-cuellar-mll-2526": {
+      "rf": 2,
+      "co": 2
+    },
+    "ivan-martin-gir-2526": {
+      "a": 2,
+      "rg": 2,
+      "pc": 2,
+      "pl": 2,
+      "dl": 2
+    },
+    "ivan-romero-lev-2526": {
+      "rc": 2,
+      "d": 2,
+      "v": 2,
+      "dl": 2,
+      "rm": 2
+    },
+    "ivan-villar-cel-2526": {
+      "rf": 2,
+      "co": 2
+    },
+    "jan-oblak-atm-2526": {
+      "rf": 3,
+      "co": 2
+    },
+    "jan-salas-mll-2526": {
+      "a": 1,
+      "rg": 2,
+      "pc": 2,
+      "pl": 2,
+      "dl": 1
+    },
+    "jan-virgili-mll-2526": {
+      "d": 2,
+      "rg": 2,
+      "v": 3,
+      "pc": 2,
+      "rm": 2
+    },
+    "javi-galan-osa-2526": {
+      "rb": 2,
+      "a": 2,
+      "rg": 2,
+      "v": 2,
+      "pc": 2
+    },
+    "javi-guerra-val-2526": {
+      "a": 2,
+      "rg": 2,
+      "pc": 3,
+      "pl": 3,
+      "dl": 2
+    },
+    "javi-llabres-mll-2526": {
+      "d": 2,
+      "rg": 2,
+      "v": 2,
+      "pc": 1,
+      "rm": 1
+    },
+    "javi-lopez-ovi-2526": {
+      "rb": 2,
+      "a": 2,
+      "rg": 2,
+      "v": 2,
+      "pc": 2
+    },
+    "javi-munoz-get-2526": {
+      "a": 2,
+      "rg": 2,
+      "pc": 2,
+      "pl": 2,
+      "dl": 1
+    },
+    "javi-puado-esp-2526": {
+      "d": 2,
+      "rg": 2,
+      "v": 2,
+      "pc": 2,
+      "rm": 2
+    },
+    "javi-rodriguez-cel-2526": {
+      "rb": 3,
+      "a": 2,
+      "rc": 2,
+      "pl": 2,
+      "pa": 2
+    },
+    "javi-rueda-cel-2526": {
+      "rb": 2,
+      "a": 2,
+      "rg": 2,
+      "v": 2,
+      "pc": 2
+    },
+    "jeremy-toljan-lev-2526": {
+      "rb": 2,
+      "a": 2,
+      "rg": 2,
+      "v": 2,
+      "pc": 2
+    },
+    "jesus-areso-ath-2526": {
+      "rb": 2,
+      "a": 2,
+      "rg": 2,
+      "v": 2,
+      "pc": 2
+    },
+    "jesus-vazquez-val-2526": {
+      "rb": 2,
+      "a": 2,
+      "rg": 2,
+      "v": 2,
+      "pc": 2
+    },
+    "jiri-letacek-get-2526": {
+      "rf": 2,
+      "co": 2
+    },
+    "joan-garcia-fcb-2526": {
+      "rf": 3,
+      "co": 3
+    },
+    "joan-jordan-sev-2526": {
+      "a": 2,
+      "rg": 2,
+      "pc": 2,
+      "pl": 2,
+      "dl": 2
+    },
+    "joao-cancelo-fcb-2526": {
+      "rb": 3,
+      "a": 2,
+      "rg": 2,
+      "v": 2,
+      "pc": 2
+    },
+    "joel-roca-gir-2526": {
+      "d": 2,
+      "rg": 2,
+      "v": 2,
+      "pc": 2,
+      "rm": 2
+    },
+    "jofre-carreras-esp-2526": {
+      "d": 2,
+      "rg": 2,
+      "v": 2,
+      "pc": 2,
+      "rm": 2
+    },
+    "johan-mojica-mll-2526": {
+      "rb": 2,
+      "a": 2,
+      "rg": 2,
+      "v": 2,
+      "pc": 2
+    },
+    "john-donald-elc-2526": {
+      "rb": 2,
+      "a": 2,
+      "rc": 2,
+      "pl": 1,
+      "pa": 2
+    },
+    "johnny-cardoso-atm-2526": {
+      "a": 2,
+      "rg": 2,
+      "pc": 3,
+      "pl": 2,
+      "dl": 2
+    },
+    "jon-ander-olasagasti-lev-2526": {
+      "a": 2,
+      "rg": 2,
+      "pc": 2,
+      "pl": 2,
+      "dl": 1
+    },
+    "jon-aramburu-rso-2526": {
+      "rb": 3,
+      "a": 2,
+      "rg": 2,
+      "v": 2,
+      "pc": 2
+    },
+    "jon-gorrotxategi-rso-2526": {
+      "rb": 3,
+      "a": 3,
+      "rg": 2,
+      "pc": 2,
+      "pl": 2
+    },
+    "jon-guridi-ala-2526": {
+      "a": 2,
+      "rg": 2,
+      "pc": 2,
+      "pl": 2,
+      "dl": 2
+    },
+    "jon-karrikaburu-rso-2526": {
+      "rc": 2,
+      "d": 2,
+      "v": 1,
+      "dl": 2,
+      "rm": 2
+    },
+    "jon-martin-rso-2526": {
+      "rb": 3,
+      "a": 2,
+      "rc": 2,
+      "pl": 2,
+      "pa": 2
+    },
+    "jon-moncayola-osa-2526": {
+      "a": 2,
+      "rg": 2,
+      "pc": 2,
+      "pl": 2,
+      "dl": 2
+    },
+    "jon-pacheco-ala-2526": {
+      "rb": 2,
+      "a": 2,
+      "rc": 2,
+      "pl": 2,
+      "pa": 2
+    },
+    "jones-el-abdellaoui-cel-2526": {
+      "d": 2,
+      "rg": 2,
+      "v": 2,
+      "pc": 2,
+      "rm": 2
+    },
+    "jonny-otto-ala-2526": {
+      "rb": 2,
+      "a": 2,
+      "rg": 2,
+      "v": 2,
+      "pc": 2
+    },
+    "jorge-cestero-rma-2526": {
+      "a": 2,
+      "rg": 2,
+      "pc": 2,
+      "pl": 2,
+      "dl": 2
+    },
+    "jorge-de-frutos-ray-2526": {
+      "d": 2,
+      "rg": 2,
+      "v": 3,
+      "pc": 2,
+      "rm": 2
+    },
+    "jorge-herrando-osa-2526": {
+      "rb": 2,
+      "a": 2,
+      "rc": 2,
+      "pl": 2,
+      "pa": 2
+    },
+    "josan-elc-2526": {
+      "d": 2,
+      "rg": 2,
+      "v": 2,
+      "pc": 1,
+      "rm": 1
+    },
+    "jose-angel-carmona-sev-2526": {
+      "rb": 3,
+      "a": 2,
+      "rg": 2,
+      "v": 2,
+      "pc": 2
+    },
+    "jose-copete-val-2526": {
+      "rb": 2,
+      "a": 2,
+      "rc": 2,
+      "pl": 2,
+      "pa": 2
+    },
+    "jose-gaya-val-2526": {
+      "rb": 2,
+      "a": 2,
+      "rg": 2,
+      "v": 2,
+      "pc": 2
+    },
+    "jose-luis-morales-lev-2526": {
+      "rc": 2,
+      "d": 2,
+      "v": 1,
+      "dl": 2,
+      "rm": 2
+    },
+    "jose-maria-gimenez-atm-2526": {
+      "rb": 3,
+      "a": 2,
+      "rc": 2,
+      "pl": 2,
+      "pa": 2
+    },
+    "jose-salinas-esp-2526": {
+      "rb": 2,
+      "a": 2,
+      "rg": 2,
+      "v": 2,
+      "pc": 2
+    },
+    "joseph-aidoo-cel-2526": {
+      "rb": 2,
+      "a": 2,
+      "rc": 2,
+      "pl": 1,
+      "pa": 2
+    },
+    "jozhua-vertrouwd-ray-2526": {
+      "rb": 2,
+      "a": 2,
+      "rc": 2,
+      "pl": 1,
+      "pa": 2
+    },
+    "juan-carlos-gir-2526": {
+      "rf": 2,
+      "co": 2
+    },
+    "juan-cruz-osa-2526": {
+      "rb": 2,
+      "a": 2,
+      "rg": 2,
+      "v": 2,
+      "pc": 2
+    },
+    "juan-foyth-vil-2526": {
+      "rb": 3,
+      "a": 2,
+      "rc": 2,
+      "pl": 2,
+      "pa": 2
+    },
+    "juan-iglesias-get-2526": {
+      "rb": 2,
+      "a": 2,
+      "rg": 2,
+      "v": 2,
+      "pc": 2
+    },
+    "juan-musso-atm-2526": {
+      "rf": 3,
+      "co": 2
+    },
+    "juanlu-sanchez-sev-2526": {
+      "rb": 3,
+      "a": 2,
+      "rg": 2,
+      "v": 2,
+      "pc": 2
+    },
+    "juanmi-get-2526": {
+      "d": 2,
+      "rg": 2,
+      "v": 2,
+      "pc": 2,
+      "rm": 1
+    },
+    "jude-bellingham-rma-2526": {
+      "d": 2,
+      "rg": 3,
+      "pc": 3,
+      "pl": 3,
+      "dl": 3
+    },
+    "julen-agirrezabala-val-2526": {
+      "rf": 3,
+      "co": 2
+    },
+    "jules-kounde-fcb-2526": {
+      "rb": 3,
+      "a": 3,
+      "rg": 2,
+      "v": 3,
+      "pc": 2
+    },
+    "julian-alvarez-atm-2526": {
+      "rc": 3,
+      "d": 3,
+      "v": 2,
+      "dl": 3,
+      "rm": 3
+    },
+    "junior-firpo-bet-2526": {
+      "rb": 2,
+      "a": 2,
+      "rg": 2,
+      "v": 2,
+      "pc": 2
+    },
+    "justin-kalumba-mll-2526": {
+      "d": 2,
+      "rg": 2,
+      "v": 2,
+      "pc": 1,
+      "rm": 1
+    },
+    "kareem-tunde-lev-2526": {
+      "d": 2,
+      "rg": 2,
+      "v": 2,
+      "pc": 2,
+      "rm": 1
+    },
+    "karl-etta-eyong-lev-2526": {
+      "rc": 2,
+      "d": 2,
+      "v": 2,
+      "dl": 2,
+      "rm": 3
+    },
+    "kervin-arriaga-lev-2526": {
+      "rb": 2,
+      "a": 2,
+      "rg": 1,
+      "pc": 2,
+      "pl": 2
+    },
+    "kike-barja-osa-2526": {
+      "d": 2,
+      "rg": 2,
+      "v": 2,
+      "pc": 2,
+      "rm": 1
+    },
+    "kike-garcia-esp-2526": {
+      "rc": 2,
+      "d": 2,
+      "v": 2,
+      "dl": 2,
+      "rm": 2
+    },
+    "kike-salas-sev-2526": {
+      "rb": 2,
+      "a": 2,
+      "rc": 2,
+      "pl": 2,
+      "pa": 2
+    },
+    "kiko-femenia-get-2526": {
+      "rb": 2,
+      "a": 2,
+      "rg": 1,
+      "v": 2,
+      "pc": 2
+    },
+    "koke-atm-2526": {
+      "a": 2,
+      "rg": 2,
+      "pc": 3,
+      "pl": 2,
+      "dl": 2
+    },
+    "kwasi-sibo-ovi-2526": {
+      "a": 2,
+      "rg": 2,
+      "pc": 2,
+      "pl": 2,
+      "dl": 1
+    },
+    "kylian-mbappe-rma-2526": {
+      "rc": 3,
+      "d": 3,
+      "v": 2,
+      "dl": 3,
+      "rm": 3
+    },
+    "lamine-yamal-fcb-2526": {
+      "d": 3,
+      "rg": 3,
+      "v": 3,
+      "pc": 2,
+      "rm": 2
+    },
+    "largie-ramazani-val-2526": {
+      "d": 2,
+      "rg": 2,
+      "v": 2,
+      "pc": 2,
+      "rm": 2
+    },
+    "lass-kourouma-gir-2526": {
+      "a": 1,
+      "rg": 2,
+      "pc": 2,
+      "pl": 2,
+      "dl": 1
+    },
+    "leander-dendoncker-ovi-2526": {
+      "rb": 2,
+      "a": 2,
+      "rg": 2,
+      "pc": 2,
+      "pl": 2
+    },
+    "leandro-cabrera-esp-2526": {
+      "rb": 2,
+      "a": 2,
+      "rc": 2,
+      "pl": 2,
+      "pa": 2
+    },
+    "leo-petrot-elc-2526": {
+      "rb": 2,
+      "a": 2,
+      "rg": 1,
+      "v": 2,
+      "pc": 2
+    },
+    "leo-roman-mll-2526": {
+      "rf": 3,
+      "co": 2
+    },
+    "logan-costa-vil-2526": {
+      "rb": 3,
+      "a": 2,
+      "rc": 2,
+      "pl": 2,
+      "pa": 2
+    },
+    "lucas-ahijado-ovi-2526": {
+      "rb": 2,
+      "a": 2,
+      "rg": 1,
+      "v": 2,
+      "pc": 2
+    },
+    "lucas-beltran-val-2526": {
+      "rc": 2,
+      "d": 2,
+      "v": 2,
+      "dl": 2,
+      "rm": 2
+    },
+    "lucas-bergstrom-mll-2526": {
+      "rf": 2,
+      "co": 2
+    },
+    "lucas-boye-ala-2526": {
+      "rc": 2,
+      "d": 2,
+      "v": 2,
+      "dl": 2,
+      "rm": 2
+    },
+    "lucas-cepeda-elc-2526": {
+      "d": 2,
+      "rg": 2,
+      "v": 2,
+      "pc": 2,
+      "rm": 2
+    },
+    "lucas-torro-osa-2526": {
+      "rb": 2,
+      "a": 2,
+      "rg": 2,
+      "pc": 2,
+      "pl": 2
+    },
+    "lucien-agoume-sev-2526": {
+      "rb": 3,
+      "a": 2,
+      "rg": 2,
+      "pc": 2,
+      "pl": 2
+    },
+    "luis-milla-get-2526": {
+      "a": 2,
+      "rg": 2,
+      "pc": 2,
+      "pl": 2,
+      "dl": 2
+    },
+    "luis-rioja-val-2526": {
+      "d": 2,
+      "rg": 2,
+      "v": 2,
+      "pc": 2,
+      "rm": 2
+    },
+    "luis-vazquez-get-2526": {
+      "rc": 2,
+      "d": 2,
+      "v": 1,
+      "dl": 2,
+      "rm": 2
+    },
+    "luiz-felipe-ray-2526": {
+      "rb": 2,
+      "a": 2,
+      "rc": 2,
+      "pl": 2,
+      "pa": 2
+    },
+    "luiz-junior-vil-2526": {
+      "rf": 3,
+      "co": 2
+    },
+    "luka-ilic-ovi-2526": {
+      "d": 1,
+      "rg": 2,
+      "pc": 2,
+      "pl": 2,
+      "dl": 2
+    },
+    "luka-sucic-rso-2526": {
+      "a": 2,
+      "rg": 2,
+      "pc": 3,
+      "pl": 2,
+      "dl": 2
+    },
+    "manu-bueno-sev-2526": {
+      "a": 2,
+      "rg": 2,
+      "pc": 2,
+      "pl": 2,
+      "dl": 1
+    },
+    "manu-fernandez-cel-2526": {
+      "rb": 2,
+      "a": 2,
+      "rc": 2,
+      "pl": 1,
+      "pa": 2
+    },
+    "manu-morlanes-mll-2526": {
+      "a": 2,
+      "rg": 2,
+      "pc": 2,
+      "pl": 2,
+      "dl": 1
+    },
+    "manu-sanchez-lev-2526": {
+      "rb": 2,
+      "a": 2,
+      "rg": 2,
+      "v": 2,
+      "pc": 2
+    },
+    "manuel-angel-rma-2526": {
+      "a": 2,
+      "rg": 2,
+      "pc": 2,
+      "pl": 2,
+      "dl": 2
+    },
+    "marash-kumbulla-mll-2526": {
+      "rb": 2,
+      "a": 2,
+      "rc": 2,
+      "pl": 2,
+      "pa": 2
+    },
+    "marc-aguado-elc-2526": {
+      "rb": 2,
+      "a": 2,
+      "rg": 2,
+      "pc": 2,
+      "pl": 2
+    },
+    "marc-andre-ter-stegen-gir-2526": {
+      "rf": 3,
+      "co": 2
+    },
+    "marc-bartra-bet-2526": {
+      "rb": 2,
+      "a": 2,
+      "rc": 2,
+      "pl": 2,
+      "pa": 2
+    },
+    "marc-bernal-fcb-2526": {
+      "rb": 3,
+      "a": 2,
+      "rg": 2,
+      "pc": 2,
+      "pl": 2
+    },
+    "marc-casado-fcb-2526": {
+      "rb": 3,
+      "a": 2,
+      "rg": 2,
+      "pc": 2,
+      "pl": 2
+    },
+    "marc-pubill-atm-2526": {
+      "rb": 3,
+      "a": 3,
+      "rc": 2,
+      "pl": 2,
+      "pa": 2
+    },
+    "marc-roca-bet-2526": {
+      "rb": 2,
+      "a": 2,
+      "rg": 2,
+      "pc": 2,
+      "pl": 2
+    },
+    "marc-vidal-cel-2526": {
+      "rf": 2,
+      "co": 1
+    },
+    "marcao-sev-2526": {
+      "rb": 2,
+      "a": 2,
+      "rc": 2,
+      "pl": 2,
+      "pa": 2
+    },
+    "marcos-alonso-cel-2526": {
+      "rb": 2,
+      "a": 2,
+      "rc": 2,
+      "pl": 2,
+      "pa": 2
+    },
+    "marcos-llorente-atm-2526": {
+      "rb": 3,
+      "a": 3,
+      "rg": 2,
+      "v": 2,
+      "pc": 2
+    },
+    "marcus-rashford-fcb-2526": {
+      "d": 2,
+      "rg": 3,
+      "v": 3,
+      "pc": 2,
+      "rm": 2
+    },
+    "mariano-diaz-ala-2526": {
+      "rc": 2,
+      "d": 2,
+      "v": 1,
+      "dl": 1,
+      "rm": 2
+    },
+    "mario-martin-get-2526": {
+      "rb": 3,
+      "a": 2,
+      "rg": 2,
+      "pc": 2,
+      "pl": 2
+    },
+    "marko-dmitrovic-esp-2526": {
+      "rf": 2,
+      "co": 2
+    },
+    "maroan-sannadi-ath-2526": {
+      "rc": 2,
+      "d": 2,
+      "v": 2,
+      "dl": 2,
+      "rm": 2
+    },
+    "martim-neto-elc-2526": {
+      "a": 2,
+      "rg": 2,
+      "pc": 2,
+      "pl": 2,
+      "dl": 2
+    },
+    "martin-satriano-get-2526": {
+      "rc": 2,
+      "d": 2,
+      "v": 2,
+      "dl": 2,
+      "rm": 2
+    },
+    "martin-valjent-mll-2526": {
+      "rb": 2,
+      "a": 2,
+      "rc": 2,
+      "pl": 2,
+      "pa": 2
+    },
+    "mateo-joseph-mll-2526": {
+      "rc": 2,
+      "d": 2,
+      "v": 2,
+      "dl": 2,
+      "rm": 2
+    },
+    "mateu-morey-mll-2526": {
+      "rb": 2,
+      "a": 2,
+      "rg": 1,
+      "v": 2,
+      "pc": 2
+    },
+    "mathew-ryan-lev-2526": {
+      "rf": 3,
+      "co": 2
+    },
+    "matias-dituro-elc-2526": {
+      "rf": 2,
+      "co": 2
+    },
+    "matias-moreno-lev-2526": {
+      "rb": 2,
+      "a": 2,
+      "rc": 2,
+      "pl": 2,
+      "pa": 2
+    },
+    "matias-vecino-cel-2526": {
+      "a": 2,
+      "rg": 2,
+      "pc": 2,
+      "pl": 2,
+      "dl": 2
+    },
+    "matteo-ruggeri-atm-2526": {
+      "rb": 3,
+      "a": 2,
+      "rg": 2,
+      "v": 2,
+      "pc": 2
+    },
+    "mauro-arambarri-get-2526": {
+      "a": 2,
+      "rg": 2,
+      "pc": 3,
+      "pl": 2,
+      "dl": 2
+    },
+    "miguel-angel-sierra-sev-2526": {
+      "d": 1,
+      "rg": 2,
+      "v": 2,
+      "pc": 1,
+      "rm": 1
+    },
+    "miguel-roman-cel-2526": {
+      "a": 2,
+      "rg": 2,
+      "pc": 3,
+      "pl": 2,
+      "dl": 2
+    },
+    "miguel-rubio-esp-2526": {
+      "rb": 2,
+      "a": 2,
+      "rc": 2,
+      "pl": 1,
+      "pa": 2
+    },
+    "mihailo-ristic-cel-2526": {
+      "rb": 2,
+      "a": 2,
+      "rg": 1,
+      "v": 2,
+      "pc": 2
+    },
+    "mikel-jauregizar-ath-2526": {
+      "a": 2,
+      "rg": 2,
+      "pc": 3,
+      "pl": 3,
+      "dl": 2
+    },
+    "mikel-oyarzabal-rso-2526": {
+      "rc": 2,
+      "d": 3,
+      "v": 2,
+      "dl": 2,
+      "rm": 3
+    },
+    "mikel-vesga-ath-2526": {
+      "rb": 2,
+      "a": 2,
+      "rg": 2,
+      "pc": 2,
+      "pl": 2
+    },
+    "moi-gomez-osa-2526": {
+      "d": 2,
+      "rg": 2,
+      "pc": 2,
+      "pl": 2,
+      "dl": 2
+    },
+    "mouctar-diakhaby-val-2526": {
+      "rb": 2,
+      "a": 2,
+      "rc": 2,
+      "pl": 1,
+      "pa": 2
+    },
+    "nacho-vidal-ovi-2526": {
+      "rb": 2,
+      "a": 2,
+      "rg": 1,
+      "v": 2,
+      "pc": 2
+    },
+    "nahuel-molina-atm-2526": {
+      "rb": 3,
+      "a": 2,
+      "rg": 2,
+      "v": 2,
+      "pc": 2
+    },
+    "nahuel-tenaglia-ala-2526": {
+      "rb": 2,
+      "a": 2,
+      "rg": 2,
+      "v": 2,
+      "pc": 2
+    },
+    "natan-bet-2526": {
+      "rb": 3,
+      "a": 3,
+      "rc": 2,
+      "pl": 2,
+      "pa": 2
+    },
+    "neal-maupay-sev-2526": {
+      "rc": 2,
+      "d": 2,
+      "v": 2,
+      "dl": 2,
+      "rm": 2
+    },
+    "nelson-deossa-bet-2526": {
+      "a": 2,
+      "rg": 2,
+      "pc": 2,
+      "pl": 2,
+      "dl": 2
+    },
+    "nemanja-gudelj-sev-2526": {
+      "rb": 2,
+      "a": 2,
+      "rg": 2,
+      "pc": 2,
+      "pl": 2
+    },
+    "nico-gonzalez-atm-2526": {
+      "d": 2,
+      "rg": 3,
+      "v": 3,
+      "pc": 2,
+      "rm": 2
+    },
+    "nico-serrano-ath-2526": {
+      "d": 2,
+      "rg": 2,
+      "v": 2,
+      "pc": 2,
+      "rm": 1
+    },
+    "nico-williams-ath-2526": {
+      "d": 2,
+      "rg": 3,
+      "v": 3,
+      "pc": 2,
+      "rm": 2
+    },
+    "nicolas-fonseca-ovi-2526": {
+      "rb": 2,
+      "a": 2,
+      "rg": 2,
+      "pc": 2,
+      "pl": 2
+    },
+    "nicolas-pepe-vil-2526": {
+      "d": 2,
+      "rg": 2,
+      "v": 3,
+      "pc": 2,
+      "rm": 2
+    },
+    "nobel-mendy-ray-2526": {
+      "rb": 2,
+      "a": 2,
+      "rc": 2,
+      "pl": 2,
+      "pa": 2
+    },
+    "obed-vargas-atm-2526": {
+      "a": 2,
+      "rg": 2,
+      "pc": 2,
+      "pl": 2,
+      "dl": 2
+    },
+    "odysseas-vlachodimos-sev-2526": {
+      "rf": 3,
+      "co": 2
+    },
+    "oihan-sancet-ath-2526": {
+      "d": 2,
+      "rg": 3,
+      "pc": 3,
+      "pl": 2,
+      "dl": 2
+    },
+    "omar-el-hilali-esp-2526": {
+      "rb": 3,
+      "a": 2,
+      "rg": 2,
+      "v": 2,
+      "pc": 2
+    },
+    "omar-mascarell-mll-2526": {
+      "rb": 2,
+      "a": 2,
+      "rg": 1,
+      "pc": 2,
+      "pl": 2
+    },
+    "oriol-rey-lev-2526": {
+      "rb": 2,
+      "a": 2,
+      "rg": 1,
+      "pc": 2,
+      "pl": 2
+    },
+    "orri-oskarsson-rso-2526": {
+      "rc": 2,
+      "d": 2,
+      "v": 2,
+      "dl": 2,
+      "rm": 3
+    },
+    "oscar-mingueza-cel-2526": {
+      "rb": 3,
+      "a": 2,
+      "rg": 2,
+      "v": 2,
+      "pc": 2
+    },
+    "oscar-trejo-ray-2526": {
+      "d": 1,
+      "rg": 2,
+      "pc": 2,
+      "pl": 2,
+      "dl": 2
+    },
+    "oscar-valentin-ray-2526": {
+      "a": 2,
+      "rg": 2,
+      "pc": 2,
+      "pl": 2,
+      "dl": 2
+    },
+    "oso-sev-2526": {
+      "rb": 2,
+      "a": 2,
+      "rg": 2,
+      "v": 2,
+      "pc": 2
+    },
+    "ovie-ejaria-ovi-2526": {
+      "d": 2,
+      "rg": 2,
+      "v": 2,
+      "pc": 1,
+      "rm": 1
+    },
+    "pablo-agudin-ovi-2526": {
+      "d": 1,
+      "rg": 2,
+      "pc": 2,
+      "pl": 1,
+      "dl": 2
+    },
+    "pablo-barrios-atm-2526": {
+      "a": 2,
+      "rg": 3,
+      "pc": 3,
+      "pl": 3,
+      "dl": 2
+    },
+    "pablo-campos-lev-2526": {
+      "rf": 2,
+      "co": 2
+    },
+    "pablo-duran-cel-2526": {
+      "rc": 2,
+      "d": 2,
+      "v": 2,
+      "dl": 2,
+      "rm": 2
+    },
+    "pablo-fornals-bet-2526": {
+      "a": 2,
+      "rg": 2,
+      "pc": 3,
+      "pl": 2,
+      "dl": 2
+    },
+    "pablo-garcia-bet-2526": {
+      "d": 2,
+      "rg": 2,
+      "v": 2,
+      "pc": 2,
+      "rm": 2
+    },
+    "pablo-ibanez-ala-2526": {
+      "a": 2,
+      "rg": 2,
+      "pc": 2,
+      "pl": 2,
+      "dl": 2
+    },
+    "pablo-maffeo-mll-2526": {
+      "rb": 2,
+      "a": 2,
+      "rg": 2,
+      "v": 2,
+      "pc": 2
+    },
+    "pablo-marin-rso-2526": {
+      "d": 2,
+      "rg": 2,
+      "pc": 2,
+      "pl": 2,
+      "dl": 2
+    },
+    "pablo-martinez-lev-2526": {
+      "a": 2,
+      "rg": 2,
+      "pc": 2,
+      "pl": 2,
+      "dl": 1
+    },
+    "pablo-torre-mll-2526": {
+      "d": 2,
+      "rg": 2,
+      "pc": 2,
+      "pl": 2,
+      "dl": 2
+    },
+    "paco-cortes-lev-2526": {
+      "d": 2,
+      "rg": 2,
+      "v": 2,
+      "pc": 2,
+      "rm": 1
+    },
+    "pape-gueye-vil-2526": {
+      "a": 2,
+      "rg": 2,
+      "pc": 3,
+      "pl": 3,
+      "dl": 2
+    },
+    "pathe-ciss-ray-2526": {
+      "a": 2,
+      "rg": 2,
+      "pc": 2,
+      "pl": 2,
+      "dl": 2
+    },
+    "pau-cabanes-vil-2526": {
+      "rc": 2,
+      "d": 2,
+      "v": 1,
+      "dl": 1,
+      "rm": 2
+    },
+    "pau-cubarsi-fcb-2526": {
+      "rb": 3,
+      "a": 3,
+      "rc": 2,
+      "pl": 2,
+      "pa": 2
+    },
+    "pau-lopez-bet-2526": {
+      "rf": 2,
+      "co": 2
+    },
+    "pau-navarro-vil-2526": {
+      "rb": 3,
+      "a": 2,
+      "rg": 2,
+      "v": 2,
+      "pc": 2
+    },
+    "paulo-gazzaniga-gir-2526": {
+      "rf": 3,
+      "co": 2
+    },
+    "pedri-fcb-2526": {
+      "a": 3,
+      "rg": 3,
+      "pc": 3,
+      "pl": 3,
+      "dl": 2
+    },
+    "pedro-bigas-elc-2526": {
+      "rb": 2,
+      "a": 2,
+      "rc": 2,
+      "pl": 1,
+      "pa": 2
+    },
+    "pedro-diaz-ray-2526": {
+      "a": 2,
+      "rg": 2,
+      "pc": 2,
+      "pl": 2,
+      "dl": 2
+    },
+    "pep-chavarria-ray-2526": {
+      "rb": 3,
+      "a": 2,
+      "rg": 2,
+      "v": 2,
+      "pc": 2
+    },
+    "pepelu-val-2526": {
+      "rb": 2,
+      "a": 2,
+      "rg": 2,
+      "pc": 2,
+      "pl": 2
+    },
+    "peque-fernandez-sev-2526": {
+      "d": 2,
+      "rg": 2,
+      "pc": 2,
+      "dl": 2,
+      "rm": 2
+    },
+    "pere-milla-esp-2526": {
+      "d": 2,
+      "rg": 2,
+      "v": 2,
+      "pc": 2,
+      "rm": 1
+    },
+    "pol-lozano-esp-2526": {
+      "a": 2,
+      "rg": 2,
+      "pc": 2,
+      "pl": 2,
+      "dl": 2
+    },
+    "portu-gir-2526": {
+      "d": 2,
+      "rg": 2,
+      "v": 2,
+      "pc": 2,
+      "rm": 2
+    },
+    "rafa-marin-vil-2526": {
+      "rb": 3,
+      "a": 2,
+      "rc": 2,
+      "pl": 2,
+      "pa": 2
+    },
+    "rafa-mir-elc-2526": {
+      "rc": 2,
+      "d": 2,
+      "v": 2,
+      "dl": 2,
+      "rm": 2
+    },
+    "rahim-alhassane-ovi-2526": {
+      "rb": 2,
+      "a": 2,
+      "rg": 1,
+      "v": 2,
+      "pc": 2
+    },
+    "ramon-terrats-esp-2526": {
+      "a": 2,
+      "rg": 2,
+      "pc": 2,
+      "pl": 2,
+      "dl": 2
+    },
+    "randy-nteka-ray-2526": {
+      "d": 1,
+      "rg": 2,
+      "pc": 2,
+      "pl": 2,
+      "dl": 2
+    },
+    "raphinha-fcb-2526": {
+      "d": 3,
+      "rg": 3,
+      "v": 3,
+      "pc": 2,
+      "rm": 2
+    },
+    "raul-asencio-rma-2526": {
+      "rb": 3,
+      "a": 3,
+      "rc": 2,
+      "pl": 2,
+      "pa": 2
+    },
+    "raul-fernandez-ala-2526": {
+      "rf": 2,
+      "co": 2
+    },
+    "raul-garcia-osa-2526": {
+      "rc": 2,
+      "d": 2,
+      "v": 2,
+      "dl": 2,
+      "rm": 2
+    },
+    "raul-moro-osa-2526": {
+      "d": 2,
+      "rg": 2,
+      "v": 2,
+      "pc": 2,
+      "rm": 2
+    },
+    "renato-veiga-vil-2526": {
+      "rb": 3,
+      "a": 3,
+      "rc": 2,
+      "pl": 2,
+      "pa": 2
+    },
+    "renzo-saravia-val-2526": {
+      "rb": 2,
+      "a": 2,
+      "rg": 2,
+      "v": 2,
+      "pc": 2
+    },
+    "ricardo-rodriguez-bet-2526": {
+      "rb": 2,
+      "a": 2,
+      "rg": 2,
+      "v": 2,
+      "pc": 2
+    },
+    "rjan-nyland-sev-2526": {
+      "rf": 2,
+      "co": 2
+    },
+    "robert-lewandowski-fcb-2526": {
+      "rc": 2,
+      "d": 3,
+      "v": 2,
+      "dl": 2,
+      "rm": 3
+    },
+    "robert-navarro-ath-2526": {
+      "d": 2,
+      "rg": 2,
+      "v": 2,
+      "pc": 2,
+      "rm": 2
+    },
+    "roberto-fernandez-esp-2526": {
+      "rc": 2,
+      "d": 2,
+      "v": 2,
+      "dl": 2,
+      "rm": 3
+    },
+    "robin-le-normand-atm-2526": {
+      "rb": 3,
+      "a": 3,
+      "rc": 2,
+      "pl": 2,
+      "pa": 2
+    },
+    "rodrigo-mendoza-atm-2526": {
+      "a": 2,
+      "rg": 2,
+      "pc": 3,
+      "pl": 2,
+      "dl": 2
+    },
+    "rodrigo-riquelme-bet-2526": {
+      "d": 2,
+      "rg": 2,
+      "v": 2,
+      "pc": 2,
+      "rm": 2
+    },
+    "rodrygo-rma-2526": {
+      "d": 2,
+      "rg": 3,
+      "v": 3,
+      "pc": 2,
+      "rm": 2
+    },
+    "roger-brugue-lev-2526": {
+      "d": 2,
+      "rg": 2,
+      "v": 2,
+      "pc": 2,
+      "rm": 1
+    },
+    "ronald-araujo-fcb-2526": {
+      "rb": 3,
+      "a": 2,
+      "rc": 2,
+      "pl": 2,
+      "pa": 2
+    },
+    "roony-bardghji-fcb-2526": {
+      "d": 2,
+      "rg": 2,
+      "v": 3,
+      "pc": 2,
+      "rm": 2
+    },
+    "ruben-blanco-gir-2526": {
+      "rf": 2,
+      "co": 2
+    },
+    "ruben-garcia-osa-2526": {
+      "d": 2,
+      "rg": 2,
+      "v": 2,
+      "pc": 2,
+      "rm": 2
+    },
+    "ruben-sanchez-esp-2526": {
+      "rb": 2,
+      "a": 2,
+      "rg": 1,
+      "v": 2,
+      "pc": 2
+    },
+    "ruben-vargas-sev-2526": {
+      "d": 2,
+      "rg": 2,
+      "v": 3,
+      "pc": 2,
+      "rm": 2
+    },
+    "samu-becerra-ray-2526": {
+      "a": 1,
+      "rg": 1,
+      "pc": 2,
+      "pl": 2,
+      "dl": 1
+    },
+    "samu-costa-mll-2526": {
+      "rb": 3,
+      "a": 2,
+      "rg": 2,
+      "pc": 2,
+      "pl": 2
+    },
+    "santi-cazorla-ovi-2526": {
+      "a": 2,
+      "rg": 2,
+      "pc": 2,
+      "pl": 2,
+      "dl": 1
+    },
+    "santi-comesana-vil-2526": {
+      "a": 2,
+      "rg": 2,
+      "pc": 3,
+      "pl": 2,
+      "dl": 2
+    },
+    "santiago-colombatto-ovi-2526": {
+      "rb": 2,
+      "a": 2,
+      "rg": 2,
+      "pc": 2,
+      "pl": 2
+    },
+    "santiago-mourino-vil-2526": {
+      "rb": 3,
+      "a": 2,
+      "rg": 2,
+      "v": 2,
+      "pc": 2
+    },
+    "sebastian-boselli-get-2526": {
+      "rb": 2,
+      "a": 2,
+      "rc": 2,
+      "pl": 2,
+      "pa": 2
+    },
+    "selton-sanchez-ath-2526": {
+      "a": 2,
+      "rg": 2,
+      "pc": 2,
+      "pl": 2,
+      "dl": 2
+    },
+    "sergi-altimira-bet-2526": {
+      "a": 2,
+      "rg": 2,
+      "pc": 3,
+      "pl": 2,
+      "dl": 2
+    },
+    "sergi-cardona-vil-2526": {
+      "rb": 2,
+      "a": 2,
+      "rg": 2,
+      "v": 2,
+      "pc": 2
+    },
+    "sergi-darder-mll-2526": {
+      "a": 2,
+      "rg": 2,
+      "pc": 2,
+      "pl": 2,
+      "dl": 2
+    },
+    "sergio-camello-ray-2526": {
+      "rc": 2,
+      "d": 2,
+      "v": 1,
+      "dl": 2,
+      "rm": 2
+    },
+    "sergio-carreira-cel-2526": {
+      "rb": 2,
+      "a": 2,
+      "rg": 2,
+      "v": 2,
+      "pc": 2
+    },
+    "sergio-gomez-rso-2526": {
+      "rb": 3,
+      "a": 2,
+      "rg": 2,
+      "v": 2,
+      "pc": 2
+    },
+    "sergio-herrera-osa-2526": {
+      "rf": 3,
+      "co": 2
+    },
+    "sofyan-amrabat-bet-2526": {
+      "rb": 3,
+      "a": 2,
+      "rg": 2,
+      "pc": 2,
+      "pl": 2
+    },
+    "stole-dimitrievski-val-2526": {
+      "rf": 2,
+      "co": 2
+    },
+    "tajon-buchanan-vil-2526": {
+      "d": 2,
+      "rg": 2,
+      "v": 3,
+      "pc": 2,
+      "rm": 2
+    },
+    "takefusa-kubo-rso-2526": {
+      "d": 2,
+      "rg": 3,
+      "v": 3,
+      "pc": 2,
+      "rm": 2
+    },
+    "takuma-asano-mll-2526": {
+      "d": 2,
+      "rg": 2,
+      "v": 2,
+      "pc": 2,
+      "rm": 2
+    },
+    "tanguy-nianzou-sev-2526": {
+      "rb": 2,
+      "a": 2,
+      "rc": 2,
+      "pl": 1,
+      "pa": 2
+    },
+    "tani-oluwaseyi-vil-2526": {
+      "rc": 2,
+      "d": 2,
+      "v": 2,
+      "dl": 2,
+      "rm": 2
+    },
+    "tay-abed-lev-2526": {
+      "d": 2,
+      "rg": 2,
+      "v": 2,
+      "pc": 1,
+      "rm": 1
+    },
+    "tete-morente-elc-2526": {
+      "d": 2,
+      "rg": 2,
+      "v": 2,
+      "pc": 2,
+      "rm": 1
+    },
+    "thiago-almada-atm-2526": {
+      "d": 2,
+      "rg": 2,
+      "v": 3,
+      "pc": 2,
+      "rm": 2
+    },
+    "thiago-borbas-ovi-2526": {
+      "rc": 2,
+      "d": 2,
+      "v": 2,
+      "dl": 2,
+      "rm": 2
+    },
+    "thiago-fernandez-ovi-2526": {
+      "d": 2,
+      "rg": 2,
+      "v": 2,
+      "pc": 2,
+      "rm": 2
+    },
+    "thiago-pitarch-rma-2526": {
+      "a": 2,
+      "rg": 2,
+      "pc": 3,
+      "pl": 2,
+      "dl": 2
+    },
+    "thibaut-courtois-rma-2526": {
+      "rf": 3,
+      "co": 2
+    },
+    "thierry-correia-val-2526": {
+      "rb": 2,
+      "a": 2,
+      "rg": 2,
+      "v": 2,
+      "pc": 2
+    },
+    "thomas-lemar-gir-2526": {
+      "d": 2,
+      "rg": 2,
+      "pc": 2,
+      "pl": 2,
+      "dl": 2
+    },
+    "thomas-partey-vil-2526": {
+      "rb": 2,
+      "a": 2,
+      "rg": 2,
+      "pc": 2,
+      "pl": 2
+    },
+    "toni-lato-mll-2526": {
+      "rb": 2,
+      "a": 2,
+      "rg": 1,
+      "v": 2,
+      "pc": 2
+    },
+    "toni-martinez-ala-2526": {
+      "rc": 2,
+      "d": 2,
+      "v": 2,
+      "dl": 2,
+      "rm": 2
+    },
+    "trent-alexander-arnold-rma-2526": {
+      "rb": 3,
+      "a": 3,
+      "rg": 2,
+      "v": 3,
+      "pc": 2
+    },
+    "tyrhys-dolan-esp-2526": {
+      "d": 2,
+      "rg": 2,
+      "v": 3,
+      "pc": 2,
+      "rm": 2
+    },
+    "ugo-raghouber-lev-2526": {
+      "rb": 2,
+      "a": 2,
+      "rg": 2,
+      "pc": 2,
+      "pl": 2
+    },
+    "umar-sadiq-val-2526": {
+      "rc": 2,
+      "d": 2,
+      "v": 2,
+      "dl": 2,
+      "rm": 2
+    },
+    "unai-egiluz-ath-2526": {
+      "rb": 2,
+      "a": 2,
+      "rc": 2,
+      "pl": 1,
+      "pa": 1
+    },
+    "unai-elgezabal-lev-2526": {
+      "rb": 2,
+      "a": 2,
+      "rc": 2,
+      "pl": 1,
+      "pa": 2
+    },
+    "unai-gomez-ath-2526": {
+      "d": 2,
+      "rg": 2,
+      "pc": 2,
+      "pl": 2,
+      "dl": 2
+    },
+    "unai-lopez-ray-2526": {
+      "a": 2,
+      "rg": 2,
+      "pc": 2,
+      "pl": 2,
+      "dl": 2
+    },
+    "unai-marrero-rso-2526": {
+      "rf": 2,
+      "co": 2
+    },
+    "unai-nunez-val-2526": {
+      "rb": 2,
+      "a": 2,
+      "rc": 2,
+      "pl": 2,
+      "pa": 2
+    },
+    "unai-simon-ath-2526": {
+      "rf": 3,
+      "co": 2
+    },
+    "unai-vencedor-lev-2526": {
+      "a": 2,
+      "rg": 2,
+      "pc": 2,
+      "pl": 2,
+      "dl": 1
+    },
+    "urko-gonzalez-de-zarate-esp-2526": {
+      "rb": 3,
+      "a": 2,
+      "rg": 2,
+      "pc": 2,
+      "pl": 2
+    },
+    "urko-izeta-ath-2526": {
+      "rc": 2,
+      "d": 2,
+      "v": 1,
+      "dl": 2,
+      "rm": 2
+    },
+    "valentin-gomez-bet-2526": {
+      "rb": 3,
+      "a": 2,
+      "rc": 2,
+      "pl": 2,
+      "pa": 2
+    },
+    "valentin-rosier-osa-2526": {
+      "rb": 2,
+      "a": 2,
+      "rg": 2,
+      "v": 2,
+      "pc": 2
+    },
+    "vedat-muriqi-mll-2526": {
+      "rc": 2,
+      "d": 2,
+      "v": 2,
+      "dl": 2,
+      "rm": 2
+    },
+    "veljko-birmancevic-get-2526": {
+      "d": 2,
+      "rg": 2,
+      "v": 2,
+      "pc": 2,
+      "rm": 2
+    },
+    "victor-chust-elc-2526": {
+      "rb": 2,
+      "a": 2,
+      "rc": 2,
+      "pl": 2,
+      "pa": 2
+    },
+    "victor-garcia-lev-2526": {
+      "rb": 2,
+      "a": 2,
+      "rg": 1,
+      "v": 2,
+      "pc": 2
+    },
+    "victor-munoz-osa-2526": {
+      "d": 2,
+      "rg": 2,
+      "v": 3,
+      "pc": 2,
+      "rm": 2
+    },
+    "victor-parada-ala-2526": {
+      "rb": 2,
+      "a": 2,
+      "rg": 1,
+      "v": 2,
+      "pc": 2
+    },
+    "viktor-tsygankov-gir-2526": {
+      "d": 2,
+      "rg": 2,
+      "v": 3,
+      "pc": 2,
+      "rm": 2
+    },
+    "ville-koski-ala-2526": {
+      "rb": 2,
+      "a": 2,
+      "rc": 2,
+      "pl": 1,
+      "pa": 2
+    },
+    "vinicius-junior-rma-2526": {
+      "d": 3,
+      "rg": 3,
+      "v": 3,
+      "pc": 3,
+      "rm": 2
+    },
+    "vitor-reis-gir-2526": {
+      "rb": 3,
+      "a": 3,
+      "rc": 2,
+      "pl": 2,
+      "pa": 2
+    },
+    "vladyslav-krapyvtsov-gir-2526": {
+      "rf": 2,
+      "co": 2
+    },
+    "vladyslav-vanat-gir-2526": {
+      "rc": 2,
+      "d": 2,
+      "v": 2,
+      "dl": 2,
+      "rm": 3
+    },
+    "wesley-rso-2526": {
+      "d": 2,
+      "rg": 2,
+      "v": 2,
+      "pc": 2,
+      "rm": 2
+    },
+    "williot-swedberg-cel-2526": {
+      "d": 2,
+      "rg": 2,
+      "v": 3,
+      "pc": 2,
+      "rm": 2
+    },
+    "willy-kambwala-vil-2526": {
+      "rb": 2,
+      "a": 2,
+      "rc": 2,
+      "pl": 2,
+      "pa": 2
+    },
+    "wojciech-szczesny-fcb-2526": {
+      "rf": 2,
+      "co": 2
+    },
+    "yago-santiago-elc-2526": {
+      "d": 2,
+      "rg": 2,
+      "v": 2,
+      "pc": 2,
+      "rm": 1
+    },
+    "yangel-herrera-rso-2526": {
+      "a": 2,
+      "rg": 2,
+      "pc": 2,
+      "pl": 2,
+      "dl": 2
+    },
+    "yeray-alvarez-ath-2526": {
+      "rb": 2,
+      "a": 2,
+      "rc": 2,
+      "pl": 1,
+      "pa": 2
+    },
+    "yoel-lago-cel-2526": {
+      "rb": 2,
+      "a": 2,
+      "rc": 2,
+      "pl": 1,
+      "pa": 2
+    },
+    "youssef-enriquez-ala-2526": {
+      "rb": 2,
+      "a": 2,
+      "rg": 2,
+      "v": 2,
+      "pc": 2
+    },
+    "yuri-berchiche-ath-2526": {
+      "rb": 2,
+      "a": 2,
+      "rg": 2,
+      "v": 2,
+      "pc": 2
+    },
+    "zaid-romero-get-2526": {
+      "rb": 2,
+      "a": 2,
+      "rc": 2,
+      "pl": 1,
+      "pa": 2
+    },
+    "zito-luvumbo-mll-2526": {
+      "d": 2,
+      "rg": 2,
+      "v": 2,
+      "pc": 2,
+      "rm": 2
+    }
+  }
+}

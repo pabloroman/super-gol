@@ -1,7 +1,12 @@
 // Map Transfermarkt detailed positions onto Super Gol's GK/DF/MF/FW model, and
-// hold the per-role factor "profile": a priority-ordered list of the factors
-// that define the role. factors.ts spends a budget (scaled by overall) down this
-// list, so a role's signature factors are the ones a strong player maxes out.
+// hold the per-role factor "profile": the **core** factors that define the role.
+// This core list is the card's whole functional attribute set — a card carries
+// only these keys (values 1..3), and every other factor is absent (reads as 0,
+// rulebook page 6). factors.ts spends a budget (scaled by overall) down the list,
+// so a role's most-defining factors are the ones a strong player maxes out. The
+// list is deliberately position-coherent: robo (`rb`) lives only on defenders and
+// defensive-mids, remate (`rm`) only on attackers. Any extra/flavour attributes
+// are added by hand afterwards in scripts/cards/data/abilities.json, never rolled.
 
 import type { AbilityKey } from '../lib/types'
 
@@ -9,25 +14,25 @@ export type PositionGroup = 'GK' | 'DF' | 'MF' | 'FW'
 
 export interface RoleProfile {
   group: PositionGroup
-  /** Signature factors, most-defining first. Budget flows down this list. */
-  priority: AbilityKey[]
+  /** The role's functional factor set, most-defining first. Budget flows down it. */
+  core: AbilityKey[]
 }
 
-// Priority lists are hand-tuned to the rulebook's factor meanings (see
+// Core lists are hand-tuned to the rulebook's factor meanings (see
 // src/game/abilities.ts): a centre-back is about robo/anticipación, a
 // centre-forward about remate/desmarque, a keeper about reflejos/colocación.
 const PROFILES: Record<string, RoleProfile> = {
-  Goalkeeper: { group: 'GK', priority: ['rf', 'co'] },
-  'Centre-Back': { group: 'DF', priority: ['rb', 'a', 'rc', 'pa', 'pl'] },
-  'Left-Back': { group: 'DF', priority: ['rb', 'a', 'v', 'pc', 'rg'] },
-  'Right-Back': { group: 'DF', priority: ['rb', 'a', 'v', 'pc', 'rg'] },
-  'Defensive Midfield': { group: 'MF', priority: ['rb', 'a', 'pc', 'pl', 'rg'] },
-  'Central Midfield': { group: 'MF', priority: ['pc', 'pl', 'rg', 'a', 'dl'] },
-  'Attacking Midfield': { group: 'MF', priority: ['pc', 'rg', 'dl', 'pl', 'd'] },
-  'Left Winger': { group: 'FW', priority: ['v', 'rg', 'd', 'pc', 'rm'] },
-  'Right Winger': { group: 'FW', priority: ['v', 'rg', 'd', 'pc', 'rm'] },
-  'Centre-Forward': { group: 'FW', priority: ['rm', 'd', 'rc', 'dl', 'v'] },
-  'Second Striker': { group: 'FW', priority: ['rm', 'd', 'rg', 'dl', 'pc'] },
+  Goalkeeper: { group: 'GK', core: ['rf', 'co'] },
+  'Centre-Back': { group: 'DF', core: ['rb', 'a', 'rc', 'pa', 'pl'] },
+  'Left-Back': { group: 'DF', core: ['rb', 'a', 'v', 'pc', 'rg'] },
+  'Right-Back': { group: 'DF', core: ['rb', 'a', 'v', 'pc', 'rg'] },
+  'Defensive Midfield': { group: 'MF', core: ['rb', 'a', 'pc', 'pl', 'rg'] },
+  'Central Midfield': { group: 'MF', core: ['pc', 'pl', 'rg', 'a', 'dl'] },
+  'Attacking Midfield': { group: 'MF', core: ['pc', 'rg', 'dl', 'pl', 'd'] },
+  'Left Winger': { group: 'FW', core: ['v', 'rg', 'd', 'pc', 'rm'] },
+  'Right Winger': { group: 'FW', core: ['v', 'rg', 'd', 'pc', 'rm'] },
+  'Centre-Forward': { group: 'FW', core: ['rm', 'd', 'rc', 'dl', 'v'] },
+  'Second Striker': { group: 'FW', core: ['rm', 'd', 'rg', 'dl', 'pc'] },
 }
 
 // Fallback by keyword when Transfermarkt uses a label we haven't mapped.
