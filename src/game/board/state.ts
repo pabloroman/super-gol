@@ -160,6 +160,11 @@ export function playerId(side: Side, index: number): PlayerId {
   return `${side === 'home' ? 'h' : 'a'}${index}`
 }
 
+/** Shirt number for a player id: keeper (index 0) is 1, outfield 2–11 (football convention). */
+export function dorsal(id: PlayerId): number {
+  return Number(id.slice(1)) + 1
+}
+
 /** The two players sharing this key's side. */
 export function sideOf(id: PlayerId): Side {
   return id[0] === 'h' ? 'home' : 'away'
