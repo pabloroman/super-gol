@@ -1,6 +1,7 @@
 import { describe, it, expect } from 'vitest'
 import {
   scoreContest,
+  contestBreakdown,
   diceForPass,
   passDice,
   diceForAction,
@@ -31,6 +32,32 @@ describe('scoreContest', () => {
       }
     }
     expect(wins).toBe(6) // sums of 10, 11, 12
+  })
+})
+
+describe('contestBreakdown — inverts scoreContest for the rulebook sum', () => {
+  it('recovers the rating and the +5 bonus a single-die roll folded into the total', () => {
+    // Rulebook play 30: «DL ! (5 + D1: 5 + 0)» → total 10.
+    const c = scoreContest([5], 0)
+    expect(contestBreakdown(c.dice, c.total)).toEqual({
+      dice: [5],
+      bonus: 5,
+      rating: 0,
+      total: 10,
+      target: 10,
+    })
+  })
+
+  it('reports no bonus for a two-die roll and recovers the rating', () => {
+    // Rulebook play 27: «RG ! (D1: 4 + D2: 4 + 2)» → total 10.
+    const c = scoreContest([4, 4], 2)
+    expect(contestBreakdown(c.dice, c.total)).toEqual({
+      dice: [4, 4],
+      bonus: 0,
+      rating: 2,
+      total: 10,
+      target: 10,
+    })
   })
 })
 

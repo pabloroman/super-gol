@@ -80,6 +80,22 @@ export function scoreContest(dice: number[], rating: number): Contest {
   return { dice, total, success }
 }
 
+/**
+ * Invert `scoreContest`: recover the term-by-term breakdown of a contest from its
+ * die faces and final `total`, so the UI can print the rulebook's sum
+ * (e.g. «RG ! (D1: 4 + D2: 4 + 2)» or «DL ! (5 + D1: 5 + 0)») without the engine
+ * having to carry the rating and bonus as separate fields. Pure and derived from
+ * the same formula, so it stays correct as long as `total` is `scoreContest`'s.
+ */
+export function contestBreakdown(
+  dice: number[],
+  total: number,
+): { dice: number[]; bonus: 0 | 5; rating: number; total: number; target: number } {
+  const bonus: 0 | 5 = dice.length === 1 ? 5 : 0
+  const diceSum = dice.reduce((s, d) => s + d, 0)
+  return { dice, bonus, rating: total - diceSum - bonus, total, target: TARGET }
+}
+
 /** Roll `n` dice and score them against the target. */
 export function resolveContest(rng: Rng, n: 0 | 1 | 2, rating: number): Contest {
   const dice: number[] = []

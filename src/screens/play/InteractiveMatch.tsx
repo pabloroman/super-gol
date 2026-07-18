@@ -7,7 +7,8 @@ import type { Action, Cell, MatchState, Side } from '@/game/board'
 import { cellKey, occupants } from '@/game/board'
 import { describeAction, phasePrompt, actionAbility, type ActionGroup } from '@/game/board/describe'
 import type { Difficulty } from '@/game/engine/types'
-import { useInteractiveMatch } from './useInteractiveMatch'
+import { contestBreakdown } from '@/game/engine/dice'
+import { useInteractiveMatch, type Roll } from './useInteractiveMatch'
 import { InteractivePitchBoard } from './InteractivePitchBoard'
 import { HowToPlay } from './HowToPlay'
 import { SquadPanel } from './SquadPanel'
@@ -97,12 +98,17 @@ export function InteractiveMatch({
   const [showRules, setShowRules] = useState(false)
   const [showSquad, setShowSquad] = useState(false)
 
+  // The home side "controls" the panel whenever the phase is waiting on home and the match
+  // is live — INCLUDING while a home jugada is resolving (`pending`). Keeping the menu built
+  // and mounted through that round trip (just dimmed/disabled) is what stops the panel from
+  // collapsing to the "Resolviendo…" line and snapping back for the next jugada.
+  const homeControls = state != null && phaseSideOf(state) === 'home' && finish == null
   const menu = useMemo<Menu>(
     () =>
-      humanTurn
+      homeControls
         ? buildMenu(legal)
         : { buttons: [], moveSources: new Map(), huecoModes: [], advance: new Map() },
-    [legal, humanTurn],
+    [legal, homeControls],
   )
 
   // A new jugada clears any in-progress selection so a stale player/hueco pick can't fire.
@@ -170,7 +176,6 @@ export function InteractiveMatch({
     act(action)
   }
 
-  const phaseSide = phaseSideOf(state)
   const canMove = menu.moveSources.size > 0
   const hint = menu.advance.size > 0
     ? 'Toca una casilla resaltada para avanzar con el balón.'
@@ -227,43 +232,50 @@ export function InteractiveMatch({
                 <DiceReveal rolling={pending} roll={lastRoll} />
               </div>
 
-              {phaseSide === 'away' && !pending && (
-                <p className="text-sm text-slate-400">El rival juega…</p>
-              )}
-              {pending && phaseSide !== 'home' && (
-                <p className="text-sm text-slate-400">El rival juega…</p>
-              )}
-              {pending && phaseSide === 'home' && (
-                <p className="text-sm text-slate-400">Resolviendo la jugada…</p>
-              )}
+              {/* Stable-height body so swaps between the away prose and the home menu — and the
+                  menu dimming while a jugada resolves — cross-fade in place instead of the panel
+                  collapsing and snapping back. */}
+              <div className="min-h-[7rem] transition-opacity duration-200">
+                {!homeControls && (
+                  <p className="text-sm text-slate-400">El rival juega…</p>
+                )}
 
-              {humanTurn && (
-                <div className="flex flex-col gap-2">
-                  <p className="text-xs text-slate-400">{hint}</p>
-                  {menu.huecoModes.map((m) => (
-                    <button
-                      key={m.key}
-                      className={`btn-ghost text-left ${m.key === huecoKey ? 'ring-1 ring-amber-300' : ''}`}
-                      onClick={() => {
-                        setSelected(null)
-                        setHuecoKey((cur) => (cur === m.key ? null : m.key))
-                      }}
-                    >
-                      <span className="flex-1">
-                        {m.label}
-                        {m.key === huecoKey ? ' — toca una casilla' : ''}
-                      </span>
-                      <AbilityChip ability={huecoAbility(state, m.targets)} />
-                    </button>
-                  ))}
-                  {orderButtons(state, menu.buttons).map((a, i) => (
-                    <button key={i} className="btn-ghost text-left" onClick={() => run(a)}>
-                      <span className="flex-1">{describeAction(state, a).label}</span>
-                      <AbilityChip ability={actionAbility(state, a)} />
-                    </button>
-                  ))}
-                </div>
-              )}
+                {homeControls && (
+                  <div
+                    className={`flex flex-col gap-2 transition-opacity duration-200 ${
+                      pending ? 'pointer-events-none opacity-50' : 'opacity-100'
+                    }`}
+                    aria-busy={pending}
+                  >
+                    <p className="text-xs text-slate-400">
+                      {pending ? 'Resolviendo la jugada…' : hint}
+                    </p>
+                    {menu.huecoModes.map((m) => (
+                      <button
+                        key={m.key}
+                        disabled={pending}
+                        className={`btn-ghost text-left ${m.key === huecoKey ? 'ring-1 ring-amber-300' : ''}`}
+                        onClick={() => {
+                          setSelected(null)
+                          setHuecoKey((cur) => (cur === m.key ? null : m.key))
+                        }}
+                      >
+                        <span className="flex-1">
+                          {m.label}
+                          {m.key === huecoKey ? ' — toca una casilla' : ''}
+                        </span>
+                        <AbilityChip ability={huecoAbility(state, m.targets)} />
+                      </button>
+                    ))}
+                    {orderButtons(state, menu.buttons).map((a, i) => (
+                      <button key={i} disabled={pending} className="btn-ghost text-left" onClick={() => run(a)}>
+                        <span className="flex-1">{describeAction(state, a).label}</span>
+                        <AbilityChip ability={actionAbility(state, a)} />
+                      </button>
+                    ))}
+                  </div>
+                )}
+              </div>
             </div>
           )}
 
@@ -356,21 +368,46 @@ function resultTitle(result: 'win' | 'loss' | 'draw' | undefined, state: MatchSt
   return r === 'win' ? '¡Victoria!' : r === 'loss' ? 'Derrota' : 'Empate'
 }
 
-/** A single die face; tinted green/red on reveal, tumbling while the roll is in flight. */
-function Die({ face, spinning, tone }: { face: number; spinning?: boolean; tone?: 'ok' | 'bad' }) {
-  const color =
-    tone === 'ok'
-      ? 'bg-grass-500 text-white'
-      : tone === 'bad'
-        ? 'bg-red-500/85 text-white'
-        : 'bg-white text-pitch-950'
+/** Standard pip positions on a 3×3 grid (index 0–8) for each die face 1–6. */
+const PIPS: Record<number, number[]> = {
+  1: [4],
+  2: [0, 8],
+  3: [0, 4, 8],
+  4: [0, 2, 6, 8],
+  5: [0, 2, 4, 6, 8],
+  6: [0, 2, 3, 5, 6, 8],
+}
+
+/**
+ * A single die drawn as the physical card's die: a white rounded square with black
+ * pips (never a bare number). Kept neutral on reveal — the outcome is conveyed by the
+ * breakdown's total and the ✓/✗, not by tinting the die. `spinning` bounces the tumble.
+ */
+function DieFace({ face, spinning }: { face: number; spinning?: boolean }) {
+  const lit = new Set(PIPS[face] ?? [])
   return (
     <span
-      className={`flex h-7 w-7 items-center justify-center rounded-md text-base font-bold tabular-nums ${color} ${
+      className={`grid h-7 w-7 shrink-0 grid-cols-3 grid-rows-3 gap-px rounded-md bg-white p-1 shadow-sm ${
         spinning ? 'animate-bounce' : ''
       }`}
+      aria-label={`Dado: ${face}`}
     >
-      {face}
+      {Array.from({ length: 9 }, (_, i) => (
+        <span
+          key={i}
+          className={`m-auto h-1.5 w-1.5 rounded-full ${lit.has(i) ? 'bg-pitch-950' : 'bg-transparent'}`}
+        />
+      ))}
+    </span>
+  )
+}
+
+/** A summed term in the breakdown (a rating or the +5 constant), rendered like the rulebook. */
+function Term({ value }: { value: number }) {
+  return (
+    <span className="flex items-center gap-1 text-sm font-semibold tabular-nums text-slate-300">
+      <span className="text-slate-500">+</span>
+      {value}
     </span>
   )
 }
@@ -378,15 +415,10 @@ function Die({ face, spinning, tone }: { face: number; spinning?: boolean; tone?
 /**
  * The dice HUD: while a jugada is in flight it tumbles (the client does not know the roll),
  * and lands on the real faces the server returns — the dice are the drama, so the reveal
- * arrives with the response rather than being faked optimistically.
+ * arrives with the response rather than being faked optimistically. On reveal it spells out
+ * the rulebook sum: ability · dice + [5] + rating = total (≥10), with the ✓/✗ marker.
  */
-function DiceReveal({
-  rolling,
-  roll,
-}: {
-  rolling: boolean
-  roll: { dice: number[]; success: boolean } | null
-}) {
+function DiceReveal({ rolling, roll }: { rolling: boolean; roll: Roll | null }) {
   const [tick, setTick] = useState(0)
   useEffect(() => {
     if (!rolling) return
@@ -397,19 +429,35 @@ function DiceReveal({
   if (rolling) {
     const faces = [((tick * 7) % 6) + 1, ((tick * 5 + 3) % 6) + 1]
     return (
-      <div className="flex shrink-0 gap-1.5">
+      <div className="flex shrink-0 items-center gap-1.5">
         {faces.map((f, i) => (
-          <Die key={i} face={f} spinning />
+          <DieFace key={i} face={f} spinning />
         ))}
       </div>
     )
   }
   if (!roll || roll.dice.length === 0) return null
+
+  const { bonus, rating, total, target } = contestBreakdown(roll.dice, roll.total)
   return (
-    <div className="flex shrink-0 items-center gap-1.5">
+    <div className="flex shrink-0 flex-wrap items-center justify-end gap-1.5">
+      {roll.ability && (
+        <span className="rounded bg-black/30 px-1.5 py-0.5 text-xs font-semibold leading-none text-slate-200">
+          {ABILITY_META[roll.ability].abbr}
+        </span>
+      )}
       {roll.dice.map((f, i) => (
-        <Die key={i} face={f} tone={roll.success ? 'ok' : 'bad'} />
+        <DieFace key={i} face={f} />
       ))}
+      {bonus > 0 && <Term value={bonus} />}
+      <Term value={rating} />
+      <span className="text-sm font-semibold text-slate-500">=</span>
+      <span
+        className={`text-base font-bold tabular-nums ${roll.success ? 'text-grass-400' : 'text-red-400'}`}
+      >
+        {total}
+      </span>
+      <span className="text-xs font-medium tabular-nums text-slate-500">/{target}</span>
       {roll.success ? (
         <CheckIcon className="h-4 w-4 text-grass-400" aria-label="Éxito" />
       ) : (
