@@ -425,7 +425,7 @@ function DieFace({ face, spinning }: { face: number; spinning?: boolean }) {
   const lit = new Set(PIPS[face] ?? [])
   return (
     <span
-      className={`grid h-7 w-7 shrink-0 grid-cols-3 grid-rows-3 gap-px rounded-md bg-white p-1 shadow-sm ${
+      className={`grid h-5 w-5 shrink-0 grid-cols-3 grid-rows-3 gap-px rounded bg-white p-0.5 shadow-sm ${
         spinning ? 'animate-bounce' : ''
       }`}
       aria-label={`Dado: ${face}`}
@@ -433,7 +433,7 @@ function DieFace({ face, spinning }: { face: number; spinning?: boolean }) {
       {Array.from({ length: 9 }, (_, i) => (
         <span
           key={i}
-          className={`m-auto h-1.5 w-1.5 rounded-full ${lit.has(i) ? 'bg-pitch-950' : 'bg-transparent'}`}
+          className={`m-auto h-1 w-1 rounded-full ${lit.has(i) ? 'bg-pitch-950' : 'bg-transparent'}`}
         />
       ))}
     </span>
