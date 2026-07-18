@@ -92,11 +92,16 @@ export function GoalCelebration({
           <p className="text-sm text-slate-400">En propia puerta</p>
         )}
 
+        {/* Auto-focused on mount for keyboard/AT users, so drop the UA outline and use
+            the app's own grass focus ring (as every input does) — and only for keyboard
+            (`focus-visible`), so a tap-driven goal shows no ring at all. */}
         <button
           ref={seguirRef}
           type="button"
           onClick={onSeguir}
-          className={`mt-2 px-8 ${home ? 'btn-primary' : 'btn-ghost'}`}
+          className={`mt-2 px-8 outline-none focus-visible:ring-2 focus-visible:ring-grass-400 focus-visible:ring-offset-2 focus-visible:ring-offset-pitch-950 ${
+            home ? 'btn-primary' : 'btn-ghost'
+          }`}
         >
           Seguir
         </button>
