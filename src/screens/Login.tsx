@@ -36,8 +36,14 @@ function readHashError(): { code: string | null; description: string | null } | 
   return result
 }
 
-export function Login() {
-  const [mode, setMode] = useState<'signin' | 'signup'>('signin')
+export function Login({
+  initialMode = 'signin',
+  onBack,
+}: {
+  initialMode?: 'signin' | 'signup'
+  onBack?: () => void
+} = {}) {
+  const [mode, setMode] = useState<'signin' | 'signup'>(initialMode)
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [username, setUsername] = useState('')
@@ -142,6 +148,14 @@ export function Login() {
 
   return (
     <div className="mx-auto flex min-h-screen max-w-md flex-col justify-center gap-6 px-6">
+      {onBack && (
+        <button
+          onClick={onBack}
+          className="self-start text-sm text-slate-400 hover:text-slate-200"
+        >
+          ‹ Volver
+        </button>
+      )}
       <div className="text-center">
         <h1 className="font-display text-5xl font-extrabold uppercase text-grass-400">
           Super Gol
