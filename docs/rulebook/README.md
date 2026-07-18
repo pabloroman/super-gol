@@ -6,10 +6,11 @@ rulebook**, the paper instructions that shipped with the card game
 Printed in Spain*).
 
 It exists so the digital recreation in this repo can implement the **real**
-rules (the `d6 + ability + pitch-zone` simulation) faithfully, rather than the
-placeholder match engine currently in `play_match`. When a rule is ambiguous in
-code, this transcription — and the original scans it is based on — are the
-source of truth.
+rules faithfully. The turn-based **Juego Básico** engine in `src/game/board/` is
+built against this transcription; when a rule is ambiguous in code, this
+transcription — and the original scans it is based on — are the source of truth.
+The deliberate departures from the paper rules (chiefly the 15-turno clock) are
+recorded in [`DEVIATIONS.md`](./DEVIATIONS.md).
 
 ## Layout
 

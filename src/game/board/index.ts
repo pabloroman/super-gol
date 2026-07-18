@@ -1,12 +1,11 @@
 /**
- * The interactive basic-game board engine.
+ * The interactive basic-game board engine — the one match engine.
  *
- * A serializable, dependency-free, deterministic model of a played match — the
- * turn-based counterpart to `../engine`'s one-shot `simulateMatch`. It reuses that
- * module's pure resolvers (dice, actions, keeper, marcaje) but replaces the
- * single-carrier narrative loop with all 22 cards on the board and marcaje derived
- * from where they stand. Phases 2+ add `legalActions`/`apply`; this barrel currently
- * exposes the state model and `createMatch`.
+ * A serializable, dependency-free, deterministic model of a played match: all 22 cards
+ * on the board with marcaje derived from where they stand. It reuses the pure resolvers
+ * in `../engine` (dice, actions, keeper, marcaje, interrupt) and adds the played-game
+ * layer on top — `legalActions`/`apply`, the phase machine, the AI (`ai.ts`), and
+ * `createMatch`, all barrelled here.
  */
 
 import type { EngineSquad, Difficulty } from '../engine/types'

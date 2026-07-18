@@ -44,23 +44,42 @@ the current engine.
 
 ## Match engine architecture
 
-- The engine lives in `src/game/engine/` as a **pure, dependency-free, seeded,
-  deterministic** TypeScript module (no React/DOM/Node/Supabase imports). Same
-  `{ home, away, difficulty, seed }` → identical `MatchOutcome`.
-- It implements the **basic game** with a **zone-abstracted** positional model:
-  the dice math, marcaje transitions, keeper saves and win-by-two-goals
-  termination are rule-faithful, but board position is abstracted to an
-  advancement band (`OWN → MID → DL → RM`) behind the `Pitch` interface in
-  `pitch.ts`, so a real 6×5 board can drop in later. The core contest resolver
-  (TABLA 1/2 as data) is `dice.ts`.
-- **Authority:** `serverMatchEngine` in `src/game/engine.ts` invokes the
-  **`play-match` Supabase Edge Function**, which runs the identical
-  `src/game/engine/` module server-side and commits the result through the
-  `record_match` `SECURITY DEFINER` function. `record_match` is revoked from the
-  `anon`/`authenticated` roles and granted only to `service_role`, so the browser
-  can trigger a match but never forge the scoreline or the coins it pays.
-  `localMatchEngine` runs the same rules client-side but is **not** trusted for
-  coins — it is a preview path, selected only when `VITE_LOCAL_ENGINE=1`.
+- **The engine is `src/game/board/`** — a turn-based, server-authoritative recreation of
+  the **Juego Básico** on a full **22-player 5×6 board**, with **marcaje derived from where
+  cards stack** (`derive.ts`'s `marcajeOf`), not rolled. It is **pure, dependency-free,
+  seeded and deterministic** (no React/DOM/Node/Supabase imports). Two functions carry the
+  rules and are read identically by the UI menu, the server-side validation and the AI:
+  `legalActions(state)` and `apply(state, action, rng)` — legality is defined once. Files:
+  `state.ts` (serializable `MatchState`/`Phase`), `derive.ts` (geometry + `marcajeOf`),
+  `legal.ts`, `reducer.ts` (`apply`), `actions.ts` (the `Action` union + `actionKey`),
+  `placement.ts` (`autoPlace`), `ai.ts` (`chooseAction`), `index.ts` (`createMatch`).
+- **The pure leaf resolvers stay in `src/game/engine/`** and are reused verbatim by
+  `board/`: the TABLA 1/2 contest resolver `dice.ts`, plus `keeper.ts`, `marcaje.ts`,
+  `interrupt.ts`, `actions.ts`, `rng.ts`, `events.ts` + `format-es.ts` (the Spanish
+  renderer seam), and the board geometry in `pitch.ts` (`ZONE_MAP`/`zoneAt`/`Cell`,
+  `COLS`/`ROWS`). The old one-shot `simulateMatch`, its single-carrier `loop.ts`, the
+  `Pitch` closure, the old heuristic `ai.ts`, and the `localMatchEngine` /
+  `VITE_LOCAL_ENGINE` preview seam were **deleted** once interactive landed — there is one
+  engine now, and no `MatchOutcome`.
+- **Match length is the tournament 15-turno clock (page 29), a deliberate, documented
+  deviation** from basic's unbounded win-by-two-goals: `MatchState.turno` counts changes of
+  possession and the match ends at 15, highest score wins, draws allowed. The rationale, the
+  corrected page-29 reading, and the other in-scope deviations live in
+  `docs/rulebook/DEVIATIONS.md`.
+- **Authority — per jugada.** `src/data/matchSession.ts` is the client seam; the
+  **`play-match` Supabase Edge Function** runs the identical `src/game/board/` module
+  server-side. State lives in `match_sessions` (0014); each jugada is **one authenticated
+  call** (`op: start | act | resume | resign`). The invariant that keeps the anti-cheat
+  posture across ~100 round trips: **the client never sends state back and never rolls a
+  die** — it sends an action id + a `ply` optimistic-concurrency token; the server
+  re-derives `legalActions`, rolls dice from a seed it owns (an addressed sub-seed per
+  action) and applies exactly one step. A **partial unique index** enforces one active
+  session per user (the anti-farming spine). Coins are paid only by `record_match`, via the
+  `finish_match_session` `SECURITY DEFINER` RPC (0014), which stamps `matches.id` onto the
+  session **inside the paying transaction** so a win can't be replayed; `record_match` now
+  **returns that inserted id** (0015, additive). Both are revoked from
+  `anon`/`authenticated` and granted only to `service_role`, so the browser can trigger a
+  jugada but never forge the scoreline or the coins.
 - **Deploying the engine to Deno:** the readable function source is
   `supabase/functions/_src/play-match.ts` (imports the engine via `@/…`).
   `npm run build:function` esbuild-bundles it — engine inlined, `@supabase/supabase-js`

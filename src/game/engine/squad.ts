@@ -6,9 +6,8 @@ import type { EngineSquad } from './types'
  * Build an `EngineSquad` (10 outfield + 1 keeper) from a saved squad and the card
  * catalog, using `isGoalkeeper` to pick out the portero.
  *
- * Pure and Supabase/React-free on purpose: both the client (`localMatchEngine`)
- * and the authoritative Supabase Edge Function build the human squad through this
- * exact function, so the two engines see identical inputs.
+ * Pure and Supabase/React-free on purpose: the authoritative `play-match` Edge Function
+ * builds the human squad through this exact function when it starts a match.
  */
 export function buildEngineSquad(name: string, squad: Squad, catalog: Card[]): EngineSquad {
   const byId = new Map(catalog.map((c) => [c.id, c]))
