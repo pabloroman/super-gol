@@ -151,8 +151,9 @@ pending a sharper re-shoot.
 The **Reglamento oficial del torneo** (page 29) independently confirms two
 constraints already baked into the codebase:
 
-- **100-point squad cap** — "un máximo de **100 puntos** (suma de las fichas de
-  los 16 jugadores)", matching `save_squad`'s cap and the README's 11+5 ≤ 100.
+- **Point-limited squads** — "un máximo de **100 puntos** (suma de las fichas de
+  los 16 jugadores)". The app enforces a cap in `save_squad`, but scaled to its
+  11-player squad: **70 points** (100 × 11/16 ≈ 70). See `DEVIATIONS.md`.
 - **Demarcación** — a card's abilities only apply in its pitch zone (except
   LF/RM/DL/RC), matching the per-card pitch-zone grid.
 - **No foreign-player limit.** The tournament's *3-extranjeros-per-team* cap

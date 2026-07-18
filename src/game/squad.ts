@@ -8,9 +8,16 @@ function isPositionGroup(value: string | null | undefined): value is PositionGro
 }
 
 // Rules taken from the original game: «10 jugadores de campo + 1 portero» per side
-// (rulebook page 12, MODALIDAD DE JUEGO BÁSICO), capped at 100 points. The basic
-// game has no bench — substitutes are a regla avanzada (page 28) and out of scope.
-export const POINT_CAP = 100
+// (rulebook page 12, MODALIDAD DE JUEGO BÁSICO). The basic game has no bench —
+// substitutes are a regla avanzada (page 28) and out of scope.
+//
+// The point cap is a deliberate deck-building deviation: the basic game itself
+// «no utiliza la ficha» (page 12), so the cap is borrowed from the tournament rule
+// (page 29), which limits the sum of 16 players' fichas to 100 (~6.25/player). Scaled
+// to this game's 11-player squad that is 100 × 11/16 ≈ 70, which also matches the
+// catalog's mean squad cost (~11 × 6.34). At 100 the cap barely binds for 11 players;
+// 70 makes it a real budget. See docs/rulebook/DEVIATIONS.md.
+export const POINT_CAP = 70
 export const STARTER_COUNT = 11
 
 // Composition: exactly one portero, and at least one player in each outfield line.

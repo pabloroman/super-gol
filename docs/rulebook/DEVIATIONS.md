@@ -27,6 +27,24 @@ for the same reason: it is the only brake on an otherwise unbounded possession.
 «(cambie de los jugadores)» flagged as illegible was the sentence itself, truncated.
 `pages/page-29.md` and `VERIFICATION.md` were corrected against `scans/pages-28-29.jpeg`.
 
+## Deviation — a 70-point squad cap, scaled from the tournament's 100
+
+The basic game «**no utiliza la ficha** del jugador» (page 12), so it has no point
+limit at all. To keep squad-building meaningful the app borrows the point cap from the
+**tournament rule** (page 29):
+
+> Se juega con límite de puntos … con un máximo de **100 puntos** (suma de las fichas
+> de los 16 jugadores).
+
+That 100 is a **16-player** ceiling (~6.25 points/player). This game fields an
+**11-player** squad (page 12's «10 de campo + 1 portero», no bench), so applying 100
+directly would allow ~9.1 points/player — the cap would barely bind, since the LaLiga
+catalog's mean card cost is ~6.34 and a typical XI already costs only ~70. The app
+therefore scales the ceiling to the squad size: **100 × 11/16 ≈ 70**, which also lands
+on the catalog's mean squad cost (~11 × 6.34). The number lives once in `POINT_CAP`
+(`src/game/squad.ts`) and is enforced authoritatively in `save_squad`
+(`supabase/migrations/0019_squad_point_cap.sql`).
+
 ## In scope, but faithfully simplified
 
 - **Demarcación is absent — and that is faithful.** Page 11 opens the basic modality with
