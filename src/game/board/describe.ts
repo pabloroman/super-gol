@@ -7,6 +7,7 @@
 
 import type { Action } from './actions'
 import type { MatchState } from './state'
+import { dorsal } from './state'
 import { occupants } from './derive'
 
 const PASS_LABEL: Record<string, string> = { PD: 'Pase directo', PC: 'Pase corto', PL: 'Pase largo' }
@@ -23,8 +24,7 @@ export interface ActionLabel {
 function name(state: MatchState, id: string): string {
   const p = state.players[id]
   if (!p) return id
-  const n = Number(id.slice(1))
-  return n === 0 ? p.card.name : `${p.card.name} (${n})`
+  return `${p.card.name} (${dorsal(id)})`
 }
 
 export function describeAction(state: MatchState, action: Action): ActionLabel {

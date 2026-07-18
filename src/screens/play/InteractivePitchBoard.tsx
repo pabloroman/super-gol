@@ -1,4 +1,5 @@
 import type { MatchState, MatchPlayer, Cell } from '@/game/board'
+import { dorsal } from '@/game/board'
 import { occupants, cellKey, keeperCell, sameCell } from '@/game/board'
 import { ZONE_MAP, COLS, ROWS, type Zone } from '@/game/engine/pitch'
 
@@ -30,8 +31,7 @@ const ALL_COLS = Array.from({ length: COLS }, (_, i) => i)
 const DISPLAY_ROWS = Array.from({ length: ROWS }, (_, i) => ROWS - 1 - i)
 
 function shirtNumber(p: MatchPlayer): string {
-  const n = Number(p.id.slice(1))
-  return n === 0 ? 'P' : String(n)
+  return String(dorsal(p.id))
 }
 
 function Pip({
