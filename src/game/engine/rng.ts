@@ -1,11 +1,10 @@
 /**
  * Seeded pseudo-random number generator.
  *
- * The whole engine draws every random value from a single `Rng` created from an
- * integer seed, so a match is fully reproducible: the same
- * `{ home, away, difficulty, seed }` always yields the same `MatchOutcome`. That
- * determinism is what lets the eventual server-authoritative engine hand the
- * client a seed and have both replay an identical match.
+ * The engine draws every random value from an `Rng` created from an integer seed, so a
+ * match is fully reproducible. The server-authoritative board engine addresses a fresh
+ * sub-seed per action (`seedFrom(seed, ply, action.kind)`), making each roll independently
+ * reproducible and every jugada auditable from `(seed, ply, action)` alone.
  *
  * `mulberry32` is a tiny, well-distributed 32-bit generator — no dependencies.
  */

@@ -117,19 +117,19 @@ export interface MatchEventParams {
   cell?: { col: number; row: number }
 }
 
-export interface MatchEvent {
-  minute: number
-  side: 'home' | 'away'
-  text: string
-  type?: MatchEventType
-  params?: MatchEventParams
-}
-
-export interface MatchOutcome {
+/**
+ * A finished game, one row of `matches` (0001_schema.sql). Read-only history: RLS lets
+ * a client read its own rows (0002 + 0007), and `fetchMatches` selects this display
+ * subset. The full row also carries `user_id`, `squad_strength` and the `log` jsonb (an
+ * `EngineEvent[]` crónica), none of which the history list needs.
+ */
+export interface Match {
+  id: number
+  opponent_name: string
+  difficulty: string
   result: MatchResultKind
-  opponent: string
   goals_for: number
   goals_against: number
   coins_awarded: number
-  log: MatchEvent[]
+  created_at: string
 }

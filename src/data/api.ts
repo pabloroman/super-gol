@@ -3,6 +3,7 @@ import type {
   AdminUser,
   Card,
   CollectionEntry,
+  Match,
   Pack,
   Profile,
   Squad,
@@ -83,6 +84,25 @@ export async function saveSquad(name: string, starters: string[]): Promise<numbe
   })
   if (error) throw new Error(error.message)
   return data as number
+}
+
+// ---------- match history ----------
+/**
+ * The caller's finished games, newest first. RLS (0002 + 0007_table_grants) scopes
+ * `matches` to its owner, so no explicit user filter is needed. `limit` keeps the Home
+ * summary compact; the crónica `log` column is left unselected — the list only shows the
+ * scoreline.
+ */
+export async function fetchMatches(limit = 5): Promise<Match[]> {
+  const { data, error } = await requireSupabase()
+    .from('matches')
+    .select(
+      'id, opponent_name, difficulty, result, goals_for, goals_against, coins_awarded, created_at',
+    )
+    .order('created_at', { ascending: false })
+    .limit(limit)
+  if (error) throw new Error(error.message)
+  return data as Match[]
 }
 
 // ---------- store ----------

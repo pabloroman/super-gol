@@ -39,8 +39,8 @@ begin
     raise exception 'record_match requires a user id';
   end if;
 
-  -- Reward is defined server-side, keyed off the result the engine returned.
-  -- Mirrors REWARD in src/game/engine/index.ts (win / draw / loss).
+  -- Reward is defined server-side, keyed off the result (win / draw / loss); this RPC is
+  -- the single source of truth for match coins.
   v_reward := case p_result
     when 'win'  then 100
     when 'draw' then 40

@@ -1,29 +1,25 @@
 // play-match — the authoritative match server (SOURCE).
 //
-// Two protocols share this one function (the name is kept so config.toml's
-// `verify_jwt = true` and the single build:function script don't change):
+// The interactive, turn-based basic game from `src/game/board/` (`op: start | act |
+// resume | resign`). State lives in `match_sessions`; each jugada is one authenticated
+// call. The invariant that keeps the anti-cheat posture intact across ~100 round trips
+// instead of one: the client NEVER sends state back and NEVER rolls a die. It sends an
+// action id and a ply token; the server loads the row, re-derives `legalActions`, rolls
+// the dice from a seed it owns, applies exactly one step, and persists it. Coins are paid
+// only by `record_match`, via `finish_match_session` (0014) so the pay + the match-id
+// stamp are one transaction and a win can't be replayed.
 //
-//   • LEGACY (no `op`): the old one-shot simulate — build squads, run the pure engine
-//     in `src/game/engine/`, and commit through `record_match`. Still serves the current
-//     non-interactive Play screen; deleted in Phase 6.
-//
-//   • INTERACTIVE (`op: start | act | resume | resign`): the turn-based basic game from
-//     `src/game/board/`. State lives in `match_sessions`; each jugada is one authenticated
-//     call. The invariant that keeps the anti-cheat posture intact across ~100 round trips
-//     instead of one: the client NEVER sends state back and NEVER rolls a die. It sends an
-//     action id and a ply token; the server loads the row, re-derives `legalActions`,
-//     rolls the dice from a seed it owns, applies exactly one step, and persists it. Coins
-//     are still paid only by `record_match`, now via `finish_match_session` (0014) so the
-//     pay + the match-id stamp are one transaction and a win can't be replayed.
+// The function name is kept (the old one-shot simulate branch lived here too, retired in
+// Phase 6) so config.toml's `verify_jwt = true` and the single build:function script
+// don't change.
 //
 // This file imports the engine from the app source (`@/…`); `npm run build:function`
 // bundles it (engine inlined) into the deployed `../play-match/index.ts`. Never hand-edit
 // that generated file.
 
 import { createClient, type SupabaseClient } from 'npm:@supabase/supabase-js@2.47.10'
-import type { Card, Squad, SquadSlot, MatchOutcome } from '@/lib/types.ts'
+import type { Card, Squad, SquadSlot } from '@/lib/types.ts'
 import type { Difficulty } from '@/game/engine/types.ts'
-import { simulateMatch } from '@/game/engine/index.ts'
 import { buildEngineSquad } from '@/game/engine/squad.ts'
 import { generateOpponent } from '@/game/engine/opponent.ts'
 import { createRng, seedFrom } from '@/game/engine/rng.ts'
@@ -96,39 +92,6 @@ async function loadHome(userClient: SupabaseClient): Promise<HomeContext | { err
   const byId = new Map(cards.map((c) => [c.id, c]))
   const strength = squad.slots.reduce((sum, s) => sum + (byId.get(s.card_id)?.cost ?? 0), 0)
   return { home, strength, squadId: squadRow.id }
-}
-
-// ── legacy one-shot (no op) ──────────────────────────────────────────────────────
-
-async function legacyPlay(
-  userClient: SupabaseClient,
-  adminClient: SupabaseClient,
-  uid: string,
-  difficulty: Difficulty,
-): Promise<Response> {
-  const ctx = await loadHome(userClient)
-  if ('error' in ctx) return json({ error: ctx.error }, ctx.status)
-
-  const seed = seedFrom(Date.now(), difficulty, ctx.squadId)
-  const away = generateOpponent(difficulty, createRng(seedFrom(seed, 'opponent')))
-  const outcome: MatchOutcome = simulateMatch({ home: ctx.home, away, difficulty, seed })
-
-  const { data: recorded, error: recErr } = await adminClient.rpc('record_match', {
-    p_uid: uid,
-    p_opponent: outcome.opponent,
-    p_difficulty: difficulty,
-    p_result: outcome.result,
-    p_gf: outcome.goals_for,
-    p_ga: outcome.goals_against,
-    p_squad_strength: ctx.strength,
-    p_log: outcome.log,
-  })
-  if (recErr) return json({ error: recErr.message }, 500)
-
-  return json({
-    ...outcome,
-    coins_awarded: (recorded as { coins_awarded: number }).coins_awarded,
-  } satisfies MatchOutcome)
 }
 
 // ── interactive: start | act | resume | resign ───────────────────────────────────
@@ -373,7 +336,6 @@ Deno.serve(async (req: Request): Promise<Response> => {
     case 'resign':
       return resignMatch(adminClient, uid)
     default:
-      // Legacy one-shot Play (no op). Deleted in Phase 6.
-      return legacyPlay(userClient, adminClient, uid, pickDifficulty(body.p_difficulty))
+      return json({ error: 'unknown op' }, 400)
   }
 })

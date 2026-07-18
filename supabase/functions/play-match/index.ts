@@ -3,80 +3,6 @@
 // supabase/functions/_src/play-match.ts
 import { createClient } from "npm:@supabase/supabase-js@2.47.10";
 
-// src/game/engine/rng.ts
-function createRng(seed) {
-  let state = seed >>> 0;
-  const next = () => {
-    state = state + 1831565813 >>> 0;
-    let t = state;
-    t = Math.imul(t ^ t >>> 15, t | 1);
-    t ^= t + Math.imul(t ^ t >>> 7, t | 61);
-    return ((t ^ t >>> 14) >>> 0) / 4294967296;
-  };
-  const int = (n) => Math.floor(next() * n);
-  return {
-    next,
-    int,
-    d6: () => int(6) + 1,
-    pick: (xs) => xs[int(xs.length)],
-    chance: (p) => next() < p
-  };
-}
-function seedFrom(...parts) {
-  let h = 2166136261;
-  const str = parts.join("|");
-  for (let i = 0; i < str.length; i++) {
-    h ^= str.charCodeAt(i);
-    h = Math.imul(h, 16777619);
-  }
-  return h >>> 0;
-}
-
-// src/game/engine/pitch.ts
-var COLS = 5;
-var ROWS = 6;
-var ZONE_MAP = [
-  ["PA", "RM", "RM", "RM", "PA"],
-  // row 0 — home's own box (away's target)
-  ["PA", "DL", "DL", "DL", "PA"],
-  // row 1 — DL ring
-  ["MID", "MID", "MID", "MID", "MID"],
-  // row 2 — midfield build-up
-  ["MID", "MID", "MID", "MID", "MID"],
-  // row 3 — midfield build-up
-  ["PA", "DL", "DL", "DL", "PA"],
-  // row 4 — DL ring
-  ["PA", "RM", "RM", "RM", "PA"]
-  // row 5 — away's box (home's target)
-];
-function zoneAt(cell) {
-  return ZONE_MAP[cell.row][cell.col];
-}
-var clamp = (v, lo, hi) => Math.max(lo, Math.min(hi, v));
-function makePitch(cell, attacker) {
-  const dir = attacker === "home" ? 1 : -1;
-  const goalRow = attacker === "home" ? ROWS - 1 : 0;
-  const zone = zoneAt(cell);
-  return {
-    cell,
-    zone,
-    attacker,
-    canShootRM: () => zone === "RM",
-    canShootDL: () => zone === "DL",
-    step: (d) => makePitch({ col: cell.col, row: clamp(cell.row + dir * d, 0, ROWS - 1) }, attacker),
-    toLane: (col) => makePitch({ col: clamp(col, 0, COLS - 1), row: cell.row }, attacker),
-    toGoal: () => Math.abs(goalRow - cell.row)
-  };
-}
-var CENTRE_LANE = 2;
-function initialPitch(attacker) {
-  const startRow = attacker === "home" ? 2 : 3;
-  return makePitch({ col: CENTRE_LANE, row: startRow }, attacker);
-}
-function laneFor(index) {
-  return 1 + (index % 3 + 3) % 3;
-}
-
 // src/game/ratings.ts
 function abilityValue(card, key) {
   return card.abilities[key] ?? 0;
@@ -90,421 +16,16 @@ function keeperStats(card) {
   return { rf: abilityValue(card, "rf"), co: abilityValue(card, "co") };
 }
 
-// src/game/engine/dice.ts
-var TARGET = 10;
-function diceForPass(mark, type) {
-  if (type === "PD") return 0;
-  if (mark === "MH") return 2;
-  if (type === "PC") return mark === "SM" || mark === "LIBRE" ? 0 : 1;
-  return 1;
-}
-function passDice(passer, receiver, type) {
-  return Math.max(diceForPass(passer, type), diceForPass(receiver, type));
-}
-function diceForAction(mark, _action) {
-  return mark === "MH" ? 2 : 1;
-}
-function scoreContest(dice, rating) {
-  const bonus = dice.length === 1 ? 5 : 0;
-  const total = dice.reduce((s, d) => s + d, 0) + bonus + rating;
-  const success = dice.length === 0 ? true : total >= TARGET;
-  return { dice, total, success };
-}
-function resolveContest(rng, n, rating) {
-  const dice = [];
-  for (let i = 0; i < n; i++) dice.push(rng.d6());
-  return scoreContest(dice, rating);
-}
-function contestDice(mark, action) {
-  return diceForAction(mark, action);
-}
-
-// src/game/engine/marcaje.ts
-function afterAnticipacion(success) {
-  if (success) return { possession: "defender", carrier: "LIBRE" };
-  return { possession: "attacker", carrier: "LIBRE" };
-}
-function afterRobo(success) {
-  if (success) return { possession: "defender", carrier: "MH" };
-  return { possession: "attacker", carrier: "LIBRE" };
-}
-function afterRegate(success) {
-  return { possession: "attacker", carrier: success ? "LIBRE" : "MZ" };
-}
-function forDice(mark) {
-  return mark === "LIBRE" ? "SM" : mark;
-}
-
-// src/game/engine/actions.ts
-function resolvePase(rng, type, passerMark, receiverMark, rating) {
-  const n = passDice(forDice(passerMark), forDice(receiverMark), type);
-  return resolveContest(rng, n, rating);
-}
-function resolvePaseHueco(rng, rating) {
-  return resolveContest(rng, 2, rating);
-}
-function resolveRegate(rng, mark, rg) {
-  return resolveContest(rng, contestDice(forDice(mark), "RG"), rg);
-}
-function resolveShot(rng, action, mark, rating) {
-  return resolveContest(rng, contestDice(forDice(mark), action), rating);
-}
-
-// src/game/engine/interrupt.ts
-function resolveAnticipacion(rng, a) {
-  return resolveContest(rng, 2, a);
-}
-function resolveRobo(rng, rb) {
-  return resolveContest(rng, 2, rb);
-}
-
-// src/game/engine/keeper.ts
-function resolveSave(rng, stat) {
-  const contest = resolveContest(rng, 2, stat);
-  return { contest, saved: contest.success };
-}
-function isGoal(shotSuccess, saved) {
-  return shotSuccess && !saved;
-}
-
-// src/game/engine/ai.ts
-var TUNING = {
-  easy: { finishing: 0.45, press: 0.35, interrupt: 0.45 },
-  normal: { finishing: 0.55, press: 0.55, interrupt: 0.6 },
-  hard: { finishing: 0.6, press: 0.75, interrupt: 0.78 }
-};
-function tuning(difficulty) {
-  return TUNING[difficulty];
-}
-function marked(mark) {
-  return mark === "MH" || mark === "MZ";
-}
-function chooseAttack(rng, pitch, mark, carrier2, difficulty) {
-  const t = tuning(difficulty);
-  const dl = abilityValue(carrier2, "dl");
-  const rg = abilityValue(carrier2, "rg");
-  if (pitch.canShootRM()) {
-    if (mark === "MH" && rng.chance(0.35 + rg * 0.08)) return { kind: "regate" };
-    return { kind: "shot", action: "RM" };
-  }
-  if (pitch.canShootDL()) {
-    const shootWeight = t.finishing + dl * 0.1;
-    if (mark === "MH" && rng.chance(0.3 + rg * 0.08)) return { kind: "regate" };
-    if (rng.chance(Math.min(0.85, shootWeight))) return { kind: "shot", action: "DL" };
-    return advanceChoice(rng, mark, carrier2);
-  }
-  if (mark === "MH" && rng.chance(0.3 + rg * 0.08)) return { kind: "regate" };
-  return advanceChoice(rng, mark, carrier2);
-}
-function advanceChoice(rng, mark, carrier2) {
-  const pc = abilityValue(carrier2, "pc");
-  const pl = abilityValue(carrier2, "pl");
-  if (marked(mark) && rng.chance(0.2)) {
-    return { kind: "hueco", type: pl >= pc ? "PL" : "PC" };
-  }
-  if (pc === 0 && pl === 0) return { kind: "advance" };
-  return { kind: "pase", type: pl > pc ? "PL" : "PC" };
-}
-function pressAfterMove(rng, current, difficulty) {
-  const t = tuning(difficulty);
-  if (!rng.chance(t.press)) return current === "LIBRE" ? "SM" : current;
-  if (current === "MH") return "MH";
-  if (current === "MZ") return "MH";
-  return "MZ";
-}
-function chooseInterrupt(rng, receiverMark, difficulty) {
-  const t = tuning(difficulty);
-  if (receiverMark === "MZ") return rng.chance(t.interrupt) ? "anticipacion" : "none";
-  if (receiverMark === "MH") return rng.chance(t.interrupt) ? "robo" : "none";
-  return "none";
-}
-
-// src/game/engine/events.ts
-function ev(type, side, params = {}, cell) {
-  return { type, side, params: cell ? { ...params, cell } : params };
-}
-function evContest(type, side, opts) {
-  return {
-    type,
-    side,
-    params: {
-      player: opts.player,
-      target: opts.target,
-      ability: opts.ability,
-      marcaje: opts.marcaje,
-      dice: opts.contest.dice,
-      total: opts.contest.total,
-      success: opts.contest.success,
-      cell: opts.cell
-    }
-  };
-}
-
-// src/game/engine/loop.ts
-var WIN_MARGIN = 2;
-var MAX_POSSESSIONS = 80;
-var JUGADA_BUDGET = 10;
-var other = (s) => s === "home" ? "away" : "home";
-function squadOf(state, side) {
-  return side === "home" ? state.home : state.away;
-}
-function defenderBest(squad, key) {
-  return squad.outfield.reduce((best, c) => Math.max(best, abilityValue(c, key)), 0);
-}
-function pickOther(rng, xs, exclude) {
-  if (xs.length <= 1) return xs[0];
-  let c = rng.pick(xs);
-  while (c === exclude) c = rng.pick(xs);
-  return c;
-}
-function pressReceiver(rng, difficulty) {
-  const t = tuning(difficulty);
-  if (!rng.chance(t.press)) return "SM";
-  return rng.chance(t.press) ? "MH" : "MZ";
-}
-function applyChoice(state, rng, events, choice) {
-  const atkSide = state.attacker;
-  const defSquad = squadOf(state, other(atkSide));
-  switch (choice.kind) {
-    case "advance": {
-      state.pitch = state.pitch.step(1);
-      state.carrierMark = pressAfterMove(rng, state.carrierMark, state.difficulty);
-      return "continue";
-    }
-    case "regate": {
-      const rg = abilityValue(state.carrier, "rg");
-      const contest = resolveRegate(rng, state.carrierMark, rg);
-      events.push(
-        evContest("dribble", atkSide, {
-          player: state.carrier.name,
-          ability: "rg",
-          marcaje: state.carrierMark,
-          contest,
-          cell: state.pitch.cell
-        })
-      );
-      const outcome = afterRegate(contest.success);
-      state.carrierMark = outcome.carrier;
-      if (contest.success) state.pitch = state.pitch.step(1);
-      return "continue";
-    }
-    case "pase":
-    case "hueco": {
-      const type = choice.type;
-      const rating = abilityValue(state.carrier, type === "PL" ? "pl" : "pc");
-      const receiver = pickOther(rng, squadOf(state, atkSide).outfield, state.carrier);
-      const receiverMark = choice.kind === "hueco" ? "LIBRE" : pressReceiver(rng, state.difficulty);
-      const contest = choice.kind === "hueco" ? resolvePaseHueco(rng, rating) : resolvePase(rng, type, state.carrierMark, receiverMark, rating);
-      if (!contest.success) {
-        events.push(
-          evContest("turnover", atkSide, {
-            player: state.carrier.name,
-            ability: type === "PL" ? "pl" : "pc",
-            contest,
-            cell: state.pitch.cell
-          })
-        );
-        flip(state);
-        return "turnover";
-      }
-      state.carrier = receiver;
-      state.carrierMark = receiverMark;
-      state.pitch = state.pitch.step(1).toLane(laneFor(squadOf(state, atkSide).outfield.indexOf(receiver)));
-      if (choice.kind === "pase" && (receiverMark === "MZ" || receiverMark === "MH")) {
-        const decision = chooseInterrupt(rng, receiverMark, state.difficulty);
-        if (decision === "anticipacion") {
-          const contestA = resolveAnticipacion(rng, defenderBest(defSquad, "a"));
-          const res = afterAnticipacion(contestA.success);
-          if (res.possession === "defender") {
-            events.push(
-              evContest("interception", other(atkSide), {
-                ability: "a",
-                contest: contestA,
-                cell: state.pitch.cell
-              })
-            );
-            flip(state);
-            return "turnover";
-          }
-          state.carrierMark = res.carrier;
-        } else if (decision === "robo") {
-          const contestR = resolveRobo(rng, defenderBest(defSquad, "rb"));
-          const res = afterRobo(contestR.success);
-          if (res.possession === "defender") {
-            events.push(
-              evContest("steal", other(atkSide), {
-                ability: "rb",
-                contest: contestR,
-                cell: state.pitch.cell
-              })
-            );
-            flip(state);
-            return "turnover";
-          }
-          state.carrierMark = res.carrier;
-        }
-      }
-      return "continue";
-    }
-    case "shot": {
-      const action = choice.action;
-      const rating = abilityValue(state.carrier, action === "RM" ? "rm" : "dl");
-      const contest = resolveShot(rng, action, state.carrierMark, rating);
-      if (!contest.success) {
-        events.push(
-          evContest("shot", atkSide, {
-            player: state.carrier.name,
-            ability: action === "RM" ? "rm" : "dl",
-            marcaje: state.carrierMark,
-            contest,
-            cell: state.pitch.cell
-          })
-        );
-        flip(state);
-        return "turnover";
-      }
-      const keeper = squadOf(state, other(atkSide)).keeper;
-      const stat = action === "RM" ? keeperStats(keeper).rf : keeperStats(keeper).co;
-      const { contest: saveContest, saved } = resolveSave(rng, stat);
-      if (isGoal(true, saved)) {
-        events.push(
-          evContest("goal", atkSide, {
-            player: state.carrier.name,
-            ability: action === "RM" ? "rm" : "dl",
-            contest,
-            cell: state.pitch.cell
-          })
-        );
-        return "goal";
-      }
-      events.push(
-        evContest("save", other(atkSide), {
-          player: keeper.name,
-          ability: action === "RM" ? "rf" : "co",
-          contest: saveContest,
-          cell: state.pitch.cell
-        })
-      );
-      flip(state);
-      return "turnover";
-    }
-  }
-}
-function flip(state) {
-  state.attacker = other(state.attacker);
-}
-function runPossession(state, rng, events, kickoff) {
-  const squad = squadOf(state, state.attacker);
-  state.pitch = initialPitch(state.attacker);
-  state.carrier = rng.pick(squad.outfield);
-  state.carrierMark = "SM";
-  state.minute = Math.min(120, state.minute + rng.int(4) + 1);
-  if (kickoff) {
-    events.push(ev("kickoff", state.attacker, { player: state.carrier.name }, state.pitch.cell));
-    state.carrier = pickOther(rng, squad.outfield, state.carrier);
-  }
-  for (let budget = JUGADA_BUDGET; budget > 0; budget--) {
-    const choice = chooseAttack(rng, state.pitch, state.carrierMark, state.carrier, state.difficulty);
-    const outcome = applyChoice(state, rng, events, choice);
-    if (outcome === "goal") {
-      if (state.attacker === "home") state.gf++;
-      else state.ga++;
-      state.attacker = other(state.attacker);
-      return { scored: true, kickoff: true };
-    }
-    if (outcome === "turnover") return { scored: false, kickoff: false };
-  }
-  flip(state);
-  return { scored: false, kickoff: false };
-}
-function terminated(state) {
-  return Math.abs(state.gf - state.ga) >= WIN_MARGIN || state.possessions >= MAX_POSSESSIONS;
-}
-function runMatch(state, rng) {
-  const events = [];
-  const minutes = [];
-  const stamp = () => {
-    while (minutes.length < events.length) minutes.push(state.minute);
-  };
-  let kickoff = true;
-  while (!terminated(state)) {
-    const result = runPossession(state, rng, events, kickoff);
-    stamp();
-    kickoff = result.kickoff;
-    state.possessions++;
-  }
-  events.push(ev("fulltime", "home"));
-  stamp();
-  return { events, minutes };
-}
-
-// src/game/abilities.ts
-var ABILITY_META = {
-  rb: { abbr: "RB", label: "Robo bal\xF3n" },
-  a: { abbr: "A", label: "Anticipaci\xF3n" },
-  rc: { abbr: "RC", label: "Remate cabeza" },
-  d: { abbr: "D", label: "Desmarque" },
-  rg: { abbr: "RG", label: "Regate" },
-  v: { abbr: "V", label: "Velocidad" },
-  pc: { abbr: "PC", label: "Pase corto" },
-  pl: { abbr: "PL", label: "Pase largo" },
-  pa: { abbr: "PA", label: "Pase alto" },
-  dl: { abbr: "DL", label: "Disparo lejano" },
-  rm: { abbr: "RM", label: "Remate" },
-  // Goalkeeper ratings — only meaningful on the portero card.
-  rf: { abbr: "RF", label: "Reflejos" },
-  co: { abbr: "CO", label: "Colocaci\xF3n" }
-};
-var OUTFIELD_ABILITY_KEYS = [
-  "rb",
-  "a",
-  "rc",
-  "d",
-  "rg",
-  "v",
-  "pc",
-  "pl",
-  "pa",
-  "dl",
-  "rm"
-];
-var KEEPER_ABILITY_KEYS = ["rf", "co"];
-var ABILITY_ORDER = [
-  ...OUTFIELD_ABILITY_KEYS,
-  ...KEEPER_ABILITY_KEYS
-];
-
-// src/game/engine/format-es.ts
-function ability(e) {
-  return e.params.ability ? ABILITY_META[e.params.ability].abbr : "";
-}
-function player(e) {
-  return e.params.player ?? "Un jugador";
-}
-function renderEs(e) {
-  const p = player(e);
-  switch (e.type) {
-    case "kickoff":
-      return `Saque desde el centro. Mueve ${p}.`;
-    case "pass":
-      return `${p} combina con los suyos.`;
-    case "dribble":
-      return e.params.success ? `${p} se va en el regate (${ability(e)}).` : `${p} lo intenta en el regate pero lo frenan.`;
-    case "shot":
-      return `${p} dispara (${ability(e)}) y se va fuera.`;
-    case "save":
-      return `\xA1Parad\xF3n de ${p}! (${ability(e)}).`;
-    case "goal":
-      return `\xA1GOOOOL de ${p}! (${ability(e)}).`;
-    case "interception":
-      return `Anticipaci\xF3n (${ability(e)}); corta el bal\xF3n la defensa.`;
-    case "steal":
-      return `Robo de bal\xF3n (${ability(e)}); recupera la defensa.`;
-    case "turnover":
-      return `${p} pierde el bal\xF3n.`;
-    case "fulltime":
-      return "Final del partido.";
-  }
+// src/game/engine/squad.ts
+function buildEngineSquad(name, squad, catalog) {
+  const byId = new Map(catalog.map((c) => [c.id, c]));
+  const starters = squad.slots.map((s) => byId.get(s.card_id)).filter((c) => Boolean(c)).map((c) => ({ id: c.id, name: c.name, position: c.position, abilities: c.abilities }));
+  if (starters.length === 0) throw new Error("your squad has no starters");
+  let keeperIdx = starters.findIndex(isGoalkeeper);
+  if (keeperIdx < 0) keeperIdx = 0;
+  const keeper = starters[keeperIdx];
+  const outfield = starters.filter((_, i) => i !== keeperIdx);
+  return { name, outfield, keeper };
 }
 
 // src/game/engine/opponent.ts
@@ -565,63 +86,38 @@ function generateOpponent(difficulty, rng) {
   return { name: OPPONENT_NAMES[difficulty], outfield, keeper };
 }
 
-// src/game/engine/index.ts
-var REWARD = { win: 100, draw: 40, loss: 10 };
-function resultFor(gf, ga) {
-  if (gf > ga) return "win";
-  if (gf < ga) return "loss";
-  return "draw";
-}
-function simulateMatch(input) {
-  const rng = createRng(input.seed);
-  const state = {
-    home: input.home,
-    away: input.away,
-    difficulty: input.difficulty,
-    attacker: "home",
-    // the human squad kicks off
-    pitch: initialPitch("home"),
-    carrier: input.home.outfield[0],
-    carrierMark: "SM",
-    gf: 0,
-    ga: 0,
-    minute: 0,
-    possessions: 0
+// src/game/engine/rng.ts
+function createRng(seed) {
+  let state = seed >>> 0;
+  const next = () => {
+    state = state + 1831565813 >>> 0;
+    let t = state;
+    t = Math.imul(t ^ t >>> 15, t | 1);
+    t ^= t + Math.imul(t ^ t >>> 7, t | 61);
+    return ((t ^ t >>> 14) >>> 0) / 4294967296;
   };
-  const { events, minutes } = runMatch(state, rng);
-  const log = events.map((e, i) => ({
-    minute: minutes[i] ?? state.minute,
-    side: e.side,
-    text: renderEs(e),
-    type: e.type,
-    params: e.params
-  }));
-  const result = resultFor(state.gf, state.ga);
+  const int = (n) => Math.floor(next() * n);
   return {
-    result,
-    opponent: input.away.name || OPPONENT_NAMES[input.difficulty],
-    goals_for: state.gf,
-    goals_against: state.ga,
-    coins_awarded: REWARD[result],
-    log
+    next,
+    int,
+    d6: () => int(6) + 1,
+    pick: (xs) => xs[int(xs.length)],
+    chance: (p) => next() < p
   };
 }
-
-// src/game/engine/squad.ts
-function buildEngineSquad(name, squad, catalog) {
-  const byId = new Map(catalog.map((c) => [c.id, c]));
-  const starters = squad.slots.map((s) => byId.get(s.card_id)).filter((c) => Boolean(c)).map((c) => ({ id: c.id, name: c.name, position: c.position, abilities: c.abilities }));
-  if (starters.length === 0) throw new Error("your squad has no starters");
-  let keeperIdx = starters.findIndex(isGoalkeeper);
-  if (keeperIdx < 0) keeperIdx = 0;
-  const keeper = starters[keeperIdx];
-  const outfield = starters.filter((_, i) => i !== keeperIdx);
-  return { name, outfield, keeper };
+function seedFrom(...parts) {
+  let h = 2166136261;
+  const str = parts.join("|");
+  for (let i = 0; i < str.length; i++) {
+    h ^= str.charCodeAt(i);
+    h = Math.imul(h, 16777619);
+  }
+  return h >>> 0;
 }
 
 // src/game/board/state.ts
-var COLS2 = 5;
-var ROWS2 = 6;
+var COLS = 5;
+var ROWS = 6;
 var STATE_VERSION = 1;
 function playerId(side, index) {
   return `${side === "home" ? "h" : "a"}${index}`;
@@ -643,12 +139,31 @@ function positionRank(position) {
   return POSITION_ORDER.indexOf(position);
 }
 
+// src/game/engine/pitch.ts
+var ZONE_MAP = [
+  ["PA", "RM", "RM", "RM", "PA"],
+  // row 0 — home's own box (away's target)
+  ["PA", "DL", "DL", "DL", "PA"],
+  // row 1 — DL ring
+  ["MID", "MID", "MID", "MID", "MID"],
+  // row 2 — midfield build-up
+  ["MID", "MID", "MID", "MID", "MID"],
+  // row 3 — midfield build-up
+  ["PA", "DL", "DL", "DL", "PA"],
+  // row 4 — DL ring
+  ["PA", "RM", "RM", "RM", "PA"]
+  // row 5 — away's box (home's target)
+];
+function zoneAt(cell) {
+  return ZONE_MAP[cell.row][cell.col];
+}
+
 // src/game/board/derive.ts
 function keeperCell(side) {
-  return side === "home" ? { col: 2, row: -1 } : { col: 2, row: ROWS2 };
+  return side === "home" ? { col: 2, row: -1 } : { col: 2, row: ROWS };
 }
 function isKeeperCell(cell) {
-  return cell.row < 0 || cell.row >= ROWS2;
+  return cell.row < 0 || cell.row >= ROWS;
 }
 function sameCell(a, b) {
   return a.col === b.col && a.row === b.row;
@@ -657,11 +172,11 @@ function cellKey(cell) {
   return `${cell.col},${cell.row}`;
 }
 function inBounds(cell) {
-  return cell.col >= 0 && cell.col < COLS2 && cell.row >= 0 && cell.row < ROWS2;
+  return cell.col >= 0 && cell.col < COLS && cell.row >= 0 && cell.row < ROWS;
 }
 var ALL_CELLS = Array.from(
-  { length: ROWS2 },
-  (_, row) => Array.from({ length: COLS2 }, (_2, col) => ({ col, row }))
+  { length: ROWS },
+  (_, row) => Array.from({ length: COLS }, (_2, col) => ({ col, row }))
 ).flat();
 function neighbours(cell) {
   const out = [];
@@ -781,7 +296,7 @@ function actionKey(a) {
 // src/game/board/legal.ts
 var isMarked = (m) => m === "MH" || m === "MZ";
 var isUnmarked = (m) => m === "SM" || m === "LIBRE";
-var other2 = (s) => s === "home" ? "away" : "home";
+var other = (s) => s === "home" ? "away" : "home";
 function playersOf(state, side) {
   return Object.values(state.players).filter((p) => p.side === side);
 }
@@ -869,7 +384,7 @@ function attackerActions(state) {
   return out;
 }
 function defenderMoveActions(state) {
-  const def = other2(state.attacker);
+  const def = other(state.attacker);
   const holder = carrier(state);
   const out = [{ kind: "decline" }];
   for (const p of playersOf(state, def)) {
@@ -969,6 +484,93 @@ function legalActions(state) {
   }
 }
 
+// src/game/engine/dice.ts
+var TARGET = 10;
+function diceForPass(mark, type) {
+  if (type === "PD") return 0;
+  if (mark === "MH") return 2;
+  if (type === "PC") return mark === "SM" || mark === "LIBRE" ? 0 : 1;
+  return 1;
+}
+function passDice(passer, receiver, type) {
+  return Math.max(diceForPass(passer, type), diceForPass(receiver, type));
+}
+function diceForAction(mark, _action) {
+  return mark === "MH" ? 2 : 1;
+}
+function scoreContest(dice, rating) {
+  const bonus = dice.length === 1 ? 5 : 0;
+  const total = dice.reduce((s, d) => s + d, 0) + bonus + rating;
+  const success = dice.length === 0 ? true : total >= TARGET;
+  return { dice, total, success };
+}
+function resolveContest(rng, n, rating) {
+  const dice = [];
+  for (let i = 0; i < n; i++) dice.push(rng.d6());
+  return scoreContest(dice, rating);
+}
+function contestDice(mark, action) {
+  return diceForAction(mark, action);
+}
+
+// src/game/engine/marcaje.ts
+function forDice(mark) {
+  return mark === "LIBRE" ? "SM" : mark;
+}
+
+// src/game/engine/actions.ts
+function resolvePase(rng, type, passerMark, receiverMark, rating) {
+  const n = passDice(forDice(passerMark), forDice(receiverMark), type);
+  return resolveContest(rng, n, rating);
+}
+function resolvePaseHueco(rng, rating) {
+  return resolveContest(rng, 2, rating);
+}
+function resolveRegate(rng, mark, rg) {
+  return resolveContest(rng, contestDice(forDice(mark), "RG"), rg);
+}
+function resolveShot(rng, action, mark, rating) {
+  return resolveContest(rng, contestDice(forDice(mark), action), rating);
+}
+
+// src/game/engine/interrupt.ts
+function resolveAnticipacion(rng, a) {
+  return resolveContest(rng, 2, a);
+}
+function resolveRobo(rng, rb) {
+  return resolveContest(rng, 2, rb);
+}
+
+// src/game/engine/keeper.ts
+function resolveSave(rng, stat) {
+  const contest = resolveContest(rng, 2, stat);
+  return { contest, saved: contest.success };
+}
+function isGoal(shotSuccess, saved) {
+  return shotSuccess && !saved;
+}
+
+// src/game/engine/events.ts
+function ev(type, side, params = {}, cell) {
+  return { type, side, params: cell ? { ...params, cell } : params };
+}
+function evContest(type, side, opts) {
+  return {
+    type,
+    side,
+    params: {
+      player: opts.player,
+      target: opts.target,
+      ability: opts.ability,
+      marcaje: opts.marcaje,
+      dice: opts.contest.dice,
+      total: opts.contest.total,
+      success: opts.contest.success,
+      cell: opts.cell
+    }
+  };
+}
+
 // src/game/board/reducer.ts
 var TURNO_LIMIT = 15;
 var POSSESSION_CAP = 24;
@@ -1021,16 +623,16 @@ function resetAntiStall(state) {
   state.antiStall = { pdChain: [], movedTo: {} };
 }
 function changePossession(state, events, grantDefenderMove = false) {
-  state.attacker = other2(state.attacker);
+  state.attacker = other(state.attacker);
   resetAntiStall(state);
   state.possessionJugadas = 0;
   if (advanceTurno(state, events)) return;
-  state.phase = grantDefenderMove ? { kind: "defend_move", side: other2(state.attacker) } : { kind: "attack", side: state.attacker };
+  state.phase = grantDefenderMove ? { kind: "defend_move", side: other(state.attacker) } : { kind: "attack", side: state.attacker };
 }
 function breakDown(state, events) {
   const holder = carrier(state);
-  const taker = playersOf(state, other2(state.attacker)).filter((p) => p.id !== keeperId(other2(state.attacker))).sort((a, b) => distance(a.cell, holder.cell) - distance(b.cell, holder.cell))[0];
-  events.push(ev("turnover", other2(state.attacker), { player: taker.card.name }));
+  const taker = playersOf(state, other(state.attacker)).filter((p) => p.id !== keeperId(other(state.attacker))).sort((a, b) => distance(a.cell, holder.cell) - distance(b.cell, holder.cell))[0];
+  events.push(ev("turnover", other(state.attacker), { player: taker.card.name }));
   giveBall(state, taker.id);
   state.libre = null;
   changePossession(state, events);
@@ -1147,7 +749,7 @@ function applyPass(state, pass, to, rng, events) {
     );
     if (cesion) return keeperFootRestart(state);
     if (receiverMark === "MZ" || receiverMark === "MH") {
-      state.phase = { kind: "defend_interrupt", side: other2(state.attacker), receiver: to };
+      state.phase = { kind: "defend_interrupt", side: other(state.attacker), receiver: to };
       return;
     }
     state.phase = { kind: "attack", side: state.attacker };
@@ -1155,7 +757,7 @@ function applyPass(state, pass, to, rng, events) {
   }
   if (cesion) {
     events.push(evContest("turnover", state.attacker, { player: from.card.name, ability: ratingKey, contest, cell: from.cell }));
-    return concede(state, other2(state.attacker), events);
+    return concede(state, other(state.attacker), events);
   }
   events.push(evContest("turnover", state.attacker, { player: from.card.name, ability: ratingKey, contest, cell: from.cell }));
   recoverFailedPass(state, to, receiverMark, events);
@@ -1200,14 +802,14 @@ function applyShot(state, shot, rng, events) {
     events.push(evContest("shot", state.attacker, { player: self.card.name, ability: shot === "RM" ? "rm" : "dl", marcaje: mark, contest, cell: self.cell }));
     return keeperRestartAfterShot(state, events);
   }
-  const keeper = state.players[keeperId(other2(state.attacker))];
+  const keeper = state.players[keeperId(other(state.attacker))];
   const stat = shot === "RM" ? keeperStats(keeper.card).rf : keeperStats(keeper.card).co;
   const { contest: saveContest, saved } = resolveSave(rng, stat);
   if (isGoal(true, saved)) {
     events.push(evContest("goal", state.attacker, { player: self.card.name, ability: shot === "RM" ? "rm" : "dl", contest, cell: self.cell }));
     return concede(state, state.attacker, events);
   }
-  events.push(evContest("save", other2(state.attacker), { player: keeper.card.name, ability: shot === "RM" ? "rf" : "co", contest: saveContest, cell: self.cell }));
+  events.push(evContest("save", other(state.attacker), { player: keeper.card.name, ability: shot === "RM" ? "rf" : "co", contest: saveContest, cell: self.cell }));
   keeperRestartAfterShot(state, events);
 }
 function applyMove(state, playerId2, to, handoff) {
@@ -1221,7 +823,7 @@ function applyMove(state, playerId2, to, handoff) {
   state.antiStall.pdChain = [];
   ((_a = state.antiStall.movedTo)[playerId2] ?? (_a[playerId2] = [])).push(cellKey(to));
   if (wasCarrier) state.libre = null;
-  state.phase = { kind: "defend_move", side: other2(state.attacker) };
+  state.phase = { kind: "defend_move", side: other(state.attacker) };
 }
 function applyHueco(state, pass, to, rng, events) {
   const from = carrier(state);
@@ -1230,11 +832,11 @@ function applyHueco(state, pass, to, rng, events) {
   const contest = resolvePaseHueco(rng, rate(from, pass === "PL" ? "pl" : "pc"));
   state.ball = { carrier: null, cell: { ...to } };
   events.push(evContest("pass", state.attacker, { player: from.card.name, ability: pass === "PL" ? "pl" : "pc", contest, cell: to }));
-  const first = contest.success ? state.attacker : other2(state.attacker);
+  const first = contest.success ? state.attacker : other(state.attacker);
   state.phase = { kind: "hueco_move", side: first };
 }
 function recoverFailedPass(state, receiver, receiverMark, events) {
-  const def = other2(state.attacker);
+  const def = other(state.attacker);
   if (receiverMark === "MH" || receiverMark === "MZ") {
     const marker = markerOf(state, receiver);
     if (marker) {
@@ -1353,7 +955,7 @@ function applyHuecoMove(state, action, events) {
       const picker = state.players[action.player];
       giveBall(state, picker.id);
       if (picker.side === state.attacker) {
-        state.phase = { kind: "defend_move", side: other2(state.attacker) };
+        state.phase = { kind: "defend_move", side: other(state.attacker) };
       } else {
         state.libre = null;
         return changePossession(state, events, true);
@@ -1371,7 +973,7 @@ function nearestTo(state, side, cell) {
   return playersOf(state, side).filter((p) => p.id !== keeperId(side)).sort((a, b) => distance(a.cell, cell) - distance(b.cell, cell))[0].id;
 }
 function keeperRestartAfterShot(state, events) {
-  state.attacker = other2(state.attacker);
+  state.attacker = other(state.attacker);
   resetAntiStall(state);
   state.possessionJugadas = 0;
   if (advanceTurno(state, events)) return;
@@ -1393,7 +995,7 @@ function applyRestartMove(state, action) {
     else stepInto(state, action.player, action.to);
   }
   if (doneSide === restartSide) {
-    state.phase = { kind: "restart_move", side: other2(restartSide) };
+    state.phase = { kind: "restart_move", side: other(restartSide) };
   } else {
     giveBall(state, keeperId(restartSide));
     state.phase = { kind: "keeper_restart", side: restartSide };
@@ -1419,7 +1021,7 @@ function applyKeeperRestart(state, action, rng, events) {
     const contest = resolvePaseHueco(rng, 0);
     state.ball = { carrier: null, cell: { ...action.to } };
     events.push(evContest("pass", side, { player: keeper.card.name, ability: action.pass === "PL" ? "pl" : "pc", contest, cell: action.to }));
-    state.phase = { kind: "hueco_move", side: contest.success ? side : other2(side) };
+    state.phase = { kind: "hueco_move", side: contest.success ? side : other(side) };
     return;
   }
 }
@@ -1427,7 +1029,7 @@ function concede(state, scorer, events) {
   if (scorer === "home") state.score.home += 1;
   else state.score.away += 1;
   if (advanceTurno(state, events)) return;
-  const conceding = other2(scorer);
+  const conceding = other(scorer);
   state.players = { ...autoPlace(homeSquadOf(state), "home"), ...autoPlace(awaySquadOf(state), "away") };
   state.attacker = conceding;
   resetAntiStall(state);
@@ -1437,14 +1039,14 @@ function concede(state, scorer, events) {
   giveBall(state, kicker);
   state.phase = { kind: "kickoff", side: conceding };
 }
-function squadOf2(state, side) {
+function squadOf(state, side) {
   const ps = playersOf(state, side).sort((a, b) => a.id.localeCompare(b.id));
   const keeper = state.players[keeperId(side)].card;
   const outfield = ps.filter((p) => p.id !== keeperId(side)).map((p) => p.card);
   return { name: side, outfield, keeper };
 }
-var homeSquadOf = (s) => squadOf2(s, "home");
-var awaySquadOf = (s) => squadOf2(s, "away");
+var homeSquadOf = (s) => squadOf(s, "home");
+var awaySquadOf = (s) => squadOf(s, "away");
 
 // src/game/board/index.ts
 function createMatch(input) {
@@ -1536,7 +1138,7 @@ function score(state, action, w) {
       const mark = forDice(marcajeOf(state, shooter.id));
       const shotKey = action.shot === "RM" ? "rm" : "dl";
       const onTarget = successProb(contestDice(mark, action.shot), rate2(shooter, shotKey));
-      const keeper = players[keeperId(other2(me))];
+      const keeper = players[keeperId(other(me))];
       const saveKey = action.shot === "RM" ? "rf" : "co";
       const save = twoDiceProb(rate2(keeper, saveKey));
       const goalP = onTarget * (1 - save);
@@ -1692,28 +1294,6 @@ async function loadHome(userClient) {
   }, 0);
   return { home, strength, squadId: squadRow.id };
 }
-async function legacyPlay(userClient, adminClient, uid, difficulty) {
-  const ctx = await loadHome(userClient);
-  if ("error" in ctx) return json({ error: ctx.error }, ctx.status);
-  const seed = seedFrom(Date.now(), difficulty, ctx.squadId);
-  const away = generateOpponent(difficulty, createRng(seedFrom(seed, "opponent")));
-  const outcome = simulateMatch({ home: ctx.home, away, difficulty, seed });
-  const { data: recorded, error: recErr } = await adminClient.rpc("record_match", {
-    p_uid: uid,
-    p_opponent: outcome.opponent,
-    p_difficulty: difficulty,
-    p_result: outcome.result,
-    p_gf: outcome.goals_for,
-    p_ga: outcome.goals_against,
-    p_squad_strength: ctx.strength,
-    p_log: outcome.log
-  });
-  if (recErr) return json({ error: recErr.message }, 500);
-  return json({
-    ...outcome,
-    coins_awarded: recorded.coins_awarded
-  });
-}
 async function startMatch(userClient, adminClient, uid, difficulty) {
   const { data: active } = await adminClient.from("match_sessions").select("id").eq("user_id", uid).eq("status", "active").maybeSingle();
   if (active) return json({ error: "active_session", sessionId: active.id }, 409);
@@ -1860,6 +1440,6 @@ Deno.serve(async (req) => {
     case "resign":
       return resignMatch(adminClient, uid);
     default:
-      return legacyPlay(userClient, adminClient, uid, pickDifficulty(body.p_difficulty));
+      return json({ error: "unknown op" }, 400);
   }
 });

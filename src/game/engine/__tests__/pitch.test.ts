@@ -1,13 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import {
-  COLS,
-  ROWS,
-  ZONE_MAP,
-  zoneAt,
-  laneFor,
-  initialPitch,
-  pitchAt,
-} from '@/game/engine/pitch'
+import { COLS, ROWS, ZONE_MAP, zoneAt } from '@/game/engine/pitch'
 
 describe('ZONE_MAP', () => {
   it('is a 5×6 board', () => {
@@ -43,76 +35,6 @@ describe('ZONE_MAP', () => {
     for (const col of [0, 2, COLS - 1]) {
       expect(zoneAt({ col, row: 2 })).toBe('MID')
       expect(zoneAt({ col, row: 3 })).toBe('MID')
-    }
-  })
-})
-
-describe('Pitch advancement', () => {
-  it('starts each possession at midfield, where no shot is legal', () => {
-    const p = initialPitch('home')
-    expect(p.cell.row).toBe(2)
-    expect(p.zone).toBe('MID')
-    expect(p.canShootRM()).toBe(false)
-    expect(p.canShootDL()).toBe(false)
-    expect(p.toGoal()).toBe(3)
-  })
-
-  it('home advances up the rows: MID → MID → DL (long shot) → RM (box)', () => {
-    const mid = initialPitch('home') // row 2
-    const mid2 = mid.step(1)
-    expect(mid2.cell.row).toBe(3)
-    expect(mid2.zone).toBe('MID')
-
-    const dl = mid2.step(1)
-    expect(dl.cell.row).toBe(4)
-    expect(dl.zone).toBe('DL')
-    expect(dl.canShootDL()).toBe(true)
-    expect(dl.canShootRM()).toBe(false)
-    expect(dl.toGoal()).toBe(1)
-
-    const rm = dl.step(1)
-    expect(rm.cell.row).toBe(ROWS - 1)
-    expect(rm.zone).toBe('RM')
-    expect(rm.canShootRM()).toBe(true)
-    expect(rm.toGoal()).toBe(0)
-  })
-
-  it('away advances down the rows toward row 0', () => {
-    const mid = initialPitch('away')
-    expect(mid.cell.row).toBe(3)
-    const dl = mid.step(1).step(1)
-    expect(dl.cell.row).toBe(1)
-    expect(dl.canShootDL()).toBe(true)
-    const rm = dl.step(1)
-    expect(rm.cell.row).toBe(0)
-    expect(rm.canShootRM()).toBe(true)
-    expect(rm.toGoal()).toBe(0)
-  })
-
-  it('clamps at the goal line and never leaves the board', () => {
-    const rm = initialPitch('home').step(1).step(1).step(1)
-    expect(rm.cell.row).toBe(ROWS - 1)
-    expect(rm.step(1).cell.row).toBe(ROWS - 1)
-    const own = initialPitch('home').step(-1).step(-1).step(-1)
-    expect(own.cell.row).toBe(0)
-  })
-
-  it('toLane keeps the carrier in an interior lane and its zone', () => {
-    const rm = pitchAt({ col: 3, row: ROWS - 1 }, 'home')
-    expect(rm.zone).toBe('RM')
-    const shifted = rm.toLane(1)
-    expect(shifted.cell.col).toBe(1)
-    expect(shifted.zone).toBe('RM')
-    expect(shifted.canShootRM()).toBe(true)
-  })
-})
-
-describe('laneFor', () => {
-  it('always maps to an interior lane (cols 1–3), never a wing', () => {
-    for (let i = 0; i < 20; i++) {
-      const col = laneFor(i)
-      expect(col).toBeGreaterThanOrEqual(1)
-      expect(col).toBeLessThanOrEqual(3)
     }
   })
 })
