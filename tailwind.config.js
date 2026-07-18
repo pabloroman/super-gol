@@ -38,8 +38,6 @@ export default {
         },
         // The factor strip prints its abbreviation in black and its value in blue.
         factor: '#1c4fa1',
-        // The ficha numeral, «en rojo si es extranjero» (page 2).
-        ficha: '#cc2222',
       },
       fontFamily: {
         display: ['"Barlow Condensed"', 'system-ui', 'sans-serif'],

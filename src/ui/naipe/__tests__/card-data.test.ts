@@ -1,12 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import type { Card } from '../../../lib/types'
-import {
-  ageFrom,
-  formatBirthDate,
-  formatHeight,
-  isForeign,
-  physicalLine,
-} from '../card-data'
+import { ageFrom, formatBirthDate, formatHeight, physicalLine } from '../card-data'
 
 function card(over: Partial<Card>): Card {
   return {
@@ -30,24 +24,6 @@ function card(over: Partial<Card>): Card {
     ...over,
   }
 }
-
-describe('isForeign', () => {
-  it('reads both spellings — the catalog is English, seed.sql is Spanish', () => {
-    expect(isForeign(card({ nationality: 'Spain' }))).toBe(false)
-    expect(isForeign(card({ nationality: 'España' }))).toBe(false)
-    expect(isForeign(card({ nationality: 'espana' }))).toBe(false)
-    expect(isForeign(card({ nationality: ' Spain ' }))).toBe(false)
-  })
-
-  it('marks non-Spanish players foreign', () => {
-    expect(isForeign(card({ nationality: 'France' }))).toBe(true)
-    expect(isForeign(card({ nationality: 'Belgium' }))).toBe(true)
-  })
-
-  it('treats an unknown nationality as not foreign — absence is not evidence', () => {
-    expect(isForeign(card({ nationality: null }))).toBe(false)
-  })
-})
 
 describe('formatBirthDate', () => {
   it('renders the card format', () => {

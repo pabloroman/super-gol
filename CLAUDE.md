@@ -190,10 +190,11 @@ display subset (`src/ui/naipe/factors.ts`).
 changing anything here. Rules that page settles, each of which the code got wrong
 once already:
 
-- The roundel is the **ficha** = `cost`, and prints **red for a foreigner**
-  («En rojo si es extranjero») — 227 of 518 cards. `isForeign` accepts both
-  spellings, since `0005` stores English exonyms (`'Spain'`) and `seed.sql` stores
-  Spanish (`'España'`).
+- The roundel is the **ficha** = `cost`. The original printed it «en rojo si es
+  extranjero» (page 2) to flag the foreigners a squad's roster limit capped, but
+  **this version has no origin-based squad rule**, so the ficha always prints
+  black and cards carry no foreigner marking — nationality is shown as plain
+  information in the detail sheet, nothing more.
 - The demarcación prints **the player's zone in red**, green elsewhere. The
   `zone_grid` data is right (`true` = the zone, attacking-up); only the colour was
   inverted.

@@ -4,7 +4,7 @@ import { ABILITY_META } from '@/game/abilities'
 import { abilityValue } from '@/game/ratings'
 import { crestUrl } from '@/cards/clubs'
 import { naipeFactors } from './factors'
-import { isForeign, physicalLine } from './card-data'
+import { physicalLine } from './card-data'
 
 /**
  * The Super Gol card, reproduced from the physical naipe (Naipes Heraclio
@@ -166,11 +166,9 @@ export function Naipe({
         {/* Data band: ficha, personal data, demarcación */}
         <div className="flex shrink-0 items-center gap-[2%] bg-gradient-to-b from-naipe-band to-naipe-band-dark px-[3%] py-[2%]">
           <span
-            className={`grid shrink-0 place-items-center rounded-full bg-white font-display font-bold leading-none tabular-nums ${
-              isForeign(card) ? 'text-ficha' : 'text-black'
-            }`}
+            className="grid shrink-0 place-items-center rounded-full bg-white font-display font-bold leading-none tabular-nums text-black"
             style={{ width: '17cqw', height: '17cqw', fontSize: '9.5cqw' }}
-            title={isForeign(card) ? 'Ficha (extranjero)' : 'Ficha'}
+            title="Ficha"
           >
             {card.cost}
           </span>

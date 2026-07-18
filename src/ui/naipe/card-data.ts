@@ -6,21 +6,6 @@ import type { Card } from '@/lib/types'
  * (rulebook page 2).
  */
 
-/**
- * Is the player a foreigner? The ficha numeral prints «en rojo si es extranjero»
- * (page 2) — Super Gol is a LaLiga game, so "foreign" means non-Spanish.
- *
- * The two card sources disagree on how they spell nationality: the generated
- * catalog (0005_cards_laliga_2025.sql) uses English exonyms from the
- * Transfermarkt snapshot ('Spain', 'Belgium'), while the hand-decoded originals
- * in supabase/seed.sql use Spanish ('España'). Accept both. An unknown
- * nationality is not evidence of foreignness, so it prints black.
- */
-export function isForeign(card: Card): boolean {
-  if (!card.nationality) return false
-  return !/^(spain|españa|espana)$/i.test(card.nationality.trim())
-}
-
 /** `1992-05-11` -> `11/05/92`, the card's date format. */
 export function formatBirthDate(iso: string | null): string | null {
   if (!iso) return null
