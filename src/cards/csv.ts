@@ -1,10 +1,12 @@
 // CSV <-> Card mapping for the admin importer and the offline catalog export.
 //
 // The CSV carries finished card fields (no inference): one column per scalar
-// field plus one column per ability key. `zone_grid` is derived from `position`
-// (GK/DF/MF/FW) via ZONE_GRIDS, so the common case needs no grid in the file; a
-// card with a non-default grid gets an explicit `zone_grid` JSON column.
-// parse and serialize are symmetric — a round trip is loss-free.
+// field plus one column per ability key. A card whose `zone_grid` differs from its
+// coarse position default (ZONE_GRIDS[GK/DF/MF/FW]) gets an explicit `zone_grid` JSON
+// column; a card left at the group default omits it. Since demarcaciones are now
+// per-position (a left-back's grid ≠ the DF-group default), most catalog rows carry the
+// explicit column — the coarse `position` can't reconstruct the granular grid, so it
+// must travel in the file. parse and serialize are symmetric — a round trip is loss-free.
 
 import Papa from 'papaparse'
 import type { Abilities, AbilityKey, Card, Rarity } from '../lib/types'

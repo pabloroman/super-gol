@@ -13,7 +13,7 @@
 // attributes are added by hand later in scripts/cards/data/abilities.json.
 
 import type { Abilities, AbilityKey, Rarity } from '../lib/types'
-import { roleProfile, ZONE_GRIDS, type RoleProfile } from './positions'
+import { roleProfile, zoneForPosition, type RoleProfile } from './positions'
 
 const FACTOR_MAX = 3
 const BASELINE = 1
@@ -87,7 +87,8 @@ export function deriveCard(position: string | null | undefined, overall: number)
   const profile = roleProfile(position)
   return {
     abilities: buildAbilities(overall, profile),
-    zone_grid: ZONE_GRIDS[profile.group],
+    // Demarcación derived from the player's position via the ZONE_BY_POSITION map.
+    zone_grid: zoneForPosition(position),
     cost: costFor(overall),
     rarity: rarityFor(overall),
     position: profile.group,
