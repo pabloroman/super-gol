@@ -73,7 +73,7 @@ describe('validateSquad', () => {
     expect(v.errors).toContain('Un jugador no puede repetirse en el equipo.')
   })
 
-  it('refuses a squad over the 100-point cap', () => {
+  it('refuses a squad over the 70-point cap', () => {
     const v = validateSquad(xi(10)) // 110
     expect(v.ok).toBe(false)
     expect(v.cost).toBe(110)
@@ -81,12 +81,12 @@ describe('validateSquad', () => {
   })
 
   it('accepts a squad sitting exactly on the cap', () => {
-    // 11 legal cards costing 100: keeper 10, the ten outfielders 9 each.
+    // 11 legal cards costing 70: keeper 10, the ten outfielders 6 each.
     const onTheNose = [
       ...line('GK', 1, 10),
-      ...line('DF', 4, 9),
-      ...line('MF', 3, 9),
-      ...line('FW', 3, 9),
+      ...line('DF', 4, 6),
+      ...line('MF', 3, 6),
+      ...line('FW', 3, 6),
     ]
     const v = validateSquad(onTheNose)
     expect(v.cost).toBe(POINT_CAP)
@@ -96,8 +96,8 @@ describe('validateSquad', () => {
   // The bench used to spend against the same cap, so a legal XI could be refused
   // for players who never took the field. There is no bench to charge for now.
   it('costs the eleven and nothing else', () => {
-    const eleven = xi(9) // 99 — one point under
-    expect(squadCost(eleven)).toBe(99)
+    const eleven = xi(6) // 66 — under the cap
+    expect(squadCost(eleven)).toBe(66)
     expect(validateSquad(eleven).ok).toBe(true)
   })
 
