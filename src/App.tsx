@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Link, NavLink, Route, Routes } from 'react-router-dom'
+import { Link, NavLink, Route, Routes, useLocation } from 'react-router-dom'
 import { Cog6ToothIcon } from '@heroicons/react/24/outline'
 import { isSupabaseConfigured } from '@/lib/supabase'
 import { useAuth } from '@/auth/AuthProvider'
@@ -8,6 +8,7 @@ import { Footer } from '@/ui/Footer'
 import { Coin } from '@/ui/Coin'
 import { TABS } from '@/ui/nav'
 import { Login } from '@/screens/Login'
+import { ResetPassword } from '@/screens/ResetPassword'
 import { Landing } from '@/screens/Landing'
 import { Home } from '@/screens/Home'
 import { Collection } from '@/screens/Collection'
@@ -133,6 +134,7 @@ function Unauthenticated() {
 
 export default function App() {
   const { session, loading } = useAuth()
+  const location = useLocation()
 
   if (!isSupabaseConfigured) return <SetupNeeded />
 
@@ -143,6 +145,12 @@ export default function App() {
       </div>
     )
   }
+
+  // The password-recovery callback. Rendered ahead of the session gate and
+  // independent of `session` so it works both when the recovery link established
+  // a session (set-new-password) and when it was expired (show the error). Using
+  // useLocation keeps this reactive, so navigating away from it re-renders here.
+  if (location.pathname === '/reset-password') return <ResetPassword />
 
   if (!session) return <Unauthenticated />
 

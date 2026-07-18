@@ -28,7 +28,10 @@ port = 54323
 [auth]
 enabled = true
 site_url = "http://localhost:5173"
-additional_redirect_urls = ["http://localhost:5173"]
+# The bare origin covers the `${origin}/` confirmation redirect; the explicit
+# /reset-password entry is the password-recovery landing (prod hosts must list
+# their own `<origin>/reset-password` in the dashboard's Redirect URLs too).
+additional_redirect_urls = ["http://localhost:5173", "http://localhost:5173/reset-password"]
 jwt_expiry = 3600
 enable_signup = true
 
