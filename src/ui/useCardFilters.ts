@@ -68,10 +68,16 @@ export function useCardFilters<T>(
      * exactly that — Colección very much does not.
      */
     searchId = false,
+    /**
+     * Seed the position filter. The squad picker opens narrowed to a line (POR /
+     * DEF / MED / DEL) while the chips still let the user widen; everywhere else
+     * defaults to null (all positions).
+     */
+    initialPosition = null as PositionGroup | null,
   } = {},
 ): { filtered: T[]; state: CardFilterState } {
   const [query, setQuery] = useState('')
-  const [position, setPosition] = useState<PositionGroup | null>(null)
+  const [position, setPosition] = useState<PositionGroup | null>(initialPosition)
   const [rarity, setRarity] = useState<Rarity | null>(null)
   const [sort, setSort] = useState<SortKey>(initialSort)
 
