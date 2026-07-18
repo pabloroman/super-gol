@@ -17,16 +17,24 @@ const PASS_LABEL: Record<string, string> = { PD: 'Pase directo', PC: 'Pase corto
 /** A coarse grouping for laying the menu out (attack vs defence vs movement). */
 export type ActionGroup = 'remate' | 'pase' | 'regate' | 'mover' | 'defensa' | 'saque'
 
+/** A referenced player, split so the UI can render the board number as a chip (matching
+ *  the pitch pip) instead of a parenthesised «(NOMBRE (7))» string. */
+export interface ActionTarget {
+  name: string
+  dorsal: number
+}
+
 export interface ActionLabel {
   label: string
   group: ActionGroup
+  /** The player this action acts on/toward, when it has one (for the dorsal chip + name). */
+  target?: ActionTarget
 }
 
-/** Name plus board number, so two players sharing a surname stay distinguishable. */
-function name(state: MatchState, id: string): string {
+/** Name plus board number, split so the number can print as a chip that mirrors the pip. */
+function target(state: MatchState, id: string): ActionTarget {
   const p = state.players[id]
-  if (!p) return id
-  return `${p.card.name} (${dorsal(id)})`
+  return { name: p ? p.card.name : id, dorsal: dorsal(id) }
 }
 
 export function describeAction(state: MatchState, action: Action): ActionLabel {
@@ -34,7 +42,7 @@ export function describeAction(state: MatchState, action: Action): ActionLabel {
     case 'shot':
       return { label: action.shot === 'RM' ? 'Remate' : 'Disparo lejano', group: 'remate' }
     case 'pass':
-      return { label: `${PASS_LABEL[action.pass]} a ${name(state, action.to)}`, group: 'pase' }
+      return { label: `${PASS_LABEL[action.pass]} a`, group: 'pase', target: target(state, action.to) }
     case 'hueco':
       return { label: `${action.pass === 'PL' ? 'Pase largo' : 'Pase corto'} al hueco`, group: 'pase' }
     case 'regate':
@@ -45,14 +53,16 @@ export function describeAction(state: MatchState, action: Action): ActionLabel {
       if (action.handoff) {
         const mover = state.players[action.player]
         const mate = mover && occupants(state, action.to).find((o) => o.side === mover.side && o.id !== mover.id)
-        return { label: mate ? `Relevo, dejar el balón a ${name(state, mate.id)}` : 'Relevo con balón', group: 'mover' }
+        return mate
+          ? { label: 'Relevo, dejar el balón a', group: 'mover', target: target(state, mate.id) }
+          : { label: 'Relevo con balón', group: 'mover' }
       }
-      return { label: `Mover a ${name(state, action.player)}`, group: 'mover' }
+      return { label: 'Mover a', group: 'mover', target: target(state, action.player) }
     }
     case 'anticipacion':
-      return { label: `Anticipación (${name(state, action.defender)})`, group: 'defensa' }
+      return { label: 'Anticipación', group: 'defensa', target: target(state, action.defender) }
     case 'robo':
-      return { label: `Robo de balón (${name(state, action.defender)})`, group: 'defensa' }
+      return { label: 'Robo de balón', group: 'defensa', target: target(state, action.defender) }
     case 'decline':
       return { label: 'No hacer nada', group: 'defensa' }
     case 'robo_advance':
@@ -60,13 +70,13 @@ export function describeAction(state: MatchState, action: Action): ActionLabel {
     case 'decline_advance':
       return { label: 'Quedarse', group: 'mover' }
     case 'recover':
-      return { label: `Recuperar con ${name(state, action.player)}`, group: 'defensa' }
+      return { label: 'Recuperar con', group: 'defensa', target: target(state, action.player) }
     case 'premove':
-      return { label: `Colocar a ${name(state, action.player)}`, group: 'mover' }
+      return { label: 'Colocar a', group: 'mover', target: target(state, action.player) }
     case 'premove_done':
       return { label: 'Sacar de portería', group: 'saque' }
     case 'keeper_pass':
-      return { label: `${PASS_LABEL[action.pass]} a ${name(state, action.to)}`, group: 'saque' }
+      return { label: `${PASS_LABEL[action.pass]} a`, group: 'saque', target: target(state, action.to) }
     case 'keeper_hueco':
       return { label: 'Saque al hueco', group: 'saque' }
     case 'place':
@@ -123,7 +133,7 @@ export function phasePrompt(state: MatchState): string {
     case 'attack':
       return 'Tienes el balón'
     case 'defend_move':
-      return 'El rival se movió: puedes mover un jugador'
+      return 'El rival se movió'
     case 'defend_interrupt':
       return 'Pase del rival a un jugador marcado: ¿intervienes?'
     case 'robo_advance':
