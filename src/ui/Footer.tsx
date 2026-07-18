@@ -8,10 +8,10 @@ export function Footer() {
   return (
     <footer className="border-t border-white/5 text-slate-500">
       <div className="app-wide px-4 py-6 text-center text-xs leading-relaxed md:px-6">
-        Un homenaje al juego de cartas{' '}
+        Este proyecto, no oficial y sin ánimo de lucro, es un homenaje al juego
+        de cartas{' '}
         <span className="font-semibold text-slate-400">Super Gol</span>{' '}
-        (Naipes Heraclio Fournier, 1995). Proyecto no oficial, sin ánimo de lucro
-        y sin relación con Marca ni Fournier.
+        (Marca/Naipes Heraclio Fournier, 1995).
       </div>
     </footer>
   )
