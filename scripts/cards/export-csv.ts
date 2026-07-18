@@ -9,7 +9,7 @@ import { fileURLToPath } from 'node:url'
 import { dirname, join } from 'node:path'
 import type { Card, Rarity } from '../../src/lib/types'
 import { cardsToCsv } from '../../src/cards/csv'
-import { buildRows, type TmLeague } from './rows'
+import { buildRows, loadAbilities, type TmLeague } from './rows'
 
 const HERE = dirname(fileURLToPath(import.meta.url))
 const ROOT = join(HERE, '..', '..')
@@ -17,7 +17,10 @@ const OUT_FILE = join(HERE, 'data', 'laliga-2025-cards.csv')
 
 const league: TmLeague = JSON.parse(readFileSync(join(HERE, 'data', 'laliga-2025.json'), 'utf8'))
 
-const cards: Card[] = buildRows(league).map((r) => ({
+// Same abilities source as the SQL migration (data/abilities.json) so the CSV and
+// the migration can never disagree; empty map → derived fallback inside buildRows.
+const overrides = loadAbilities()
+const cards: Card[] = buildRows(league, Object.keys(overrides).length ? overrides : undefined).map((r) => ({
   id: r.id,
   name: r.name,
   full_name: r.full_name,
