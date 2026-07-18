@@ -6,7 +6,7 @@ import type { AbilityKey } from '@/lib/types'
 import { ABILITY_META } from '@/game/abilities'
 import type { Action, Cell, MatchState, Side } from '@/game/board'
 import { cellKey, occupants } from '@/game/board'
-import { describeAction, phasePrompt, actionAbility, type ActionGroup } from '@/game/board/describe'
+import { describeAction, phasePrompt, actionAbility, type ActionGroup, type ActionTarget } from '@/game/board/describe'
 import type { Difficulty } from '@/game/engine/types'
 import { contestBreakdown } from '@/game/engine/dice'
 import { useInteractiveMatch, type Roll } from './useInteractiveMatch'
@@ -285,12 +285,18 @@ export function InteractiveMatch({
                         <AbilityChip ability={huecoAbility(state, m.targets)} />
                       </button>
                     ))}
-                    {orderButtons(state, menu.buttons).map((a, i) => (
-                      <button key={i} disabled={pending} className="btn-ghost text-left" onClick={() => run(a)}>
-                        <span className="flex-1">{describeAction(state, a).label}</span>
-                        <AbilityChip ability={actionAbility(state, a)} />
-                      </button>
-                    ))}
+                    {orderButtons(state, menu.buttons).map((a, i) => {
+                      const d = describeAction(state, a)
+                      return (
+                        <button key={i} disabled={pending} className="btn-ghost text-left" onClick={() => run(a)}>
+                          <span className="flex min-w-0 flex-1 items-center gap-2">
+                            <span className="font-semibold">{d.label}</span>
+                            {d.target && <PlayerToken target={d.target} />}
+                          </span>
+                          <AbilityChip ability={actionAbility(state, a)} />
+                        </button>
+                      )
+                    })}
                   </div>
                 )}
               </div>
@@ -363,6 +369,19 @@ function huecoAbility(
 ): { key: AbilityKey; value: number } | null {
   for (const a of targets.values()) return actionAbility(state, a)
   return null
+}
+
+/** The action's target player: a white dorsal chip mirroring the pitch pip, plus the name,
+ *  so the number reads at a glance against the board (menu targets are always home/white). */
+function PlayerToken({ target }: { target: ActionTarget }) {
+  return (
+    <span className="inline-flex min-w-0 items-center gap-1.5 font-normal text-slate-400">
+      <span className="inline-flex h-5 min-w-[1.25rem] items-center justify-center rounded bg-white px-1 text-xs font-bold leading-none tabular-nums text-pitch-950">
+        {target.dorsal}
+      </span>
+      <span className="truncate">{target.name}</span>
+    </span>
+  )
 }
 
 /** A compact rating badge («RM 3»): which ability decides an action, and the actor's value. */
