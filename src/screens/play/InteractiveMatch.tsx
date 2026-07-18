@@ -1,12 +1,16 @@
 import { useEffect, useMemo, useState } from 'react'
 import { CheckIcon, XMarkIcon } from '@heroicons/react/24/solid'
 import { Coin } from '@/ui/Coin'
+import type { AbilityKey } from '@/lib/types'
+import { ABILITY_META } from '@/game/abilities'
 import type { Action, Cell, MatchState, Side } from '@/game/board'
 import { cellKey, occupants } from '@/game/board'
-import { describeAction, phasePrompt, type ActionGroup } from '@/game/board/describe'
+import { describeAction, phasePrompt, actionAbility, type ActionGroup } from '@/game/board/describe'
 import type { Difficulty } from '@/game/engine/types'
 import { useInteractiveMatch } from './useInteractiveMatch'
 import { InteractivePitchBoard } from './InteractivePitchBoard'
+import { HowToPlay } from './HowToPlay'
+import { SquadPanel } from './SquadPanel'
 
 /** A "pase/saque al hueco" of one pass type: tap one of its empty target cells to commit. */
 interface HuecoMode {
@@ -90,6 +94,8 @@ export function InteractiveMatch({
   const [selected, setSelected] = useState<string | null>(null)
   const [huecoKey, setHuecoKey] = useState<string | null>(null)
   const [confirmResign, setConfirmResign] = useState(false)
+  const [showRules, setShowRules] = useState(false)
+  const [showSquad, setShowSquad] = useState(false)
 
   const menu = useMemo<Menu>(
     () =>
@@ -180,11 +186,27 @@ export function InteractiveMatch({
 
   return (
     <div className="flex flex-col gap-4">
-      <div className="card-surface flex items-center justify-between p-3 text-sm">
+      <div className="card-surface flex flex-wrap items-center justify-between gap-x-3 gap-y-2 p-3 text-sm">
         <span className="font-semibold">
           Tú {state.score.home} – {state.score.away} {opponent}
         </span>
-        <span className="text-slate-400">Turno {Math.min(state.turno + 1, 15)}/15</span>
+        <div className="flex items-center gap-2">
+          <span className="text-slate-400">Turno {Math.min(state.turno + 1, 15)}/15</span>
+          <button
+            type="button"
+            onClick={() => setShowSquad(true)}
+            className="rounded-lg bg-white/5 px-2 py-1 text-xs font-medium text-slate-200 transition md:hover:bg-white/10"
+          >
+            Plantilla
+          </button>
+          <button
+            type="button"
+            onClick={() => setShowRules(true)}
+            className="rounded-lg bg-white/5 px-2 py-1 text-xs font-medium text-slate-200 transition md:hover:bg-white/10"
+          >
+            ¿Cómo se juega?
+          </button>
+        </div>
       </div>
 
       <div className="grid gap-4 md:grid-cols-[minmax(0,26rem)_minmax(0,1fr)] md:items-start">
@@ -227,13 +249,17 @@ export function InteractiveMatch({
                         setHuecoKey((cur) => (cur === m.key ? null : m.key))
                       }}
                     >
-                      {m.label}
-                      {m.key === huecoKey ? ' — toca una casilla' : ''}
+                      <span className="flex-1">
+                        {m.label}
+                        {m.key === huecoKey ? ' — toca una casilla' : ''}
+                      </span>
+                      <AbilityChip ability={huecoAbility(state, m.targets)} />
                     </button>
                   ))}
                   {orderButtons(state, menu.buttons).map((a, i) => (
                     <button key={i} className="btn-ghost text-left" onClick={() => run(a)}>
-                      {describeAction(state, a).label}
+                      <span className="flex-1">{describeAction(state, a).label}</span>
+                      <AbilityChip ability={actionAbility(state, a)} />
                     </button>
                   ))}
                 </div>
@@ -292,7 +318,29 @@ export function InteractiveMatch({
           <Chronicle lines={chronicle} />
         </div>
       </div>
+
+      <SquadPanel open={showSquad} onClose={() => setShowSquad(false)} state={state} />
+      <HowToPlay open={showRules} onClose={() => setShowRules(false)} />
     </div>
+  )
+}
+
+/** The ability a "pase al hueco" mode shows — every target of the mode shares its pass type. */
+function huecoAbility(
+  state: MatchState,
+  targets: Map<string, Action>,
+): { key: AbilityKey; value: number } | null {
+  for (const a of targets.values()) return actionAbility(state, a)
+  return null
+}
+
+/** A compact rating badge («RM 3»): which ability decides an action, and the actor's value. */
+function AbilityChip({ ability }: { ability: { key: AbilityKey; value: number } | null }) {
+  if (!ability) return null
+  return (
+    <span className="shrink-0 rounded bg-black/30 px-1.5 py-0.5 text-xs font-semibold leading-none tabular-nums text-slate-200">
+      {ABILITY_META[ability.key].abbr} {ability.value}
+    </span>
   )
 }
 
