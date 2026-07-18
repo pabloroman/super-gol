@@ -26,10 +26,11 @@
 -- code path as a live signup, so they cannot drift from it — and seed_cards.sql
 -- running first is what makes the starter grant non-empty.
 --
--- `supabase db reset --linked` (npm run db:reset:linked) runs this file against
--- the LINKED REMOTE, where a public password on an is_admin account would be a
--- real breach. The guard below refuses that, so the danger is documented in code
--- rather than in a comment nobody reads at 2am.
+-- `npm run db:reset:linked` passes --no-seed, so this file does not run against the
+-- LINKED REMOTE. The guard below is the backstop for a bare `supabase db reset
+-- --linked` (no flag), where a public password on an is_admin account would be a real
+-- breach: it refuses, so the danger is documented in code rather than in a comment
+-- nobody reads at 2am.
 --
 -- Fixed UUIDs, so the accounts are stable across resets: rows you reference by
 -- hand (a squad you keep re-seeding, a match you're debugging) survive.
