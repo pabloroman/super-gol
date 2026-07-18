@@ -2,6 +2,7 @@ import { useEffect, useState, type FormEvent } from 'react'
 import { requireSupabase } from '@/lib/supabase'
 import { USERNAME_MAX, USERNAME_MIN, usernameError } from '@/lib/username'
 import { authErrorMessage } from '@/lib/authErrors'
+import { readHashError } from '@/lib/authHash'
 
 // Supabase's default minimum password length. Mirrored client-side so a short
 // password fails with a Spanish hint before the round trip, rather than coming
@@ -12,6 +13,13 @@ const USERNAME_HINT = `Entre ${USERNAME_MIN} y ${USERNAME_MAX} caracteres · let
 
 /** Per-field validation/error messages, shown next to the offending input. */
 type FieldErrors = { username?: string; email?: string; password?: string }
+
+// signin/signup are the two account modes; `reset` is the "forgot password"
+// request form (email in → recovery link out). The reset request is email-only:
+// email_for_login (0017) resolves a username only once the password verifies, so
+// a forgotten-password user can't be reached by handle, and a password-less
+// username→email lookup would leak the public-handle→private-email mapping.
+type Mode = 'signin' | 'signup' | 'reset'
 
 /**
  * Where Supabase should send the user after they confirm their email. We pass
@@ -27,25 +35,14 @@ function emailRedirectTo(): string | undefined {
 }
 
 /**
- * Read an auth error handed back in the URL hash, e.g.
- * `#error=access_denied&error_code=otp_expired&error_description=...`.
- * Supabase appends this when an email link is invalid or expired. We surface it
- * (and strip it from the URL) so the user gets a Spanish explanation and a
- * resend option instead of a bare login form.
+ * Where a password-recovery link lands: the dedicated `/reset-password` route,
+ * which App.tsx renders ahead of the session gate so the callback is reachable
+ * whether or not the recovery session took. Same origin-from-runtime reasoning as
+ * emailRedirectTo(); the path must be on the Supabase redirect allow-list.
  */
-function readHashError(): { code: string | null; description: string | null } | null {
-  if (typeof window === 'undefined') return null
-  const hash = window.location.hash.replace(/^#/, '')
-  if (!hash) return null
-  const params = new URLSearchParams(hash)
-  if (!params.get('error') && !params.get('error_code')) return null
-  const result = {
-    code: params.get('error_code'),
-    description: params.get('error_description'),
-  }
-  // Clean the hash so a refresh doesn't re-show the error.
-  window.history.replaceState(null, '', window.location.pathname + window.location.search)
-  return result
+function resetRedirectTo(): string | undefined {
+  if (typeof window === 'undefined') return undefined
+  return `${window.location.origin}/reset-password`
 }
 
 export function Login({
@@ -55,7 +52,7 @@ export function Login({
   initialMode?: 'signin' | 'signup'
   onBack?: () => void
 } = {}) {
-  const [mode, setMode] = useState<'signin' | 'signup'>(initialMode)
+  const [mode, setMode] = useState<Mode>(initialMode)
   const [email, setEmail] = useState('')
   // Sign-in accepts either a username or an email in one field.
   const [loginId, setLoginId] = useState('')
@@ -87,6 +84,16 @@ export function Login({
     if (field) setFieldErrors((prev) => ({ ...prev, [field]: undefined }))
   }
 
+  // Switch between signin / signup / reset, wiping any errors and messages so a
+  // stale line from the previous mode never carries over.
+  function switchMode(next: Mode) {
+    setMode(next)
+    setError(null)
+    setFieldErrors({})
+    setMessage(null)
+    setExpiredLink(false)
+  }
+
   // Route a caught auth/RPC error to its field (email/password) or, failing
   // that, to the form-level line. Everything is translated to Spanish here.
   function reportAuthError(err: unknown) {
@@ -107,6 +114,24 @@ export function Login({
     setExpiredLink(false)
     const sb = requireSupabase()
     try {
+      if (mode === 'reset') {
+        // Request a recovery link. Email-only (see the Mode comment). The message
+        // is deliberately neutral — resetPasswordForEmail never reveals whether
+        // the address has an account, and we don't either.
+        const target = email.trim()
+        if (!target) {
+          setFieldErrors({ email: 'Introduce tu correo.' })
+          return
+        }
+        const { error } = await sb.auth.resetPasswordForEmail(target, {
+          redirectTo: resetRedirectTo(),
+        })
+        if (error) throw error
+        setMessage(
+          'Si hay una cuenta con ese correo, te hemos enviado un enlace para restablecer la contraseña.',
+        )
+        return
+      }
       if (mode === 'signup') {
         const trimmed = username.trim()
 
@@ -282,7 +307,7 @@ export function Login({
               {fieldErrors.email && <p className="text-xs text-red-400">{fieldErrors.email}</p>}
             </div>
           </>
-        ) : (
+        ) : mode === 'signin' ? (
           <input
             required
             autoComplete="username"
@@ -294,28 +319,63 @@ export function Login({
               clearOnEdit()
             }}
           />
-        )}
-        <div className="flex flex-col gap-1">
-          <input
-            type="password"
-            required
-            autoComplete={mode === 'signup' ? 'new-password' : 'current-password'}
-            aria-invalid={Boolean(fieldErrors.password)}
-            className={inputClass}
-            placeholder="Contraseña"
-            value={password}
-            onChange={(e) => {
-              setPassword(e.target.value)
-              clearOnEdit('password')
-            }}
-          />
-          {mode === 'signup' &&
-            (fieldErrors.password ? (
-              <p className="text-xs text-red-400">{fieldErrors.password}</p>
+        ) : (
+          <div className="flex flex-col gap-1">
+            <input
+              type="email"
+              required
+              autoComplete="email"
+              aria-invalid={Boolean(fieldErrors.email)}
+              className={inputClass}
+              placeholder="Correo"
+              value={email}
+              onChange={(e) => {
+                setEmail(e.target.value)
+                clearOnEdit('email')
+              }}
+            />
+            {fieldErrors.email ? (
+              <p className="text-xs text-red-400">{fieldErrors.email}</p>
             ) : (
-              <p className="text-xs text-slate-500">{PASSWORD_HINT}</p>
-            ))}
-        </div>
+              <p className="text-xs text-slate-500">
+                Te enviaremos un enlace al correo de tu cuenta.
+              </p>
+            )}
+          </div>
+        )}
+        {mode !== 'reset' && (
+          <div className="flex flex-col gap-1">
+            <input
+              type="password"
+              required
+              autoComplete={mode === 'signup' ? 'new-password' : 'current-password'}
+              aria-invalid={Boolean(fieldErrors.password)}
+              className={inputClass}
+              placeholder="Contraseña"
+              value={password}
+              onChange={(e) => {
+                setPassword(e.target.value)
+                clearOnEdit('password')
+              }}
+            />
+            {mode === 'signup' &&
+              (fieldErrors.password ? (
+                <p className="text-xs text-red-400">{fieldErrors.password}</p>
+              ) : (
+                <p className="text-xs text-slate-500">{PASSWORD_HINT}</p>
+              ))}
+          </div>
+        )}
+
+        {mode === 'signin' && (
+          <button
+            type="button"
+            onClick={() => switchMode('reset')}
+            className="self-end text-xs text-slate-400 hover:text-slate-200"
+          >
+            ¿Olvidaste tu contraseña?
+          </button>
+        )}
 
         {error && <p className="text-sm text-red-400">{error}</p>}
         {message && <p className="text-sm text-grass-400">{message}</p>}
@@ -332,23 +392,33 @@ export function Login({
         )}
 
         <button type="submit" className="btn-primary mt-1" disabled={busy}>
-          {busy ? '…' : mode === 'signup' ? 'Crear cuenta' : 'Entrar'}
+          {busy
+            ? '…'
+            : mode === 'signup'
+              ? 'Crear cuenta'
+              : mode === 'reset'
+                ? 'Enviar enlace'
+                : 'Entrar'}
         </button>
       </form>
 
-      <button
-        onClick={() => {
-          setMode(mode === 'signin' ? 'signup' : 'signin')
-          setError(null)
-          setFieldErrors({})
-          setMessage(null)
-        }}
-        className="text-sm text-slate-400 hover:text-slate-200"
-      >
-        {mode === 'signin'
-          ? '¿No tienes cuenta? Crea una'
-          : '¿Ya tienes cuenta? Entra'}
-      </button>
+      {mode === 'reset' ? (
+        <button
+          onClick={() => switchMode('signin')}
+          className="text-sm text-slate-400 hover:text-slate-200"
+        >
+          ‹ Volver a entrar
+        </button>
+      ) : (
+        <button
+          onClick={() => switchMode(mode === 'signin' ? 'signup' : 'signin')}
+          className="text-sm text-slate-400 hover:text-slate-200"
+        >
+          {mode === 'signin'
+            ? '¿No tienes cuenta? Crea una'
+            : '¿Ya tienes cuenta? Entra'}
+        </button>
+      )}
     </div>
   )
 }
