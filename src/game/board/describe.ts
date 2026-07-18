@@ -5,8 +5,10 @@
  * pure rules modules because it reads player names for display only.
  */
 
+import type { AbilityKey } from '@/lib/types'
+import { abilityValue } from '@/game/ratings'
 import type { Action } from './actions'
-import type { MatchState } from './state'
+import type { MatchState, PlayerId } from './state'
 import { dorsal } from './state'
 import { occupants } from './derive'
 
@@ -71,6 +73,45 @@ export function describeAction(state: MatchState, action: Action): ActionLabel {
       return { label: 'Colocación', group: 'mover' }
     case 'placement_done':
       return { label: 'Empezar', group: 'saque' }
+  }
+}
+
+/**
+ * The ability rating that resolves an action, plus the acting player's value for it,
+ * so the UI can print a chip like «RM 3» next to the button. It mirrors the `rate(...)`
+ * reads in `reducer.ts` exactly: shot → RM/DL, pase/pase al hueco corto → PC, largo → PL,
+ * regate → RG, anticipación → A, robo → RB. The acting player is the ball carrier for the
+ * attacking jugadas and `action.defender` for the defensive ones.
+ *
+ * Actions with no contested roll return null (no chip): the automatic pase directo, every
+ * movimiento, and the keeper restart (page 11 forces the portero's PC/PL to 0). Because
+ * this is only ever read for the human's own legal actions, it never surfaces an
+ * opponent's rating.
+ */
+export function actionAbility(
+  state: MatchState,
+  action: Action,
+): { key: AbilityKey; value: number } | null {
+  const carrier = state.ball.carrier
+  const of = (id: PlayerId | null, key: AbilityKey): { key: AbilityKey; value: number } | null => {
+    const p = id ? state.players[id] : null
+    return p ? { key, value: abilityValue(p.card, key) } : null
+  }
+  switch (action.kind) {
+    case 'shot':
+      return of(carrier, action.shot === 'RM' ? 'rm' : 'dl')
+    case 'regate':
+      return of(carrier, 'rg')
+    case 'pass':
+      return action.pass === 'PD' ? null : of(carrier, action.pass === 'PL' ? 'pl' : 'pc')
+    case 'hueco':
+      return of(carrier, action.pass === 'PL' ? 'pl' : 'pc')
+    case 'anticipacion':
+      return of(action.defender, 'a')
+    case 'robo':
+      return of(action.defender, 'rb')
+    default:
+      return null
   }
 }
 

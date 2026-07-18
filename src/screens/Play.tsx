@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import type { Difficulty } from '@/game/engine/types'
 import { InteractiveMatch } from './play/InteractiveMatch'
+import { HowToPlay } from './play/HowToPlay'
 
 /**
  * Difficulty picker for the interactive match. The whole game is now turn-based and
@@ -15,6 +16,7 @@ const DIFFICULTIES: { id: Difficulty; label: string; blurb: string }[] = [
 
 export function Play() {
   const [liveMatch, setLiveMatch] = useState<Difficulty | null>(null)
+  const [showRules, setShowRules] = useState(false)
 
   if (liveMatch) {
     return <InteractiveMatch difficulty={liveMatch} onExit={() => setLiveMatch(null)} />
@@ -24,7 +26,16 @@ export function Play() {
     // The picker is a short list of choices — app-measure. The match itself opens the
     // wide board inside InteractiveMatch.
     <div className="app-measure flex flex-col gap-4">
-      <h1 className="font-display text-2xl font-bold">Elige rival</h1>
+      <div className="flex items-baseline justify-between gap-3">
+        <h1 className="font-display text-2xl font-bold">Elige rival</h1>
+        <button
+          type="button"
+          onClick={() => setShowRules(true)}
+          className="shrink-0 text-sm font-medium text-slate-400 transition md:hover:text-slate-200"
+        >
+          ¿Cómo se juega?
+        </button>
+      </div>
       {DIFFICULTIES.map((d) => (
         <button
           key={d.id}
@@ -38,6 +49,8 @@ export function Play() {
           <span className="text-2xl">▶</span>
         </button>
       ))}
+
+      <HowToPlay open={showRules} onClose={() => setShowRules(false)} />
     </div>
   )
 }

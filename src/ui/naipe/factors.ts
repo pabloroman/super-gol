@@ -1,5 +1,5 @@
-import type { Card, AbilityKey } from '@/lib/types'
-import { abilityValue } from '@/game/ratings'
+import type { AbilityKey } from '@/lib/types'
+import { abilityValue, type RatedCard } from '@/game/ratings'
 import {
   ABILITY_ORDER,
   KEEPER_ABILITY_KEYS,
@@ -28,7 +28,7 @@ import {
 export const OUTFIELD_FACTOR_COUNT = 6
 
 /** Order two keys by value, breaking ties on the rulebook's display order. */
-function byValueThenOrder(card: Card) {
+function byValueThenOrder(card: RatedCard) {
   return (x: AbilityKey, y: AbilityKey) =>
     abilityValue(card, y) - abilityValue(card, x) ||
     ABILITY_ORDER.indexOf(x) - ABILITY_ORDER.indexOf(y)
@@ -48,7 +48,7 @@ function byValueThenOrder(card: Card) {
  * asking the card what it *is* rather than inferring it from its ratings means
  * none ever can.
  */
-export function naipeFactors(card: Card): AbilityKey[] {
+export function naipeFactors(card: RatedCard): AbilityKey[] {
   const isKeeper = (card.position ?? '').toUpperCase() === 'GK'
 
   if (isKeeper) {
