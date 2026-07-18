@@ -71,8 +71,9 @@ begin
       '00000000-0000-0000-0000-000000000000', acct.id, 'authenticated', 'authenticated',
       acct.email, extensions.crypt('password123', extensions.gen_salt('bf')), now(),
       '{"provider": "email", "providers": ["email"]}'::jsonb,
-      -- Exactly where the signup form puts the coach name; handle_new_user reads
-      -- it from here, btrims it, and maps blank to NULL (0012).
+      -- Exactly where the signup form puts the username; handle_new_user reads
+      -- it from here, btrims it, and now requires a valid handle (0017). Both
+      -- seed names satisfy the format.
       jsonb_build_object('username', acct.username),
       now(), now(),
       '', '', '', ''

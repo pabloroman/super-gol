@@ -157,14 +157,39 @@ whole thing together:
   the user must act on has to be **checked before `signUp`**, as the signup form
   does via the `username_available` RPC; the trigger's own exception is only the
   backstop for the race, and stays English and developer-facing.
-- **`profiles.username` is `unique` but nullable, and blank means NULL.**
-  `handle_new_user` maps blank/whitespace to NULL (`0012`), and a unique index
-  accepts unlimited NULLs — that is what lets any number of players skip the
-  field. **Never send a default from the client**: `Login.tsx` doing
-  `username || 'Entrenador'` is precisely what broke signup, because the first
-  blank signup reserved that one name and every later one collided. The
-  'Entrenador' fallback belongs at the **display** sites (`Home.tsx`, the admin
-  list), where it is a label rather than a claim.
+- **`profiles.username` is a required, unique PUBLIC handle (`0017`).** It names a
+  coach in 1v1 matchmaking, so it is `not null`, uniquely owned
+  **case-insensitively** (a unique index on `lower(username)`, not the old
+  case-sensitive constraint), and format-checked: Instagram-exact — letters,
+  digits, `.`, `_`; 3–30 chars; no leading/trailing/consecutive period. The rule
+  lives in **`src/lib/username.ts`** and is mirrored by the `profiles_username_format`
+  CHECK and `handle_new_user`; **the DB is the authority** and the client copy only
+  exists to show a specific Spanish message before the round trip (a trigger
+  exception still reaches the browser as `"{}"`). This **reverses `0012`'s
+  blank→NULL rule** — the old nullable behavior is gone, `0017` backfills legacy
+  NULL/blank rows to `user<hex>` and de-dupes case-collisions before the new index.
+  The `'Entrenador'` display fallback in `Home.tsx` / the admin list is now
+  defensive only (no row should be null), not an expected state.
+- **Login accepts a username OR an email in one field (`0017`).** Supabase Auth
+  only signs in by email/phone, so `Login.tsx` sends an input containing `@`
+  straight to `signInWithPassword`; anything else is a username resolved by the
+  `email_for_login(identifier, password)` RPC. That RPC returns the account email
+  **only when the password already verifies** (bcrypt via `extensions.crypt`
+  against `auth.users`), so a public username is never mapped to its private email
+  by an unauthenticated caller — the deliberate alternative to a plain
+  username→email lookup, which would leak PII. A miss returns the generic
+  "Usuario o contraseña incorrectos" so username existence is not revealed.
+- **Every auth failure is shown in Spanish; GoTrue's English never leaks.** The
+  app is Spanish-only, so `Login.tsx` never renders `error.message` raw — it
+  routes every caught auth/RPC error through `authErrorMessage`
+  (`src/lib/authErrors.ts`), which branches on the stable `error.code`
+  (`invalid_credentials`, `weak_password`, …) with an English-message fallback
+  and a Spanish generic for anything unrecognised. The mapper also returns a
+  `field` so the message lands under `email`/`password`; client-side validation
+  (handle format via `usernameError`, the `PASSWORD_MIN` check, availability)
+  shows per-field too, with a live hint under the username and password inputs.
+  The signup form is `noValidate` on purpose — native browser bubbles are
+  locale-dependent English, so we own the messages instead.
 
 ## Card catalog pipeline (real players)
 

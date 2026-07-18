@@ -1,5 +1,17 @@
 import { useEffect, useState, type FormEvent } from 'react'
 import { requireSupabase } from '@/lib/supabase'
+import { USERNAME_MAX, USERNAME_MIN, usernameError } from '@/lib/username'
+import { authErrorMessage } from '@/lib/authErrors'
+
+// Supabase's default minimum password length. Mirrored client-side so a short
+// password fails with a Spanish hint before the round trip, rather than coming
+// back as GoTrue's English `weak_password`.
+const PASSWORD_MIN = 6
+const PASSWORD_HINT = `Mínimo ${PASSWORD_MIN} caracteres.`
+const USERNAME_HINT = `Entre ${USERNAME_MIN} y ${USERNAME_MAX} caracteres · letras, números, punto y guion bajo.`
+
+/** Per-field validation/error messages, shown next to the offending input. */
+type FieldErrors = { username?: string; email?: string; password?: string }
 
 /**
  * Where Supabase should send the user after they confirm their email. We pass
@@ -45,11 +57,16 @@ export function Login({
 } = {}) {
   const [mode, setMode] = useState<'signin' | 'signup'>(initialMode)
   const [email, setEmail] = useState('')
+  // Sign-in accepts either a username or an email in one field.
+  const [loginId, setLoginId] = useState('')
   const [password, setPassword] = useState('')
   const [username, setUsername] = useState('')
   const [busy, setBusy] = useState(false)
   const [message, setMessage] = useState<string | null>(null)
+  // Form-level error (auth failures that aren't tied to one field). Always
+  // Spanish — see authErrorMessage.
   const [error, setError] = useState<string | null>(null)
+  const [fieldErrors, setFieldErrors] = useState<FieldErrors>({})
   const [expiredLink, setExpiredLink] = useState(false)
 
   useEffect(() => {
@@ -59,14 +76,33 @@ export function Login({
       setExpiredLink(true)
       setError('El enlace de confirmación no es válido o ha caducado. Introduce tu correo y te enviamos uno nuevo.')
     } else {
-      setError(hashError.description ?? 'No se pudo completar la confirmación.')
+      setError('No se pudo completar la confirmación.')
     }
   }, [])
+
+  // Clear the form-level error (and optionally one field's error) as the user
+  // edits, so a stale message never lingers next to a field they've just fixed.
+  function clearOnEdit(field?: keyof FieldErrors) {
+    setError(null)
+    if (field) setFieldErrors((prev) => ({ ...prev, [field]: undefined }))
+  }
+
+  // Route a caught auth/RPC error to its field (email/password) or, failing
+  // that, to the form-level line. Everything is translated to Spanish here.
+  function reportAuthError(err: unknown) {
+    const mapped = authErrorMessage(err)
+    if (mapped.field) {
+      setFieldErrors((prev) => ({ ...prev, [mapped.field as keyof FieldErrors]: mapped.text }))
+    } else {
+      setError(mapped.text)
+    }
+  }
 
   async function submit(e: FormEvent) {
     e.preventDefault()
     setBusy(true)
     setError(null)
+    setFieldErrors({})
     setMessage(null)
     setExpiredLink(false)
     const sb = requireSupabase()
@@ -74,55 +110,92 @@ export function Login({
       if (mode === 'signup') {
         const trimmed = username.trim()
 
-        // Check the name BEFORE signing up, not by reading the error after.
-        // handle_new_user still refuses a duplicate (0012), but supabase-js turns
-        // the resulting 500 into an AuthRetryableFetchError and throws the body
-        // away — whatever the trigger raises reaches us as the string "{}". So
-        // this is the only point at which we can say something true to the user.
-        // A name claimed between here and the insert loses the race and surfaces
-        // as the generic failure below; rare, and the retry is correct.
-        if (trimmed) {
-          const { data: free, error: checkError } = await sb.rpc('username_available', {
-            p_username: trimmed,
+        // Validate handle + password before the round trip, and show each
+        // message under its own field. The DB is the authority (CHECK + trigger
+        // in 0017), but a trigger exception reaches supabase-js as the string
+        // "{}", so client-side is the only place we can say what's actually
+        // wrong. src/lib/username.ts is the shared source of the handle rule.
+        const uErr = usernameError(trimmed)
+        const eErr = !email.trim() ? 'Introduce tu correo.' : null
+        const pErr = password.length < PASSWORD_MIN ? PASSWORD_HINT : null
+        if (uErr || eErr || pErr) {
+          setFieldErrors({
+            username: uErr ?? undefined,
+            email: eErr ?? undefined,
+            password: pErr ?? undefined,
           })
-          if (checkError) throw checkError
-          if (!free) {
-            setError('Ese nombre de entrenador ya está en uso. Elige otro.')
-            return
-          }
+          return
+        }
+
+        // Check availability BEFORE signing up, not by reading the error after —
+        // same reason. A name claimed between here and the insert loses the race
+        // and surfaces as the generic failure below; rare, and the retry is right.
+        const { data: free, error: checkError } = await sb.rpc('username_available', {
+          p_username: trimmed,
+        })
+        if (checkError) throw checkError
+        if (!free) {
+          setFieldErrors({ username: 'Ese nombre de usuario ya está en uso. Elige otro.' })
+          return
         }
 
         const { data, error } = await sb.auth.signUp({
           email,
           password,
           options: {
-            // Send it blank if it is blank: handle_new_user turns blank into a
-            // NULL username. Defaulting to 'Entrenador' here is what broke
-            // signup — profiles.username is unique, so the first blank signup
-            // reserved that name and every later one collided. Home and the
-            // admin list already render 'Entrenador' for a null, so the fallback
-            // lives there, where it is a label and not a claim.
+            // handle_new_user reads this, btrims it, and now REQUIRES it (0017):
+            // the username is a public 1v1 handle, unique and format-checked.
             data: { username: trimmed },
             emailRedirectTo: emailRedirectTo(),
           },
         })
         if (error) throw error
+        // With email-enumeration protection ON, signing up with an
+        // already-registered email is obfuscated as a success carrying a user
+        // whose `identities` is empty (no error is thrown). Detect that and say
+        // so under the email field, instead of a misleading "check your inbox".
+        if (data.user && (data.user.identities?.length ?? 0) === 0) {
+          setFieldErrors({ email: 'Ya existe una cuenta con ese correo.' })
+          return
+        }
         if (!data.session) {
           setMessage('Cuenta creada. Revisa tu correo para confirmarla.')
         }
       } else {
-        const { error } = await sb.auth.signInWithPassword({ email, password })
+        // Login by username OR email. An input with '@' is an email and goes
+        // straight to Auth. Otherwise it is a username: email_for_login (0017)
+        // hands back the account email ONLY when the password already verifies,
+        // so the private email is never exposed to an unauthenticated caller.
+        const id = loginId.trim()
+        let signInEmail = id
+        if (!id.includes('@')) {
+          const { data: resolved, error: resolveError } = await sb.rpc('email_for_login', {
+            p_identifier: id,
+            p_password: password,
+          })
+          if (resolveError) throw resolveError
+          if (!resolved) {
+            // Deliberately generic: do not reveal whether the username exists.
+            setError('Usuario o contraseña incorrectos.')
+            return
+          }
+          signInEmail = resolved as string
+        }
+        const { error } = await sb.auth.signInWithPassword({ email: signInEmail, password })
         if (error) throw error
       }
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Algo ha fallado')
+      reportAuthError(err)
     } finally {
       setBusy(false)
     }
   }
 
   async function resendConfirmation() {
-    if (!email) {
+    // Sign-in collects "usuario o correo", so fall back to loginId when it is an
+    // email; resend has no way to reach an account addressed by username alone.
+    const target = (email || loginId).trim()
+    if (!target.includes('@')) {
       setError('Introduce tu correo para reenviar la confirmación.')
       return
     }
@@ -133,18 +206,25 @@ export function Login({
     try {
       const { error } = await sb.auth.resend({
         type: 'signup',
-        email,
+        email: target,
         options: { emailRedirectTo: emailRedirectTo() },
       })
       if (error) throw error
       setExpiredLink(false)
       setMessage('Te hemos enviado un nuevo correo de confirmación. Ábrelo pronto: el enlace caduca.')
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'No se pudo reenviar el correo')
+      reportAuthError(err)
     } finally {
       setBusy(false)
     }
   }
+
+  const inputClass =
+    'rounded-xl bg-black/30 px-4 py-3 outline-none ring-1 ring-white/10 focus:ring-grass-400'
+
+  // Live handle feedback: nothing until they start typing, then the specific
+  // rule they're breaking, otherwise the plain hint.
+  const usernameLiveError = username.trim() ? usernameError(username) : null
 
   return (
     <div className="mx-auto flex min-h-screen max-w-md flex-col justify-center gap-6 px-6">
@@ -163,33 +243,79 @@ export function Login({
         <p className="mt-1 text-slate-400">Colecciona. Ficha. Compite.</p>
       </div>
 
-      <form onSubmit={submit} className="card-surface flex flex-col gap-3 p-5">
-        {mode === 'signup' && (
+      <form onSubmit={submit} className="card-surface flex flex-col gap-3 p-5" noValidate>
+        {mode === 'signup' ? (
+          <>
+            <div className="flex flex-col gap-1">
+              <input
+                required
+                autoComplete="username"
+                aria-invalid={Boolean(fieldErrors.username ?? usernameLiveError)}
+                className={inputClass}
+                placeholder="Usuario"
+                value={username}
+                onChange={(e) => {
+                  setUsername(e.target.value)
+                  clearOnEdit('username')
+                }}
+              />
+              {fieldErrors.username ?? usernameLiveError ? (
+                <p className="text-xs text-red-400">{fieldErrors.username ?? usernameLiveError}</p>
+              ) : (
+                <p className="text-xs text-slate-500">{USERNAME_HINT}</p>
+              )}
+            </div>
+            <div className="flex flex-col gap-1">
+              <input
+                type="email"
+                required
+                autoComplete="email"
+                aria-invalid={Boolean(fieldErrors.email)}
+                className={inputClass}
+                placeholder="Correo"
+                value={email}
+                onChange={(e) => {
+                  setEmail(e.target.value)
+                  clearOnEdit('email')
+                }}
+              />
+              {fieldErrors.email && <p className="text-xs text-red-400">{fieldErrors.email}</p>}
+            </div>
+          </>
+        ) : (
           <input
-            className="rounded-xl bg-black/30 px-4 py-3 outline-none ring-1 ring-white/10 focus:ring-grass-400"
-            placeholder="Nombre de entrenador"
-            value={username}
-            onChange={(e) => setUsername(e.target.value)}
+            required
+            autoComplete="username"
+            className={inputClass}
+            placeholder="Usuario o correo"
+            value={loginId}
+            onChange={(e) => {
+              setLoginId(e.target.value)
+              clearOnEdit()
+            }}
           />
         )}
-        <input
-          type="email"
-          required
-          autoComplete="email"
-          className="rounded-xl bg-black/30 px-4 py-3 outline-none ring-1 ring-white/10 focus:ring-grass-400"
-          placeholder="Correo"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-        />
-        <input
-          type="password"
-          required
-          autoComplete={mode === 'signup' ? 'new-password' : 'current-password'}
-          className="rounded-xl bg-black/30 px-4 py-3 outline-none ring-1 ring-white/10 focus:ring-grass-400"
-          placeholder="Contraseña"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-        />
+        <div className="flex flex-col gap-1">
+          <input
+            type="password"
+            required
+            autoComplete={mode === 'signup' ? 'new-password' : 'current-password'}
+            aria-invalid={Boolean(fieldErrors.password)}
+            className={inputClass}
+            placeholder="Contraseña"
+            value={password}
+            onChange={(e) => {
+              setPassword(e.target.value)
+              clearOnEdit('password')
+            }}
+          />
+          {mode === 'signup' &&
+            (fieldErrors.password ? (
+              <p className="text-xs text-red-400">{fieldErrors.password}</p>
+            ) : (
+              <p className="text-xs text-slate-500">{PASSWORD_HINT}</p>
+            ))}
+        </div>
 
         {error && <p className="text-sm text-red-400">{error}</p>}
         {message && <p className="text-sm text-grass-400">{message}</p>}
@@ -214,6 +340,7 @@ export function Login({
         onClick={() => {
           setMode(mode === 'signin' ? 'signup' : 'signin')
           setError(null)
+          setFieldErrors({})
           setMessage(null)
         }}
         className="text-sm text-slate-400 hover:text-slate-200"
