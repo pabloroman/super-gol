@@ -19,6 +19,18 @@ export interface ChronicleLine {
   text: string
 }
 
+/**
+ * A goal just went in, for the celebration overlay. `side` is the scoring team,
+ * `scorer` the shooter's name (null for an own goal, which concedes via a
+ * `turnover` event and carries no scorer). `nonce` bumps per goal so the overlay
+ * re-fires on back-to-back goals by the same side.
+ */
+export interface GoalFlash {
+  side: Side
+  scorer: string | null
+  nonce: number
+}
+
 /** The most recent contested roll surfaced to the dice reveal. `total` lets the UI
  *  reconstruct the rulebook breakdown; `ability` labels which factor decided it. */
 export interface Roll {
@@ -75,9 +87,13 @@ export function useInteractiveMatch(difficulty: Difficulty) {
   const [finish, setFinish] = useState<MatchFinish | null>(null)
   /** The most recent contested roll, for the dice reveal + breakdown (null before any). */
   const [lastRoll, setLastRoll] = useState<Roll | null>(null)
+  /** The last goal, for the celebration overlay; null while none is pending. */
+  const [goalFlash, setGoalFlash] = useState<GoalFlash | null>(null)
 
   const cursor = useRef<{ sessionId: string; ply: number } | null>(null)
   const busy = useRef(false)
+  /** The score we last folded, to detect a goal by diff (own goals emit no `goal` event). */
+  const prevScore = useRef<{ home: number; away: number }>({ home: 0, away: 0 })
 
   /**
    * Fold a snapshot into state. An `act` returns only the NEW events → `mode: 'append'`.
@@ -109,9 +125,31 @@ export function useInteractiveMatch(difficulty: Difficulty) {
           break
         }
       }
+      // A goal is a score change, not the `goal` event: an own goal (failed cesión)
+      // concedes with a `turnover` event and no `goal` one, so we diff the score. On a
+      // `replace` (start/resume replays the whole log) we only re-baseline — celebrating
+      // a mid-match refresh's already-scored goals would be wrong.
+      const prev = prevScore.current
+      if (mode === 'append') {
+        const scored: Side | null =
+          snap.state.score.home > prev.home
+            ? 'home'
+            : snap.state.score.away > prev.away
+              ? 'away'
+              : null
+        if (scored) {
+          // The scorer's name comes from the `goal` event when there is one (a proper
+          // shot); an own goal has none, so it stays null.
+          const goal = snap.events.find((e) => e.type === 'goal' && e.side === scored)
+          setGoalFlash((f) => ({ side: scored, scorer: goal?.params.player ?? null, nonce: (f?.nonce ?? 0) + 1 }))
+        }
+      }
+      prevScore.current = snap.state.score
     },
     [],
   )
+
+  const clearGoal = useCallback(() => setGoalFlash(null), [])
 
   const start = useCallback(async () => {
     // Guard concurrent starts: a StrictMode double-mount would otherwise fire two starts,
@@ -123,7 +161,9 @@ export function useInteractiveMatch(difficulty: Difficulty) {
     setFinish(null)
     setChronicle([])
     setLastRoll(null)
+    setGoalFlash(null)
     cursor.current = null
+    prevScore.current = { home: 0, away: 0 }
     try {
       // One live session at a time (the anti-farming spine): a start that collides with an
       // existing session resumes it rather than clobbering it — which also makes a mid-match
@@ -186,12 +226,14 @@ export function useInteractiveMatch(difficulty: Difficulty) {
 
   // The away side plays itself: one crank per away ply, paced so the human can follow.
   // State changing re-runs this, so a whole away possession chains crank → crank → …
-  // until control returns to the human or the match ends.
+  // until control returns to the human or the match ends. A pending goal celebration
+  // holds the match — the next crank waits until the overlay is dismissed (`clearGoal`
+  // nulls `goalFlash`, which re-runs this effect and resumes play).
   useEffect(() => {
-    if (!state || actorOf(state) !== 'away') return
+    if (!state || actorOf(state) !== 'away' || goalFlash) return
     const id = setTimeout(() => void advance(), AI_DELAY_MS)
     return () => clearTimeout(id)
-  }, [state, advance])
+  }, [state, advance, goalFlash])
 
   const act = useCallback(
     (action: Action) => {
@@ -230,6 +272,8 @@ export function useInteractiveMatch(difficulty: Difficulty) {
     pending,
     finish,
     lastRoll,
+    goalFlash,
+    clearGoal,
     act,
     resign,
     restart: start,

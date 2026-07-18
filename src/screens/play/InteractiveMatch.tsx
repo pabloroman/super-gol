@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from 'react'
 import { CheckIcon, XMarkIcon } from '@heroicons/react/24/solid'
+import { fetchActiveSquad } from '@/data/api'
 import { Coin } from '@/ui/Coin'
 import type { AbilityKey } from '@/lib/types'
 import { ABILITY_META } from '@/game/abilities'
@@ -12,6 +13,7 @@ import { useInteractiveMatch, type Roll } from './useInteractiveMatch'
 import { InteractivePitchBoard } from './InteractivePitchBoard'
 import { HowToPlay } from './HowToPlay'
 import { SquadPanel } from './SquadPanel'
+import { GoalCelebration } from './GoalCelebration'
 
 /** A "pase/saque al hueco" of one pass type: tap one of its empty target cells to commit. */
 interface HuecoMode {
@@ -88,9 +90,25 @@ export function InteractiveMatch({
   difficulty: Difficulty
   onExit: () => void
 }) {
+  // The name the player gave their squad in SquadBuilder (its «Nombre del equipo»
+  // field), shown wherever the home side is labelled instead of the generic "Tú".
+  // Fetched once from the active squad; 'Mi equipo' is SquadBuilder's own default.
+  const [teamName, setTeamName] = useState('Mi equipo')
+  useEffect(() => {
+    let alive = true
+    fetchActiveSquad()
+      .then((squad) => {
+        if (alive && squad?.name.trim()) setTeamName(squad.name.trim())
+      })
+      .catch(() => {})
+    return () => {
+      alive = false
+    }
+  }, [])
+
   const match = useInteractiveMatch(difficulty)
   const { state, legal, chronicle, opponent, error, loading, pending, finish, lastRoll } = match
-  const { act, resign, restart, humanTurn, finished } = match
+  const { act, resign, restart, humanTurn, finished, goalFlash, clearGoal } = match
 
   const [selected, setSelected] = useState<string | null>(null)
   const [huecoKey, setHuecoKey] = useState<string | null>(null)
@@ -193,7 +211,7 @@ export function InteractiveMatch({
     <div className="flex flex-col gap-4">
       <div className="card-surface flex flex-wrap items-center justify-between gap-x-3 gap-y-2 p-3 text-sm">
         <span className="font-semibold">
-          Tú {state.score.home} – {state.score.away} {opponent}
+          {teamName} {state.score.home} – {state.score.away} {opponent}
         </span>
         <div className="flex items-center gap-2">
           <span className="text-slate-400">Turno {Math.min(state.turno + 1, 15)}/15</span>
@@ -333,6 +351,7 @@ export function InteractiveMatch({
 
       <SquadPanel open={showSquad} onClose={() => setShowSquad(false)} state={state} />
       <HowToPlay open={showRules} onClose={() => setShowRules(false)} />
+      <GoalCelebration flash={goalFlash} teamName={teamName} opponentName={opponent} onSeguir={clearGoal} />
     </div>
   )
 }
