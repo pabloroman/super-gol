@@ -1,0 +1,5031 @@
+{
+  "cards": {
+    "1005575-2526": {
+      "label": "Vitor Reis · Girona FC",
+      "abilities": {
+        "rb": 3,
+        "a": 3,
+        "rc": 2,
+        "pl": 2,
+        "pa": 2
+      }
+    },
+    "1007378-2526": {
+      "label": "Wesley · Real Sociedad",
+      "abilities": {
+        "d": 2,
+        "rg": 2,
+        "v": 2,
+        "pc": 2,
+        "rm": 2
+      }
+    },
+    "1018920-2526": {
+      "label": "Marc Bernal · FC Barcelona",
+      "abilities": {
+        "rb": 3,
+        "a": 2,
+        "rg": 2,
+        "pc": 2,
+        "pl": 2
+      }
+    },
+    "1018938-2526": {
+      "label": "Jon Martín · Real Sociedad",
+      "abilities": {
+        "rb": 3,
+        "a": 2,
+        "rc": 2,
+        "pl": 2,
+        "pa": 2
+      }
+    },
+    "102423-2526": {
+      "label": "Leandro Cabrera · RCD Espanyol Barcelona",
+      "abilities": {
+        "rb": 2,
+        "a": 2,
+        "rc": 2,
+        "pl": 2,
+        "pa": 2
+      }
+    },
+    "1032280-2526": {
+      "label": "Oso · Sevilla FC",
+      "abilities": {
+        "rb": 2,
+        "a": 2,
+        "rg": 2,
+        "v": 2,
+        "pc": 2
+      }
+    },
+    "1034853-2526": {
+      "label": "Nobel Mendy · Rayo Vallecano",
+      "abilities": {
+        "rb": 2,
+        "a": 2,
+        "rc": 2,
+        "pl": 2,
+        "pa": 2
+      }
+    },
+    "1038512-2526": {
+      "label": "Asier Osambela · CA Osasuna",
+      "abilities": {
+        "a": 2,
+        "rg": 2,
+        "pc": 2,
+        "pl": 2,
+        "dl": 1
+      }
+    },
+    "1038950-2526": {
+      "label": "Karl Etta Eyong · Levante UD",
+      "abilities": {
+        "rc": 2,
+        "d": 2,
+        "v": 2,
+        "dl": 2,
+        "rm": 3
+      }
+    },
+    "1054934-2526": {
+      "label": "Maroan Sannadi · Athletic Club",
+      "abilities": {
+        "rc": 2,
+        "d": 2,
+        "v": 2,
+        "dl": 2,
+        "rm": 2
+      }
+    },
+    "1055220-2526": {
+      "label": "Fran González · Real Madrid",
+      "abilities": {
+        "rf": 2,
+        "co": 2
+      }
+    },
+    "1057316-2526": {
+      "label": "Franco Mastantuono · Real Madrid",
+      "abilities": {
+        "d": 2,
+        "rg": 3,
+        "v": 3,
+        "pc": 2,
+        "rm": 2
+      }
+    },
+    "1061122-2526": {
+      "label": "Adrián Liso · Getafe CF",
+      "abilities": {
+        "d": 2,
+        "rg": 2,
+        "v": 2,
+        "pc": 2,
+        "rm": 2
+      }
+    },
+    "1061336-2526": {
+      "label": "Pau Navarro · Villarreal CF",
+      "abilities": {
+        "rb": 3,
+        "a": 2,
+        "rg": 2,
+        "v": 2,
+        "pc": 2
+      }
+    },
+    "1063338-2526": {
+      "label": "Carlos Espí · Levante UD",
+      "abilities": {
+        "rc": 2,
+        "d": 2,
+        "v": 1,
+        "dl": 2,
+        "rm": 2
+      }
+    },
+    "1063340-2526": {
+      "label": "Kareem Tunde · Levante UD",
+      "abilities": {
+        "d": 2,
+        "rg": 2,
+        "v": 2,
+        "pc": 2,
+        "rm": 1
+      }
+    },
+    "1063553-2526": {
+      "label": "Pau Cabanes · Villarreal CF",
+      "abilities": {
+        "rc": 2,
+        "d": 2,
+        "v": 1,
+        "dl": 1,
+        "rm": 2
+      }
+    },
+    "1063574-2526": {
+      "label": "Jan Salas · RCD Mallorca",
+      "abilities": {
+        "a": 1,
+        "rg": 2,
+        "pc": 2,
+        "pl": 2,
+        "dl": 1
+      }
+    },
+    "1064105-2526": {
+      "label": "Miguel Ángel Sierra · Sevilla FC",
+      "abilities": {
+        "d": 1,
+        "rg": 2,
+        "v": 2,
+        "pc": 1,
+        "rm": 1
+      }
+    },
+    "1064471-2526": {
+      "label": "Fer López · RC Celta",
+      "abilities": {
+        "d": 2,
+        "rg": 2,
+        "pc": 3,
+        "pl": 2,
+        "dl": 2
+      }
+    },
+    "1064506-2526": {
+      "label": "Adam Boayar · Elche CF",
+      "abilities": {
+        "d": 2,
+        "rg": 2,
+        "pc": 1,
+        "dl": 1,
+        "rm": 2
+      }
+    },
+    "1065442-2526": {
+      "label": "Iñigo Arguibide · CA Osasuna",
+      "abilities": {
+        "rb": 2,
+        "a": 2,
+        "rg": 1,
+        "v": 2,
+        "pc": 1
+      }
+    },
+    "1076815-2526": {
+      "label": "Javi Rodríguez · RC Celta",
+      "abilities": {
+        "rb": 3,
+        "a": 2,
+        "rc": 2,
+        "pl": 2,
+        "pa": 2
+      }
+    },
+    "1081496-2526": {
+      "label": "Pablo Agudín · Real Oviedo",
+      "abilities": {
+        "d": 1,
+        "rg": 2,
+        "pc": 2,
+        "pl": 1,
+        "dl": 2
+      }
+    },
+    "108390-2526": {
+      "label": "Thibaut Courtois · Real Madrid",
+      "abilities": {
+        "rf": 3,
+        "co": 2
+      }
+    },
+    "1101641-2526": {
+      "label": "Justin Kalumba · RCD Mallorca",
+      "abilities": {
+        "d": 2,
+        "rg": 2,
+        "v": 2,
+        "pc": 1,
+        "rm": 1
+      }
+    },
+    "111508-2526": {
+      "label": "Allan Nyom · Getafe CF",
+      "abilities": {
+        "rb": 2,
+        "a": 2,
+        "rg": 1,
+        "v": 2,
+        "pc": 1
+      }
+    },
+    "1124136-2526": {
+      "label": "Ángel Pérez · Deportivo Alavés",
+      "abilities": {
+        "d": 2,
+        "rg": 2,
+        "v": 2,
+        "pc": 2,
+        "rm": 1
+      }
+    },
+    "112515-2526": {
+      "label": "Marcos Alonso · RC Celta",
+      "abilities": {
+        "rb": 2,
+        "a": 2,
+        "rc": 2,
+        "pl": 2,
+        "pa": 2
+      }
+    },
+    "1127730-2526": {
+      "label": "Thiago Fernández · Real Oviedo",
+      "abilities": {
+        "d": 2,
+        "rg": 2,
+        "v": 2,
+        "pc": 2,
+        "rm": 2
+      }
+    },
+    "1144700-2526": {
+      "label": "Matías Moreno · Levante UD",
+      "abilities": {
+        "rb": 2,
+        "a": 2,
+        "rc": 2,
+        "pl": 2,
+        "pa": 2
+      }
+    },
+    "1164331-2526": {
+      "label": "Ismael Bekhoucha · Getafe CF",
+      "abilities": {
+        "rb": 2,
+        "a": 2,
+        "rg": 1,
+        "v": 1,
+        "pc": 1
+      }
+    },
+    "1169436-2526": {
+      "label": "Vladyslav Krapyvtsov · Girona FC",
+      "abilities": {
+        "rf": 2,
+        "co": 2
+      }
+    },
+    "1186235-2526": {
+      "label": "Jorge Cestero · Real Madrid",
+      "abilities": {
+        "a": 2,
+        "rg": 2,
+        "pc": 2,
+        "pl": 2,
+        "dl": 2
+      }
+    },
+    "118997-2526": {
+      "label": "Aitor Fernández · CA Osasuna",
+      "abilities": {
+        "rf": 2,
+        "co": 2
+      }
+    },
+    "120705-2526": {
+      "label": "Juan Carlos · Girona FC",
+      "abilities": {
+        "rf": 2,
+        "co": 2
+      }
+    },
+    "121483-2526": {
+      "label": "Jan Oblak · Atlético de Madrid",
+      "abilities": {
+        "rf": 3,
+        "co": 2
+      }
+    },
+    "12282-2526": {
+      "label": "Daley Blind · Girona FC",
+      "abilities": {
+        "rb": 2,
+        "a": 2,
+        "rc": 2,
+        "pl": 2,
+        "pa": 2
+      }
+    },
+    "1232057-2526": {
+      "label": "Paco Cortés · Levante UD",
+      "abilities": {
+        "d": 2,
+        "rg": 2,
+        "v": 2,
+        "pc": 2,
+        "rm": 1
+      }
+    },
+    "124419-2526": {
+      "label": "Odysseas Vlachodimos · Sevilla FC",
+      "abilities": {
+        "rf": 3,
+        "co": 2
+      }
+    },
+    "125781-2526": {
+      "label": "Antoine Griezmann · Atlético de Madrid",
+      "abilities": {
+        "d": 3,
+        "rg": 2,
+        "pc": 2,
+        "dl": 2,
+        "rm": 3
+      }
+    },
+    "126737-2526": {
+      "label": "Juanmi · Getafe CF",
+      "abilities": {
+        "d": 2,
+        "rg": 2,
+        "v": 2,
+        "pc": 2,
+        "rm": 1
+      }
+    },
+    "126751-2526": {
+      "label": "Iñigo Ruiz de Galarreta · Athletic Club",
+      "abilities": {
+        "a": 2,
+        "rg": 2,
+        "pc": 2,
+        "pl": 2,
+        "dl": 2
+      }
+    },
+    "1268764-2526": {
+      "label": "Davinchi · Getafe CF",
+      "abilities": {
+        "rb": 2,
+        "a": 2,
+        "rg": 1,
+        "v": 2,
+        "pc": 2
+      }
+    },
+    "127048-2526": {
+      "label": "Cédric Bakambu · Real Betis Balompié",
+      "abilities": {
+        "rc": 2,
+        "d": 2,
+        "v": 2,
+        "dl": 2,
+        "rm": 2
+      }
+    },
+    "127108-2526": {
+      "label": "Florian Lejeune · Rayo Vallecano",
+      "abilities": {
+        "rb": 2,
+        "a": 2,
+        "rc": 2,
+        "pl": 2,
+        "pa": 2
+      }
+    },
+    "128969-2526": {
+      "label": "Mathew Ryan · Levante UD",
+      "abilities": {
+        "rf": 3,
+        "co": 2
+      }
+    },
+    "129444-2526": {
+      "label": "David López · Girona FC",
+      "abilities": {
+        "rb": 2,
+        "a": 2,
+        "rc": 2,
+        "pl": 2,
+        "pa": 2
+      }
+    },
+    "129674-2526": {
+      "label": "Jeremy Toljan · Levante UD",
+      "abilities": {
+        "rb": 2,
+        "a": 2,
+        "rg": 2,
+        "v": 2,
+        "pc": 2
+      }
+    },
+    "1301775-2526": {
+      "label": "Jan Virgili · RCD Mallorca",
+      "abilities": {
+        "d": 2,
+        "rg": 2,
+        "v": 3,
+        "pc": 2,
+        "rm": 2
+      }
+    },
+    "1312698-2526": {
+      "label": "Selton Sánchez · Athletic Club",
+      "abilities": {
+        "a": 2,
+        "rg": 2,
+        "pc": 2,
+        "pl": 2,
+        "dl": 2
+      }
+    },
+    "1331450-2526": {
+      "label": "Hugo López · Villarreal CF",
+      "abilities": {
+        "d": 2,
+        "rg": 2,
+        "v": 2,
+        "pc": 2,
+        "rm": 1
+      }
+    },
+    "1375227-2526": {
+      "label": "Thiago Pitarch · Real Madrid",
+      "abilities": {
+        "a": 2,
+        "rg": 2,
+        "pc": 3,
+        "pl": 2,
+        "dl": 2
+      }
+    },
+    "1384911-2526": {
+      "label": "Samu Becerra · Rayo Vallecano",
+      "abilities": {
+        "a": 1,
+        "rg": 1,
+        "pc": 2,
+        "pl": 2,
+        "dl": 1
+      }
+    },
+    "138927-2526": {
+      "label": "Daniel Carvajal · Real Madrid",
+      "abilities": {
+        "rb": 3,
+        "a": 2,
+        "rg": 2,
+        "v": 2,
+        "pc": 2
+      }
+    },
+    "142021-2526": {
+      "label": "Sergi Darder · RCD Mallorca",
+      "abilities": {
+        "a": 2,
+        "rg": 2,
+        "pc": 2,
+        "pl": 2,
+        "dl": 2
+      }
+    },
+    "142031-2526": {
+      "label": "Omar Mascarell · RCD Mallorca",
+      "abilities": {
+        "rb": 2,
+        "a": 2,
+        "rg": 1,
+        "pc": 2,
+        "pl": 2
+      }
+    },
+    "143812-2526": {
+      "label": "Matías Vecino · RC Celta",
+      "abilities": {
+        "a": 2,
+        "rg": 2,
+        "pc": 2,
+        "pl": 2,
+        "dl": 2
+      }
+    },
+    "144128-2526": {
+      "label": "Matías Dituro · Elche CF",
+      "abilities": {
+        "rf": 2,
+        "co": 2
+      }
+    },
+    "1453066-2526": {
+      "label": "Carlos Macià · Villarreal CF",
+      "abilities": {
+        "a": 2,
+        "rg": 2,
+        "pc": 2,
+        "pl": 2,
+        "dl": 2
+      }
+    },
+    "155025-2526": {
+      "label": "Fábio Cardoso · Sevilla FC",
+      "abilities": {
+        "rb": 2,
+        "a": 2,
+        "rc": 2,
+        "pl": 2,
+        "pa": 2
+      }
+    },
+    "15799-2526": {
+      "label": "Santi Cazorla · Real Oviedo",
+      "abilities": {
+        "a": 2,
+        "rg": 2,
+        "pc": 2,
+        "pl": 2,
+        "dl": 1
+      }
+    },
+    "165007-2526": {
+      "label": "Denis Suárez · Deportivo Alavés",
+      "abilities": {
+        "d": 1,
+        "rg": 2,
+        "pc": 2,
+        "pl": 2,
+        "dl": 2
+      }
+    },
+    "165467-2526": {
+      "label": "Stole Dimitrievski · Valencia CF",
+      "abilities": {
+        "rf": 2,
+        "co": 2
+      }
+    },
+    "167721-2526": {
+      "label": "Chimy Ávila · Real Betis Balompié",
+      "abilities": {
+        "rc": 2,
+        "d": 2,
+        "v": 2,
+        "dl": 2,
+        "rm": 2
+      }
+    },
+    "168157-2526": {
+      "label": "Leander Dendoncker · Real Oviedo",
+      "abilities": {
+        "rb": 2,
+        "a": 2,
+        "rg": 2,
+        "pc": 2,
+        "pl": 2
+      }
+    },
+    "169497-2526": {
+      "label": "Juan Cruz · CA Osasuna",
+      "abilities": {
+        "rb": 2,
+        "a": 2,
+        "rg": 2,
+        "v": 2,
+        "pc": 2
+      }
+    },
+    "170472-2526": {
+      "label": "Dimitri Foulquier · Valencia CF",
+      "abilities": {
+        "rb": 2,
+        "a": 2,
+        "rg": 1,
+        "v": 2,
+        "pc": 2
+      }
+    },
+    "175446-2526": {
+      "label": "Jonny Otto · Deportivo Alavés",
+      "abilities": {
+        "rb": 2,
+        "a": 2,
+        "rg": 2,
+        "v": 2,
+        "pc": 2
+      }
+    },
+    "175449-2526": {
+      "label": "Moi Gómez · CA Osasuna",
+      "abilities": {
+        "d": 2,
+        "rg": 2,
+        "pc": 2,
+        "pl": 2,
+        "dl": 2
+      }
+    },
+    "176553-2526": {
+      "label": "Aymeric Laporte · Athletic Club",
+      "abilities": {
+        "rb": 3,
+        "a": 2,
+        "rc": 2,
+        "pl": 2,
+        "pa": 2
+      }
+    },
+    "177452-2526": {
+      "label": "Abdón Prats · RCD Mallorca",
+      "abilities": {
+        "rc": 2,
+        "d": 2,
+        "v": 1,
+        "dl": 2,
+        "rm": 2
+      }
+    },
+    "177467-2526": {
+      "label": "Gerard Moreno · Villarreal CF",
+      "abilities": {
+        "rc": 2,
+        "d": 2,
+        "v": 2,
+        "dl": 2,
+        "rm": 2
+      }
+    },
+    "177847-2526": {
+      "label": "Adnan Januzaj · Sevilla FC",
+      "abilities": {
+        "d": 2,
+        "rg": 2,
+        "v": 2,
+        "pc": 2,
+        "rm": 1
+      }
+    },
+    "182712-2526": {
+      "label": "João Cancelo · FC Barcelona",
+      "abilities": {
+        "rb": 3,
+        "a": 2,
+        "rg": 2,
+        "v": 2,
+        "pc": 2
+      }
+    },
+    "182904-2526": {
+      "label": "Clément Lenglet · Atlético de Madrid",
+      "abilities": {
+        "rb": 2,
+        "a": 2,
+        "rc": 2,
+        "pl": 2,
+        "pa": 2
+      }
+    },
+    "191217-2526": {
+      "label": "Héctor Bellerín · Real Betis Balompié",
+      "abilities": {
+        "rb": 2,
+        "a": 2,
+        "rg": 2,
+        "v": 2,
+        "pc": 2
+      }
+    },
+    "192009-2526": {
+      "label": "Unai López · Rayo Vallecano",
+      "abilities": {
+        "a": 2,
+        "rg": 2,
+        "pc": 2,
+        "pl": 2,
+        "dl": 2
+      }
+    },
+    "193098-2526": {
+      "label": "Álex Moreno · Girona FC",
+      "abilities": {
+        "rb": 2,
+        "a": 2,
+        "rg": 2,
+        "v": 2,
+        "pc": 2
+      }
+    },
+    "195488-2526": {
+      "label": "Paulo Gazzaniga · Girona FC",
+      "abilities": {
+        "rf": 3,
+        "co": 2
+      }
+    },
+    "196948-2526": {
+      "label": "Andreas Christensen · FC Barcelona",
+      "abilities": {
+        "rb": 3,
+        "a": 2,
+        "rc": 2,
+        "pl": 2,
+        "pa": 2
+      }
+    },
+    "198008-2526": {
+      "label": "André Silva · Elche CF",
+      "abilities": {
+        "rc": 2,
+        "d": 2,
+        "v": 2,
+        "dl": 2,
+        "rm": 2
+      }
+    },
+    "199321-2526": {
+      "label": "Rubén Blanco · Girona FC",
+      "abilities": {
+        "rf": 2,
+        "co": 2
+      }
+    },
+    "203043-2526": {
+      "label": "Pedro Bigas · Elche CF",
+      "abilities": {
+        "rb": 2,
+        "a": 2,
+        "rc": 2,
+        "pl": 1,
+        "pa": 2
+      }
+    },
+    "205562-2526": {
+      "label": "Thomas Lemar · Girona FC",
+      "abilities": {
+        "d": 2,
+        "rg": 2,
+        "pc": 2,
+        "pl": 2,
+        "dl": 2
+      }
+    },
+    "212723-2526": {
+      "label": "Djibril Sow · Sevilla FC",
+      "abilities": {
+        "a": 2,
+        "rg": 2,
+        "pc": 2,
+        "pl": 2,
+        "dl": 2
+      }
+    },
+    "212862-2526": {
+      "label": "Álex Remiro · Real Sociedad",
+      "abilities": {
+        "rf": 3,
+        "co": 2
+      }
+    },
+    "213260-2526": {
+      "label": "Rubén García · CA Osasuna",
+      "abilities": {
+        "d": 2,
+        "rg": 2,
+        "v": 2,
+        "pc": 2,
+        "rm": 2
+      }
+    },
+    "213670-2526": {
+      "label": "Lucas Torró · CA Osasuna",
+      "abilities": {
+        "rb": 2,
+        "a": 2,
+        "rg": 2,
+        "pc": 2,
+        "pl": 2
+      }
+    },
+    "216870-2526": {
+      "label": "Nacho Vidal · Real Oviedo",
+      "abilities": {
+        "rb": 2,
+        "a": 2,
+        "rg": 1,
+        "v": 2,
+        "pc": 2
+      }
+    },
+    "217115-2526": {
+      "label": "Neal Maupay · Sevilla FC",
+      "abilities": {
+        "rc": 2,
+        "d": 2,
+        "v": 2,
+        "dl": 2,
+        "rm": 2
+      }
+    },
+    "217144-2526": {
+      "label": "Aleix Febas · Elche CF",
+      "abilities": {
+        "a": 2,
+        "rg": 2,
+        "pc": 2,
+        "pl": 2,
+        "dl": 2
+      }
+    },
+    "221150-2526": {
+      "label": "Dakonam Djené · Getafe CF",
+      "abilities": {
+        "rb": 2,
+        "a": 2,
+        "rc": 2,
+        "pl": 2,
+        "pa": 2
+      }
+    },
+    "221322-2526": {
+      "label": "José Gayà · Valencia CF",
+      "abilities": {
+        "rb": 2,
+        "a": 2,
+        "rg": 2,
+        "v": 2,
+        "pc": 2
+      }
+    },
+    "225020-2526": {
+      "label": "Mariano Díaz · Deportivo Alavés",
+      "abilities": {
+        "rc": 2,
+        "d": 2,
+        "v": 1,
+        "dl": 1,
+        "rm": 2
+      }
+    },
+    "225122-2526": {
+      "label": "Gonçalo Guedes · Real Sociedad",
+      "abilities": {
+        "d": 2,
+        "rg": 2,
+        "v": 2,
+        "pc": 2,
+        "rm": 2
+      }
+    },
+    "225593-2526": {
+      "label": "Pere Milla · RCD Espanyol Barcelona",
+      "abilities": {
+        "d": 2,
+        "rg": 2,
+        "v": 2,
+        "pc": 2,
+        "rm": 1
+      }
+    },
+    "226012-2526": {
+      "label": "David Soria · Getafe CF",
+      "abilities": {
+        "rf": 3,
+        "co": 2
+      }
+    },
+    "229804-2526": {
+      "label": "Aritz Elustondo · Real Sociedad",
+      "abilities": {
+        "rb": 2,
+        "a": 2,
+        "rc": 2,
+        "pl": 2,
+        "pa": 2
+      }
+    },
+    "230784-2526": {
+      "label": "Thomas Partey · Villarreal CF",
+      "abilities": {
+        "rb": 2,
+        "a": 2,
+        "rg": 2,
+        "pc": 2,
+        "pl": 2
+      }
+    },
+    "238266-2526": {
+      "label": "Duje Caleta-Car · Real Sociedad",
+      "abilities": {
+        "rb": 2,
+        "a": 2,
+        "rc": 2,
+        "pl": 2,
+        "pa": 2
+      }
+    },
+    "238407-2526": {
+      "label": "Alexander Sørloth · Atlético de Madrid",
+      "abilities": {
+        "rc": 2,
+        "d": 3,
+        "v": 2,
+        "dl": 2,
+        "rm": 3
+      }
+    },
+    "242359-2526": {
+      "label": "Juan Musso · Atlético de Madrid",
+      "abilities": {
+        "rf": 3,
+        "co": 2
+      }
+    },
+    "243879-2526": {
+      "label": "Charles Pickel · RCD Espanyol Barcelona",
+      "abilities": {
+        "rb": 2,
+        "a": 2,
+        "rg": 2,
+        "pc": 2,
+        "pl": 2
+      }
+    },
+    "245744-2526": {
+      "label": "Takuma Asano · RCD Mallorca",
+      "abilities": {
+        "d": 2,
+        "rg": 2,
+        "v": 2,
+        "pc": 2,
+        "rm": 2
+      }
+    },
+    "246291-2526": {
+      "label": "Diego Llorente · Real Betis Balompié",
+      "abilities": {
+        "rb": 2,
+        "a": 2,
+        "rc": 2,
+        "pl": 2,
+        "pa": 2
+      }
+    },
+    "246968-2526": {
+      "label": "Ayoze Pérez · Villarreal CF",
+      "abilities": {
+        "rc": 2,
+        "d": 2,
+        "v": 2,
+        "dl": 2,
+        "rm": 3
+      }
+    },
+    "248738-2526": {
+      "label": "Sergio Herrera · CA Osasuna",
+      "abilities": {
+        "rf": 3,
+        "co": 2
+      }
+    },
+    "249513-2526": {
+      "label": "Diego Rico · Getafe CF",
+      "abilities": {
+        "rb": 2,
+        "a": 2,
+        "rg": 1,
+        "v": 2,
+        "pc": 2
+      }
+    },
+    "250845-2526": {
+      "label": "José María Giménez · Atlético de Madrid",
+      "abilities": {
+        "rb": 3,
+        "a": 2,
+        "rc": 2,
+        "pl": 2,
+        "pa": 2
+      }
+    },
+    "251876-2526": {
+      "label": "Pablo Maffeo · RCD Mallorca",
+      "abilities": {
+        "rb": 2,
+        "a": 2,
+        "rg": 2,
+        "v": 2,
+        "pc": 2
+      }
+    },
+    "252677-2526": {
+      "label": "José Luis Morales · Levante UD",
+      "abilities": {
+        "rc": 2,
+        "d": 2,
+        "v": 1,
+        "dl": 2,
+        "rm": 2
+      }
+    },
+    "255488-2526": {
+      "label": "Yeray Álvarez · Athletic Club",
+      "abilities": {
+        "rb": 2,
+        "a": 2,
+        "rc": 2,
+        "pl": 1,
+        "pa": 2
+      }
+    },
+    "255495-2526": {
+      "label": "Unai Elgezabal · Levante UD",
+      "abilities": {
+        "rb": 2,
+        "a": 2,
+        "rc": 2,
+        "pl": 1,
+        "pa": 2
+      }
+    },
+    "255501-2526": {
+      "label": "Iñigo Lekue · Athletic Club",
+      "abilities": {
+        "rb": 2,
+        "a": 2,
+        "rg": 1,
+        "v": 2,
+        "pc": 2
+      }
+    },
+    "255508-2526": {
+      "label": "Iñaki Williams · Athletic Club",
+      "abilities": {
+        "d": 2,
+        "rg": 2,
+        "v": 3,
+        "pc": 2,
+        "rm": 2
+      }
+    },
+    "256267-2526": {
+      "label": "Vedat Muriqi · RCD Mallorca",
+      "abilities": {
+        "rc": 2,
+        "d": 2,
+        "v": 2,
+        "dl": 2,
+        "rm": 2
+      }
+    },
+    "257062-2526": {
+      "label": "Álvaro García · Rayo Vallecano",
+      "abilities": {
+        "d": 2,
+        "rg": 2,
+        "v": 2,
+        "pc": 2,
+        "rm": 2
+      }
+    },
+    "257376-2526": {
+      "label": "Domingos Duarte · Getafe CF",
+      "abilities": {
+        "rb": 2,
+        "a": 2,
+        "rc": 2,
+        "pl": 1,
+        "pa": 2
+      }
+    },
+    "258923-2526": {
+      "label": "Marcus Rashford · FC Barcelona",
+      "abilities": {
+        "d": 2,
+        "rg": 3,
+        "v": 3,
+        "pc": 2,
+        "rm": 2
+      }
+    },
+    "258987-2526": {
+      "label": "Carl Starfelt · RC Celta",
+      "abilities": {
+        "rb": 2,
+        "a": 2,
+        "rc": 2,
+        "pl": 2,
+        "pa": 2
+      }
+    },
+    "261503-2526": {
+      "label": "Álvaro Fidalgo · Real Betis Balompié",
+      "abilities": {
+        "a": 2,
+        "rg": 2,
+        "pc": 3,
+        "pl": 2,
+        "dl": 2
+      }
+    },
+    "262396-2526": {
+      "label": "Unai Simón · Athletic Club",
+      "abilities": {
+        "rf": 3,
+        "co": 2
+      }
+    },
+    "262939-2526": {
+      "label": "Johan Mojica · RCD Mallorca",
+      "abilities": {
+        "rb": 2,
+        "a": 2,
+        "rg": 2,
+        "v": 2,
+        "pc": 2
+      }
+    },
+    "263727-2526": {
+      "label": "Joan Jordán · Sevilla FC",
+      "abilities": {
+        "a": 2,
+        "rg": 2,
+        "pc": 2,
+        "pl": 2,
+        "dl": 2
+      }
+    },
+    "264372-2526": {
+      "label": "Viktor Tsygankov · Girona FC",
+      "abilities": {
+        "d": 2,
+        "rg": 2,
+        "v": 3,
+        "pc": 2,
+        "rm": 2
+      }
+    },
+    "268642-2526": {
+      "label": "Renzo Saravia · Valencia CF",
+      "abilities": {
+        "rb": 2,
+        "a": 2,
+        "rg": 2,
+        "v": 2,
+        "pc": 2
+      }
+    },
+    "268670-2526": {
+      "label": "Gerard Gumbau · Rayo Vallecano",
+      "abilities": {
+        "rb": 2,
+        "a": 2,
+        "rg": 1,
+        "pc": 2,
+        "pl": 2
+      }
+    },
+    "271455-2526": {
+      "label": "Mihailo Ristic · RC Celta",
+      "abilities": {
+        "rb": 2,
+        "a": 2,
+        "rg": 1,
+        "v": 2,
+        "pc": 2
+      }
+    },
+    "27493-2526": {
+      "label": "Iván Cuéllar · RCD Mallorca",
+      "abilities": {
+        "rf": 2,
+        "co": 2
+      }
+    },
+    "275218-2526": {
+      "label": "Augusto Batalla · Rayo Vallecano",
+      "abilities": {
+        "rf": 3,
+        "co": 2
+      }
+    },
+    "276111-2526": {
+      "label": "David Costas · Real Oviedo",
+      "abilities": {
+        "rb": 2,
+        "a": 2,
+        "rc": 2,
+        "pl": 1,
+        "pa": 2
+      }
+    },
+    "277384-2526": {
+      "label": "Martin Valjent · RCD Mallorca",
+      "abilities": {
+        "rb": 2,
+        "a": 2,
+        "rc": 2,
+        "pl": 2,
+        "pa": 2
+      }
+    },
+    "277533-2526": {
+      "label": "Josan · Elche CF",
+      "abilities": {
+        "d": 2,
+        "rg": 2,
+        "v": 2,
+        "pc": 1,
+        "rm": 1
+      }
+    },
+    "278296-2526": {
+      "label": "Antonio Raíllo · RCD Mallorca",
+      "abilities": {
+        "rb": 2,
+        "a": 2,
+        "rc": 2,
+        "pl": 2,
+        "pa": 2
+      }
+    },
+    "278359-2526": {
+      "label": "Borja Iglesias · RC Celta",
+      "abilities": {
+        "rc": 2,
+        "d": 2,
+        "v": 2,
+        "dl": 2,
+        "rm": 2
+      }
+    },
+    "278837-2526": {
+      "label": "Luis Rioja · Valencia CF",
+      "abilities": {
+        "d": 2,
+        "rg": 2,
+        "v": 2,
+        "pc": 2,
+        "rm": 2
+      }
+    },
+    "280730-2526": {
+      "label": "Álvaro Odriozola · Real Sociedad",
+      "abilities": {
+        "rb": 2,
+        "a": 2,
+        "rg": 1,
+        "v": 2,
+        "pc": 2
+      }
+    },
+    "281989-2526": {
+      "label": "Luis Milla · Getafe CF",
+      "abilities": {
+        "a": 2,
+        "rg": 2,
+        "pc": 2,
+        "pl": 2,
+        "dl": 2
+      }
+    },
+    "282411-2526": {
+      "label": "Marcos Llorente · Atlético de Madrid",
+      "abilities": {
+        "rb": 3,
+        "a": 3,
+        "rg": 2,
+        "v": 2,
+        "pc": 2
+      }
+    },
+    "282421-2526": {
+      "label": "Javi Muñoz · Getafe CF",
+      "abilities": {
+        "a": 2,
+        "rg": 2,
+        "pc": 2,
+        "pl": 2,
+        "dl": 1
+      }
+    },
+    "283170-2526": {
+      "label": "Iñaki Peña · Elche CF",
+      "abilities": {
+        "rf": 3,
+        "co": 2
+      }
+    },
+    "284430-2526": {
+      "label": "Aarón Escandell · Real Oviedo",
+      "abilities": {
+        "rf": 2,
+        "co": 2
+      }
+    },
+    "284854-2526": {
+      "label": "Carles Aleñá · Deportivo Alavés",
+      "abilities": {
+        "a": 2,
+        "rg": 2,
+        "pc": 2,
+        "pl": 2,
+        "dl": 2
+      }
+    },
+    "285323-2526": {
+      "label": "Baptiste Santamaria · Valencia CF",
+      "abilities": {
+        "rb": 2,
+        "a": 2,
+        "rg": 2,
+        "pc": 2,
+        "pl": 2
+      }
+    },
+    "286384-2526": {
+      "label": "Eric Bailly · Real Oviedo",
+      "abilities": {
+        "rb": 2,
+        "a": 2,
+        "rc": 2,
+        "pl": 2,
+        "pa": 2
+      }
+    },
+    "286415-2526": {
+      "label": "Pau López · Real Betis Balompié",
+      "abilities": {
+        "rf": 2,
+        "co": 2
+      }
+    },
+    "287579-2526": {
+      "label": "Sofyan Amrabat · Real Betis Balompié",
+      "abilities": {
+        "rb": 3,
+        "a": 2,
+        "rg": 2,
+        "pc": 2,
+        "pl": 2
+      }
+    },
+    "288255-2526": {
+      "label": "Donny van de Beek · Girona FC",
+      "abilities": {
+        "a": 2,
+        "rg": 2,
+        "pc": 2,
+        "pl": 2,
+        "dl": 1
+      }
+    },
+    "289255-2526": {
+      "label": "Andoni Gorosabel · Athletic Club",
+      "abilities": {
+        "rb": 2,
+        "a": 2,
+        "rg": 2,
+        "v": 2,
+        "pc": 2
+      }
+    },
+    "289257-2526": {
+      "label": "Jon Guridi · Deportivo Alavés",
+      "abilities": {
+        "a": 2,
+        "rg": 2,
+        "pc": 2,
+        "pl": 2,
+        "dl": 2
+      }
+    },
+    "290249-2526": {
+      "label": "Mauro Arambarri · Getafe CF",
+      "abilities": {
+        "a": 2,
+        "rg": 2,
+        "pc": 3,
+        "pl": 2,
+        "dl": 2
+      }
+    },
+    "291417-2526": {
+      "label": "Ferland Mendy · Real Madrid",
+      "abilities": {
+        "rb": 3,
+        "a": 2,
+        "rg": 2,
+        "v": 2,
+        "pc": 2
+      }
+    },
+    "293385-2526": {
+      "label": "Dani Olmo · FC Barcelona",
+      "abilities": {
+        "d": 2,
+        "rg": 3,
+        "pc": 3,
+        "pl": 2,
+        "dl": 3
+      }
+    },
+    "293388-2526": {
+      "label": "Oriol Rey · Levante UD",
+      "abilities": {
+        "rb": 2,
+        "a": 2,
+        "rg": 1,
+        "pc": 2,
+        "pl": 2
+      }
+    },
+    "297194-2526": {
+      "label": "Iván Villar · RC Celta",
+      "abilities": {
+        "rf": 2,
+        "co": 2
+      }
+    },
+    "298197-2526": {
+      "label": "Antonio Sivera · Deportivo Alavés",
+      "abilities": {
+        "rf": 3,
+        "co": 2
+      }
+    },
+    "298575-2526": {
+      "label": "Kike Barja · CA Osasuna",
+      "abilities": {
+        "d": 2,
+        "rg": 2,
+        "v": 2,
+        "pc": 2,
+        "rm": 1
+      }
+    },
+    "298583-2526": {
+      "label": "Eray Cömert · Valencia CF",
+      "abilities": {
+        "rb": 2,
+        "a": 2,
+        "rc": 2,
+        "pl": 1,
+        "pa": 2
+      }
+    },
+    "298976-2526": {
+      "label": "Borja Mayoral · Getafe CF",
+      "abilities": {
+        "rc": 2,
+        "d": 2,
+        "v": 2,
+        "dl": 2,
+        "rm": 2
+      }
+    },
+    "300168-2526": {
+      "label": "Mikel Vesga · Athletic Club",
+      "abilities": {
+        "rb": 2,
+        "a": 2,
+        "rg": 2,
+        "pc": 2,
+        "pl": 2
+      }
+    },
+    "302371-2526": {
+      "label": "Toni Martínez · Deportivo Alavés",
+      "abilities": {
+        "rc": 2,
+        "d": 2,
+        "v": 2,
+        "dl": 2,
+        "rm": 2
+      }
+    },
+    "30321-2526": {
+      "label": "Óscar Trejo · Rayo Vallecano",
+      "abilities": {
+        "d": 1,
+        "rg": 2,
+        "pc": 2,
+        "pl": 2,
+        "dl": 2
+      }
+    },
+    "303657-2526": {
+      "label": "Ionuț Radu · RC Celta",
+      "abilities": {
+        "rf": 3,
+        "co": 2
+      }
+    },
+    "309110-2526": {
+      "label": "Brais Méndez · Real Sociedad",
+      "abilities": {
+        "d": 2,
+        "rg": 2,
+        "pc": 3,
+        "pl": 2,
+        "dl": 2
+      }
+    },
+    "311044-2526": {
+      "label": "Alfonso Espino · Rayo Vallecano",
+      "abilities": {
+        "rb": 2,
+        "a": 2,
+        "rg": 1,
+        "v": 2,
+        "pc": 2
+      }
+    },
+    "314353-2526": {
+      "label": "Trent Alexander-Arnold · Real Madrid",
+      "abilities": {
+        "rb": 3,
+        "a": 3,
+        "rg": 2,
+        "v": 3,
+        "pc": 2
+      }
+    },
+    "314678-2526": {
+      "label": "Brahim Díaz · Real Madrid",
+      "abilities": {
+        "d": 2,
+        "rg": 3,
+        "v": 3,
+        "pc": 2,
+        "rm": 2
+      }
+    },
+    "319745-2526": {
+      "label": "Dani Ceballos · Real Madrid",
+      "abilities": {
+        "a": 2,
+        "rg": 2,
+        "pc": 3,
+        "pl": 2,
+        "dl": 2
+      }
+    },
+    "320271-2526": {
+      "label": "Toni Lato · RCD Mallorca",
+      "abilities": {
+        "rb": 2,
+        "a": 2,
+        "rg": 1,
+        "v": 2,
+        "pc": 2
+      }
+    },
+    "326330-2526": {
+      "label": "Frenkie de Jong · FC Barcelona",
+      "abilities": {
+        "a": 2,
+        "rg": 2,
+        "pc": 3,
+        "pl": 3,
+        "dl": 2
+      }
+    },
+    "326416-2526": {
+      "label": "Dani Calvo · Real Oviedo",
+      "abilities": {
+        "rb": 2,
+        "a": 2,
+        "rc": 2,
+        "pl": 1,
+        "pa": 2
+      }
+    },
+    "328480-2526": {
+      "label": "Pepelu · Valencia CF",
+      "abilities": {
+        "rb": 2,
+        "a": 2,
+        "rg": 2,
+        "pc": 2,
+        "pl": 2
+      }
+    },
+    "331505-2526": {
+      "label": "Óscar Mingueza · RC Celta",
+      "abilities": {
+        "rb": 3,
+        "a": 2,
+        "rg": 2,
+        "v": 2,
+        "pc": 2
+      }
+    },
+    "334222-2526": {
+      "label": "Lucas Boyé · Deportivo Alavés",
+      "abilities": {
+        "rc": 2,
+        "d": 2,
+        "v": 2,
+        "dl": 2,
+        "rm": 2
+      }
+    },
+    "335225-2526": {
+      "label": "Manu Morlanes · RCD Mallorca",
+      "abilities": {
+        "a": 2,
+        "rg": 2,
+        "pc": 2,
+        "pl": 2,
+        "dl": 1
+      }
+    },
+    "336869-2526": {
+      "label": "Marc Roca · Real Betis Balompié",
+      "abilities": {
+        "rb": 2,
+        "a": 2,
+        "rg": 2,
+        "pc": 2,
+        "pl": 2
+      }
+    },
+    "337284-2526": {
+      "label": "Ovie Ejaria · Real Oviedo",
+      "abilities": {
+        "d": 2,
+        "rg": 2,
+        "v": 2,
+        "pc": 1,
+        "rm": 1
+      }
+    },
+    "337715-2526": {
+      "label": "Umar Sadiq · Valencia CF",
+      "abilities": {
+        "rc": 2,
+        "d": 2,
+        "v": 2,
+        "dl": 2,
+        "rm": 2
+      }
+    },
+    "338285-2526": {
+      "label": "Unai Núñez · Valencia CF",
+      "abilities": {
+        "rb": 2,
+        "a": 2,
+        "rc": 2,
+        "pl": 2,
+        "pa": 2
+      }
+    },
+    "338425-2526": {
+      "label": "Álex Berenguer · Athletic Club",
+      "abilities": {
+        "d": 2,
+        "rg": 2,
+        "v": 2,
+        "pc": 2,
+        "rm": 2
+      }
+    },
+    "339079-2526": {
+      "label": "Jiri Letacek · Getafe CF",
+      "abilities": {
+        "rf": 2,
+        "co": 2
+      }
+    },
+    "339816-2526": {
+      "label": "Tete Morente · Elche CF",
+      "abilities": {
+        "d": 2,
+        "rg": 2,
+        "v": 2,
+        "pc": 2,
+        "rm": 1
+      }
+    },
+    "340205-2526": {
+      "label": "Gorka Guruzeta · Athletic Club",
+      "abilities": {
+        "rc": 2,
+        "d": 2,
+        "v": 2,
+        "dl": 2,
+        "rm": 2
+      }
+    },
+    "340376-2526": {
+      "label": "Abel Ruiz · Girona FC",
+      "abilities": {
+        "rc": 2,
+        "d": 2,
+        "v": 1,
+        "dl": 2,
+        "rm": 2
+      }
+    },
+    "341110-2526": {
+      "label": "Franco Cervi · RC Celta",
+      "abilities": {
+        "d": 2,
+        "rg": 2,
+        "v": 2,
+        "pc": 2,
+        "rm": 1
+      }
+    },
+    "341263-2526": {
+      "label": "Adrián Dela · Levante UD",
+      "abilities": {
+        "rb": 2,
+        "a": 2,
+        "rc": 2,
+        "pl": 2,
+        "pa": 2
+      }
+    },
+    "341264-2526": {
+      "label": "Fran García · Real Madrid",
+      "abilities": {
+        "rb": 3,
+        "a": 2,
+        "rg": 2,
+        "v": 2,
+        "pc": 2
+      }
+    },
+    "341278-2526": {
+      "label": "Iván Martín · Girona FC",
+      "abilities": {
+        "a": 2,
+        "rg": 2,
+        "pc": 2,
+        "pl": 2,
+        "dl": 2
+      }
+    },
+    "341713-2526": {
+      "label": "Diego Conde · Villarreal CF",
+      "abilities": {
+        "rf": 2,
+        "co": 2
+      }
+    },
+    "342048-2526": {
+      "label": "Grady Diangana · Elche CF",
+      "abilities": {
+        "d": 2,
+        "rg": 2,
+        "v": 2,
+        "pc": 2,
+        "rm": 1
+      }
+    },
+    "342229-2526": {
+      "label": "Kylian Mbappé · Real Madrid",
+      "abilities": {
+        "rc": 3,
+        "d": 3,
+        "v": 2,
+        "dl": 3,
+        "rm": 3
+      }
+    },
+    "342385-2526": {
+      "label": "Guido Rodríguez · Valencia CF",
+      "abilities": {
+        "rb": 2,
+        "a": 2,
+        "rg": 2,
+        "pc": 2,
+        "pl": 2
+      }
+    },
+    "343052-2526": {
+      "label": "Nicolas Pépé · Villarreal CF",
+      "abilities": {
+        "d": 2,
+        "rg": 2,
+        "v": 3,
+        "pc": 2,
+        "rm": 2
+      }
+    },
+    "345886-2526": {
+      "label": "Rubén Vargas · Sevilla FC",
+      "abilities": {
+        "d": 2,
+        "rg": 2,
+        "v": 3,
+        "pc": 2,
+        "rm": 2
+      }
+    },
+    "346289-2526": {
+      "label": "Mouctar Diakhaby · Valencia CF",
+      "abilities": {
+        "rb": 2,
+        "a": 2,
+        "rc": 2,
+        "pl": 1,
+        "pa": 2
+      }
+    },
+    "348795-2526": {
+      "label": "Giovani Lo Celso · Real Betis Balompié",
+      "abilities": {
+        "d": 2,
+        "rg": 2,
+        "pc": 3,
+        "pl": 2,
+        "dl": 2
+      }
+    },
+    "349884-2526": {
+      "label": "Lucas Ahijado · Real Oviedo",
+      "abilities": {
+        "rb": 2,
+        "a": 2,
+        "rg": 1,
+        "v": 2,
+        "pc": 2
+      }
+    },
+    "35047-2526": {
+      "label": "Axel Witsel · Girona FC",
+      "abilities": {
+        "rb": 2,
+        "a": 2,
+        "rg": 2,
+        "pc": 2,
+        "pl": 2
+      }
+    },
+    "351478-2526": {
+      "label": "Mikel Oyarzabal · Real Sociedad",
+      "abilities": {
+        "rc": 2,
+        "d": 3,
+        "v": 2,
+        "dl": 2,
+        "rm": 3
+      }
+    },
+    "351809-2526": {
+      "label": "Robin Le Normand · Atlético de Madrid",
+      "abilities": {
+        "rb": 3,
+        "a": 3,
+        "rc": 2,
+        "pl": 2,
+        "pa": 2
+      }
+    },
+    "355628-2526": {
+      "label": "Igor Zubeldia · Real Sociedad",
+      "abilities": {
+        "rb": 3,
+        "a": 2,
+        "rc": 2,
+        "pl": 2,
+        "pa": 2
+      }
+    },
+    "355861-2526": {
+      "label": "Arnaut Danjuma · Valencia CF",
+      "abilities": {
+        "d": 2,
+        "rg": 2,
+        "v": 2,
+        "pc": 2,
+        "rm": 2
+      }
+    },
+    "356197-2526": {
+      "label": "Alfonso Pedraza · Villarreal CF",
+      "abilities": {
+        "rb": 2,
+        "a": 2,
+        "rg": 2,
+        "v": 2,
+        "pc": 2
+      }
+    },
+    "357628-2526": {
+      "label": "Alfon González · Villarreal CF",
+      "abilities": {
+        "d": 2,
+        "rg": 2,
+        "v": 2,
+        "pc": 2,
+        "rm": 2
+      }
+    },
+    "357884-2526": {
+      "label": "Fernando Calero · RCD Espanyol Barcelona",
+      "abilities": {
+        "rb": 2,
+        "a": 2,
+        "rc": 2,
+        "pl": 2,
+        "pa": 2
+      }
+    },
+    "357885-2526": {
+      "label": "Pablo Fornals · Real Betis Balompié",
+      "abilities": {
+        "a": 2,
+        "rg": 2,
+        "pc": 3,
+        "pl": 2,
+        "dl": 2
+      }
+    },
+    "358032-2526": {
+      "label": "Cyril Ngonge · RCD Espanyol Barcelona",
+      "abilities": {
+        "d": 2,
+        "rg": 2,
+        "v": 2,
+        "pc": 2,
+        "rm": 2
+      }
+    },
+    "358250-2526": {
+      "label": "Joseph Aidoo · RC Celta",
+      "abilities": {
+        "rb": 2,
+        "a": 2,
+        "rc": 2,
+        "pl": 1,
+        "pa": 2
+      }
+    },
+    "361254-2526": {
+      "label": "Rafa Mir · Elche CF",
+      "abilities": {
+        "rc": 2,
+        "d": 2,
+        "v": 2,
+        "dl": 2,
+        "rm": 2
+      }
+    },
+    "362086-2526": {
+      "label": "Isi Palazón · Rayo Vallecano",
+      "abilities": {
+        "d": 2,
+        "rg": 2,
+        "pc": 2,
+        "dl": 2,
+        "rm": 2
+      }
+    },
+    "363057-2526": {
+      "label": "Pedro Díaz · Rayo Vallecano",
+      "abilities": {
+        "a": 2,
+        "rg": 2,
+        "pc": 2,
+        "pl": 2,
+        "dl": 2
+      }
+    },
+    "366930-2526": {
+      "label": "Sergio Gómez · Real Sociedad",
+      "abilities": {
+        "rb": 3,
+        "a": 2,
+        "rg": 2,
+        "v": 2,
+        "pc": 2
+      }
+    },
+    "367466-2526": {
+      "label": "Thierry Correia · Valencia CF",
+      "abilities": {
+        "rb": 2,
+        "a": 2,
+        "rg": 2,
+        "v": 2,
+        "pc": 2
+      }
+    },
+    "369081-2526": {
+      "label": "Federico Valverde · Real Madrid",
+      "abilities": {
+        "a": 3,
+        "rg": 3,
+        "pc": 3,
+        "pl": 3,
+        "dl": 2
+      }
+    },
+    "371371-2526": {
+      "label": "Marash Kumbulla · RCD Mallorca",
+      "abilities": {
+        "rb": 2,
+        "a": 2,
+        "rc": 2,
+        "pl": 2,
+        "pa": 2
+      }
+    },
+    "371998-2526": {
+      "label": "Vinicius Junior · Real Madrid",
+      "abilities": {
+        "d": 3,
+        "rg": 3,
+        "v": 3,
+        "pc": 3,
+        "rm": 2
+      }
+    },
+    "372246-2526": {
+      "label": "Carlos Soler · Real Sociedad",
+      "abilities": {
+        "a": 2,
+        "rg": 2,
+        "pc": 3,
+        "pl": 2,
+        "dl": 2
+      }
+    },
+    "374139-2526": {
+      "label": "Junior Firpo · Real Betis Balompié",
+      "abilities": {
+        "rb": 2,
+        "a": 2,
+        "rg": 2,
+        "v": 2,
+        "pc": 2
+      }
+    },
+    "375382-2526": {
+      "label": "André Almeida · Valencia CF",
+      "abilities": {
+        "d": 2,
+        "rg": 2,
+        "pc": 2,
+        "pl": 2,
+        "dl": 2
+      }
+    },
+    "378139-2526": {
+      "label": "Aitor Ruibal · Real Betis Balompié",
+      "abilities": {
+        "d": 2,
+        "rg": 2,
+        "v": 2,
+        "pc": 2,
+        "rm": 2
+      }
+    },
+    "378293-2526": {
+      "label": "Yangel Herrera · Real Sociedad",
+      "abilities": {
+        "a": 2,
+        "rg": 2,
+        "pc": 2,
+        "pl": 2,
+        "dl": 2
+      }
+    },
+    "380598-2526": {
+      "label": "Santi Comesaña · Villarreal CF",
+      "abilities": {
+        "a": 2,
+        "rg": 2,
+        "pc": 3,
+        "pl": 2,
+        "dl": 2
+      }
+    },
+    "38253-2526": {
+      "label": "Robert Lewandowski · FC Barcelona",
+      "abilities": {
+        "rc": 2,
+        "d": 3,
+        "v": 2,
+        "dl": 2,
+        "rm": 3
+      }
+    },
+    "385105-2526": {
+      "label": "Gabriel Suazo · Sevilla FC",
+      "abilities": {
+        "rb": 2,
+        "a": 2,
+        "rg": 2,
+        "v": 2,
+        "pc": 2
+      }
+    },
+    "388513-2526": {
+      "label": "Mateu Morey · RCD Mallorca",
+      "abilities": {
+        "rb": 2,
+        "a": 2,
+        "rg": 1,
+        "v": 2,
+        "pc": 2
+      }
+    },
+    "390688-2526": {
+      "label": "Juan Iglesias · Getafe CF",
+      "abilities": {
+        "rb": 2,
+        "a": 2,
+        "rg": 2,
+        "v": 2,
+        "pc": 2
+      }
+    },
+    "394236-2526": {
+      "label": "Filip Ugrinic · Valencia CF",
+      "abilities": {
+        "a": 2,
+        "rg": 2,
+        "pc": 2,
+        "pl": 2,
+        "dl": 2
+      }
+    },
+    "395122-2526": {
+      "label": "Santiago Colombatto · Real Oviedo",
+      "abilities": {
+        "rb": 2,
+        "a": 2,
+        "rg": 2,
+        "pc": 2,
+        "pl": 2
+      }
+    },
+    "395234-2526": {
+      "label": "Batista Mendy · Sevilla FC",
+      "abilities": {
+        "rb": 3,
+        "a": 2,
+        "rg": 2,
+        "pc": 2,
+        "pl": 2
+      }
+    },
+    "397676-2526": {
+      "label": "Dani Cárdenas · Rayo Vallecano",
+      "abilities": {
+        "rf": 2,
+        "co": 2
+      }
+    },
+    "398131-2526": {
+      "label": "Cristian Rivero · Valencia CF",
+      "abilities": {
+        "rf": 2,
+        "co": 1
+      }
+    },
+    "398163-2526": {
+      "label": "Gonzalo Villar · Elche CF",
+      "abilities": {
+        "a": 2,
+        "rg": 2,
+        "pc": 2,
+        "pl": 2,
+        "dl": 1
+      }
+    },
+    "398184-2526": {
+      "label": "Ferran Torres · FC Barcelona",
+      "abilities": {
+        "rc": 2,
+        "d": 3,
+        "v": 2,
+        "dl": 2,
+        "rm": 3
+      }
+    },
+    "401530-2526": {
+      "label": "Éder Militão · Real Madrid",
+      "abilities": {
+        "rb": 3,
+        "a": 3,
+        "rc": 2,
+        "pl": 2,
+        "pa": 2
+      }
+    },
+    "40433-2526": {
+      "label": "Alexis Sánchez · Sevilla FC",
+      "abilities": {
+        "d": 2,
+        "rg": 2,
+        "pc": 2,
+        "dl": 2,
+        "rm": 2
+      }
+    },
+    "404418-2526": {
+      "label": "Dávid Hancko · Atlético de Madrid",
+      "abilities": {
+        "rb": 3,
+        "a": 3,
+        "rc": 2,
+        "pl": 2,
+        "pa": 2
+      }
+    },
+    "404839-2526": {
+      "label": "Andriy Lunin · Real Madrid",
+      "abilities": {
+        "rf": 3,
+        "co": 2
+      }
+    },
+    "405398-2526": {
+      "label": "Takefusa Kubo · Real Sociedad",
+      "abilities": {
+        "d": 2,
+        "rg": 3,
+        "v": 3,
+        "pc": 2,
+        "rm": 2
+      }
+    },
+    "406040-2526": {
+      "label": "Ademola Lookman · Atlético de Madrid",
+      "abilities": {
+        "d": 3,
+        "rg": 2,
+        "pc": 2,
+        "dl": 2,
+        "rm": 3
+      }
+    },
+    "408471-2526": {
+      "label": "Javi Puado · RCD Espanyol Barcelona",
+      "abilities": {
+        "d": 2,
+        "rg": 2,
+        "v": 2,
+        "pc": 2,
+        "rm": 2
+      }
+    },
+    "411295-2526": {
+      "label": "Raphinha · FC Barcelona",
+      "abilities": {
+        "d": 3,
+        "rg": 3,
+        "v": 3,
+        "pc": 2,
+        "rm": 2
+      }
+    },
+    "411975-2526": {
+      "label": "Jules Koundé · FC Barcelona",
+      "abilities": {
+        "rb": 3,
+        "a": 3,
+        "rg": 2,
+        "v": 3,
+        "pc": 2
+      }
+    },
+    "412045-2526": {
+      "label": "Pol Lozano · RCD Espanyol Barcelona",
+      "abilities": {
+        "a": 2,
+        "rg": 2,
+        "pc": 2,
+        "pl": 2,
+        "dl": 2
+      }
+    },
+    "412363-2526": {
+      "label": "Rodrygo · Real Madrid",
+      "abilities": {
+        "d": 2,
+        "rg": 3,
+        "v": 3,
+        "pc": 2,
+        "rm": 2
+      }
+    },
+    "412829-2526": {
+      "label": "Léo Pétrot · Elche CF",
+      "abilities": {
+        "rb": 2,
+        "a": 2,
+        "rg": 1,
+        "v": 2,
+        "pc": 2
+      }
+    },
+    "413112-2526": {
+      "label": "Aurélien Tchouaméni · Real Madrid",
+      "abilities": {
+        "rb": 3,
+        "a": 3,
+        "rg": 2,
+        "pc": 3,
+        "pl": 2
+      }
+    },
+    "413262-2526": {
+      "label": "Dani Raba · Valencia CF",
+      "abilities": {
+        "d": 2,
+        "rg": 2,
+        "pc": 1,
+        "dl": 2,
+        "rm": 2
+      }
+    },
+    "417913-2526": {
+      "label": "Álvaro Valles · Real Betis Balompié",
+      "abilities": {
+        "rf": 3,
+        "co": 2
+      }
+    },
+    "419648-2526": {
+      "label": "Veljko Birmancevic · Getafe CF",
+      "abilities": {
+        "d": 2,
+        "rg": 2,
+        "v": 2,
+        "pc": 2,
+        "rm": 2
+      }
+    },
+    "423444-2526": {
+      "label": "Fran Beltrán · Girona FC",
+      "abilities": {
+        "a": 2,
+        "rg": 2,
+        "pc": 2,
+        "pl": 2,
+        "dl": 2
+      }
+    },
+    "424042-2526": {
+      "label": "Nahuel Molina · Atlético de Madrid",
+      "abilities": {
+        "rb": 3,
+        "a": 2,
+        "rg": 2,
+        "v": 2,
+        "pc": 2
+      }
+    },
+    "429790-2526": {
+      "label": "Luka Ilic · Real Oviedo",
+      "abilities": {
+        "d": 1,
+        "rg": 2,
+        "pc": 2,
+        "pl": 2,
+        "dl": 2
+      }
+    },
+    "431190-2526": {
+      "label": "Carlos Protesoni · Deportivo Alavés",
+      "abilities": {
+        "rb": 2,
+        "a": 2,
+        "rg": 1,
+        "pc": 2,
+        "pl": 2
+      }
+    },
+    "439022-2526": {
+      "label": "Marcão · Sevilla FC",
+      "abilities": {
+        "rb": 2,
+        "a": 2,
+        "rc": 2,
+        "pl": 2,
+        "pa": 2
+      }
+    },
+    "44058-2526": {
+      "label": "Wojciech Szczęsny · FC Barcelona",
+      "abilities": {
+        "rf": 2,
+        "co": 2
+      }
+    },
+    "441170-2526": {
+      "label": "Valentin Rosier · CA Osasuna",
+      "abilities": {
+        "rb": 2,
+        "a": 2,
+        "rg": 2,
+        "v": 2,
+        "pc": 2
+      }
+    },
+    "448628-2526": {
+      "label": "Javi Galán · CA Osasuna",
+      "abilities": {
+        "rb": 2,
+        "a": 2,
+        "rg": 2,
+        "v": 2,
+        "pc": 2
+      }
+    },
+    "449796-2526": {
+      "label": "Alejandro Catena · CA Osasuna",
+      "abilities": {
+        "rb": 2,
+        "a": 2,
+        "rc": 2,
+        "pl": 2,
+        "pa": 2
+      }
+    },
+    "451801-2526": {
+      "label": "Abdul Mumin · Rayo Vallecano",
+      "abilities": {
+        "rb": 2,
+        "a": 2,
+        "rc": 2,
+        "pl": 2,
+        "pa": 2
+      }
+    },
+    "452483-2526": {
+      "label": "David Affengruber · Elche CF",
+      "abilities": {
+        "rb": 2,
+        "a": 2,
+        "rc": 2,
+        "pl": 2,
+        "pa": 2
+      }
+    },
+    "455181-2526": {
+      "label": "Jorge de Frutos · Rayo Vallecano",
+      "abilities": {
+        "d": 2,
+        "rg": 2,
+        "v": 3,
+        "pc": 2,
+        "rm": 2
+      }
+    },
+    "457931-2526": {
+      "label": "Luiz Felipe · Rayo Vallecano",
+      "abilities": {
+        "rb": 2,
+        "a": 2,
+        "rc": 2,
+        "pl": 2,
+        "pa": 2
+      }
+    },
+    "459463-2526": {
+      "label": "Cucho Hernández · Real Betis Balompié",
+      "abilities": {
+        "rc": 2,
+        "d": 2,
+        "v": 2,
+        "dl": 2,
+        "rm": 3
+      }
+    },
+    "461617-2526": {
+      "label": "Rodrigo Riquelme · Real Betis Balompié",
+      "abilities": {
+        "d": 2,
+        "rg": 2,
+        "v": 2,
+        "pc": 2,
+        "rm": 2
+      }
+    },
+    "462070-2526": {
+      "label": "Nicolás Fonseca · Real Oviedo",
+      "abilities": {
+        "rb": 2,
+        "a": 2,
+        "rg": 2,
+        "pc": 2,
+        "pl": 2
+      }
+    },
+    "46413-2526": {
+      "label": "Ante Budimir · CA Osasuna",
+      "abilities": {
+        "rc": 2,
+        "d": 2,
+        "v": 2,
+        "dl": 2,
+        "rm": 2
+      }
+    },
+    "465967-2526": {
+      "label": "Ander Guevara · Deportivo Alavés",
+      "abilities": {
+        "a": 2,
+        "rg": 2,
+        "pc": 2,
+        "pl": 2,
+        "dl": 2
+      }
+    },
+    "466783-2526": {
+      "label": "Arnau Tenas · Villarreal CF",
+      "abilities": {
+        "rf": 2,
+        "co": 2
+      }
+    },
+    "466794-2526": {
+      "label": "Eric García · FC Barcelona",
+      "abilities": {
+        "rb": 3,
+        "a": 3,
+        "rc": 2,
+        "pl": 2,
+        "pa": 2
+      }
+    },
+    "466801-2526": {
+      "label": "Sergi Altimira · Real Betis Balompié",
+      "abilities": {
+        "a": 2,
+        "rg": 2,
+        "pc": 3,
+        "pl": 2,
+        "dl": 2
+      }
+    },
+    "480267-2526": {
+      "label": "Ronald Araujo · FC Barcelona",
+      "abilities": {
+        "rb": 3,
+        "a": 2,
+        "rc": 2,
+        "pl": 2,
+        "pa": 2
+      }
+    },
+    "480763-2526": {
+      "label": "Juan Foyth · Villarreal CF",
+      "abilities": {
+        "rb": 3,
+        "a": 2,
+        "rc": 2,
+        "pl": 2,
+        "pa": 2
+      }
+    },
+    "484988-2526": {
+      "label": "Logan Costa · Villarreal CF",
+      "abilities": {
+        "rb": 3,
+        "a": 2,
+        "rc": 2,
+        "pl": 2,
+        "pa": 2
+      }
+    },
+    "485963-2526": {
+      "label": "Pape Gueye · Villarreal CF",
+      "abilities": {
+        "a": 2,
+        "rg": 2,
+        "pc": 3,
+        "pl": 3,
+        "dl": 2
+      }
+    },
+    "486031-2526": {
+      "label": "Nico González · Atlético de Madrid",
+      "abilities": {
+        "d": 2,
+        "rg": 3,
+        "v": 3,
+        "pc": 2,
+        "rm": 2
+      }
+    },
+    "488626-2526": {
+      "label": "Jesús Areso · Athletic Club",
+      "abilities": {
+        "rb": 2,
+        "a": 2,
+        "rg": 2,
+        "v": 2,
+        "pc": 2
+      }
+    },
+    "490606-2526": {
+      "label": "Lucas Bergström · RCD Mallorca",
+      "abilities": {
+        "rf": 2,
+        "co": 2
+      }
+    },
+    "495621-2526": {
+      "label": "Antonio Blanco · Deportivo Alavés",
+      "abilities": {
+        "rb": 3,
+        "a": 2,
+        "rg": 2,
+        "pc": 2,
+        "pl": 2
+      }
+    },
+    "495625-2526": {
+      "label": "Víctor Chust · Elche CF",
+      "abilities": {
+        "rb": 2,
+        "a": 2,
+        "rc": 2,
+        "pl": 2,
+        "pa": 2
+      }
+    },
+    "498237-2526": {
+      "label": "David Carmo · Real Oviedo",
+      "abilities": {
+        "rb": 2,
+        "a": 2,
+        "rc": 2,
+        "pl": 2,
+        "pa": 2
+      }
+    },
+    "500067-2526": {
+      "label": "Chidera Ejuke · Sevilla FC",
+      "abilities": {
+        "d": 2,
+        "rg": 2,
+        "v": 2,
+        "pc": 2,
+        "rm": 2
+      }
+    },
+    "501418-2526": {
+      "label": "Adrià Pedrosa · Elche CF",
+      "abilities": {
+        "rb": 2,
+        "a": 2,
+        "rg": 2,
+        "v": 2,
+        "pc": 2
+      }
+    },
+    "502722-2526": {
+      "label": "Luka Sucic · Real Sociedad",
+      "abilities": {
+        "a": 2,
+        "rg": 2,
+        "pc": 3,
+        "pl": 2,
+        "dl": 2
+      }
+    },
+    "505493-2526": {
+      "label": "Diego Pampín · Levante UD",
+      "abilities": {
+        "rb": 2,
+        "a": 2,
+        "rg": 1,
+        "v": 2,
+        "pc": 2
+      }
+    },
+    "505674-2526": {
+      "label": "Sergio Camello · Rayo Vallecano",
+      "abilities": {
+        "rc": 2,
+        "d": 2,
+        "v": 1,
+        "dl": 2,
+        "rm": 2
+      }
+    },
+    "506248-2526": {
+      "label": "Edu Expósito · RCD Espanyol Barcelona",
+      "abilities": {
+        "a": 2,
+        "rg": 2,
+        "pc": 2,
+        "pl": 2,
+        "dl": 2
+      }
+    },
+    "513031-2526": {
+      "label": "Antonio Sánchez · RCD Mallorca",
+      "abilities": {
+        "a": 2,
+        "rg": 2,
+        "pc": 2,
+        "pl": 2,
+        "dl": 2
+      }
+    },
+    "517753-2526": {
+      "label": "Óscar Valentín · Rayo Vallecano",
+      "abilities": {
+        "a": 2,
+        "rg": 2,
+        "pc": 2,
+        "pl": 2,
+        "dl": 2
+      }
+    },
+    "517842-2526": {
+      "label": "Aihen Muñoz · Real Sociedad",
+      "abilities": {
+        "rb": 2,
+        "a": 2,
+        "rg": 2,
+        "v": 2,
+        "pc": 2
+      }
+    },
+    "518644-2526": {
+      "label": "Largie Ramazani · Valencia CF",
+      "abilities": {
+        "d": 2,
+        "rg": 2,
+        "v": 2,
+        "pc": 2,
+        "rm": 2
+      }
+    },
+    "520840-2526": {
+      "label": "José Copete · Valencia CF",
+      "abilities": {
+        "rb": 2,
+        "a": 2,
+        "rc": 2,
+        "pl": 2,
+        "pa": 2
+      }
+    },
+    "524000-2526": {
+      "label": "Dani Vivian · Athletic Club",
+      "abilities": {
+        "rb": 3,
+        "a": 3,
+        "rc": 2,
+        "pl": 2,
+        "pa": 2
+      }
+    },
+    "525438-2526": {
+      "label": "Horațiu Moldovan · Real Oviedo",
+      "abilities": {
+        "rf": 2,
+        "co": 2
+      }
+    },
+    "525578-2526": {
+      "label": "Pathé Ciss · Rayo Vallecano",
+      "abilities": {
+        "a": 2,
+        "rg": 2,
+        "pc": 2,
+        "pl": 2,
+        "dl": 2
+      }
+    },
+    "526050-2526": {
+      "label": "Kervin Arriaga · Levante UD",
+      "abilities": {
+        "rb": 2,
+        "a": 2,
+        "rg": 1,
+        "pc": 2,
+        "pl": 2
+      }
+    },
+    "527966-2526": {
+      "label": "Andrei Rațiu · Rayo Vallecano",
+      "abilities": {
+        "rb": 3,
+        "a": 2,
+        "rg": 2,
+        "v": 2,
+        "pc": 2
+      }
+    },
+    "531404-2526": {
+      "label": "Marc Aguado · Elche CF",
+      "abilities": {
+        "rb": 2,
+        "a": 2,
+        "rg": 2,
+        "pc": 2,
+        "pl": 2
+      }
+    },
+    "533354-2526": {
+      "label": "Facundo Garcés · Deportivo Alavés",
+      "abilities": {
+        "rb": 2,
+        "a": 2,
+        "rc": 1,
+        "pl": 1,
+        "pa": 1
+      }
+    },
+    "533568-2526": {
+      "label": "Nahuel Tenaglia · Deportivo Alavés",
+      "abilities": {
+        "rb": 2,
+        "a": 2,
+        "rg": 2,
+        "v": 2,
+        "pc": 2
+      }
+    },
+    "537382-2526": {
+      "label": "Bryan Gil · Girona FC",
+      "abilities": {
+        "d": 2,
+        "rg": 2,
+        "v": 3,
+        "pc": 2,
+        "rm": 2
+      }
+    },
+    "538006-2526": {
+      "label": "Kwasi Sibo · Real Oviedo",
+      "abilities": {
+        "a": 2,
+        "rg": 2,
+        "pc": 2,
+        "pl": 2,
+        "dl": 1
+      }
+    },
+    "538996-2526": {
+      "label": "Tanguy Nianzou · Sevilla FC",
+      "abilities": {
+        "rb": 2,
+        "a": 2,
+        "rc": 2,
+        "pl": 1,
+        "pa": 2
+      }
+    },
+    "541555-2526": {
+      "label": "Enzo Boyomo · CA Osasuna",
+      "abilities": {
+        "rb": 3,
+        "a": 2,
+        "rc": 2,
+        "pl": 2,
+        "pa": 2
+      }
+    },
+    "541621-2526": {
+      "label": "Marc Vidal · RC Celta",
+      "abilities": {
+        "rf": 2,
+        "co": 1
+      }
+    },
+    "54217-2526": {
+      "label": "Raúl Fernández · Deportivo Alavés",
+      "abilities": {
+        "rf": 2,
+        "co": 2
+      }
+    },
+    "545647-2526": {
+      "label": "Sergio Carreira · RC Celta",
+      "abilities": {
+        "rb": 2,
+        "a": 2,
+        "rg": 2,
+        "v": 2,
+        "pc": 2
+      }
+    },
+    "548111-2526": {
+      "label": "Álex Baena · Atlético de Madrid",
+      "abilities": {
+        "d": 2,
+        "rg": 3,
+        "v": 3,
+        "pc": 2,
+        "rm": 2
+      }
+    },
+    "548188-2526": {
+      "label": "Germán Valera · Elche CF",
+      "abilities": {
+        "d": 2,
+        "rg": 2,
+        "v": 2,
+        "pc": 2,
+        "rm": 2
+      }
+    },
+    "549027-2526": {
+      "label": "Martim Neto · Elche CF",
+      "abilities": {
+        "a": 2,
+        "rg": 2,
+        "pc": 2,
+        "pl": 2,
+        "dl": 2
+      }
+    },
+    "552425-2526": {
+      "label": "Jon Moncayola · CA Osasuna",
+      "abilities": {
+        "a": 2,
+        "rg": 2,
+        "pc": 2,
+        "pl": 2,
+        "dl": 2
+      }
+    },
+    "555143-2526": {
+      "label": "Arsen Zakharyan · Real Sociedad",
+      "abilities": {
+        "d": 2,
+        "rg": 2,
+        "pc": 3,
+        "pl": 2,
+        "dl": 2
+      }
+    },
+    "555500-2526": {
+      "label": "Jorge Herrando · CA Osasuna",
+      "abilities": {
+        "rb": 2,
+        "a": 2,
+        "rc": 2,
+        "pl": 2,
+        "pa": 2
+      }
+    },
+    "557057-2526": {
+      "label": "Roger Brugué · Levante UD",
+      "abilities": {
+        "d": 2,
+        "rg": 2,
+        "v": 2,
+        "pc": 2,
+        "rm": 1
+      }
+    },
+    "559979-2526": {
+      "label": "Abdel Abqar · Getafe CF",
+      "abilities": {
+        "rb": 2,
+        "a": 2,
+        "rc": 2,
+        "pl": 2,
+        "pa": 2
+      }
+    },
+    "560417-2526": {
+      "label": "Alemão · Rayo Vallecano",
+      "abilities": {
+        "rc": 2,
+        "d": 2,
+        "v": 2,
+        "dl": 2,
+        "rm": 2
+      }
+    },
+    "560483-2526": {
+      "label": "Randy Nteka · Rayo Vallecano",
+      "abilities": {
+        "d": 1,
+        "rg": 2,
+        "pc": 2,
+        "pl": 2,
+        "dl": 2
+      }
+    },
+    "560705-2526": {
+      "label": "Álex Sancris · Getafe CF",
+      "abilities": {
+        "d": 2,
+        "rg": 2,
+        "v": 2,
+        "pc": 2,
+        "rm": 1
+      }
+    },
+    "561613-2526": {
+      "label": "Joan García · FC Barcelona",
+      "abilities": {
+        "rf": 3,
+        "co": 3
+      }
+    },
+    "562742-2526": {
+      "label": "Leo Román · RCD Mallorca",
+      "abilities": {
+        "rf": 3,
+        "co": 2
+      }
+    },
+    "563137-2526": {
+      "label": "Robert Navarro · Athletic Club",
+      "abilities": {
+        "d": 2,
+        "rg": 2,
+        "v": 2,
+        "pc": 2,
+        "rm": 2
+      }
+    },
+    "568158-2526": {
+      "label": "Javi López · Real Oviedo",
+      "abilities": {
+        "rb": 2,
+        "a": 2,
+        "rg": 2,
+        "v": 2,
+        "pc": 2
+      }
+    },
+    "568835-2526": {
+      "label": "Pablo Martínez · Levante UD",
+      "abilities": {
+        "a": 2,
+        "rg": 2,
+        "pc": 2,
+        "pl": 2,
+        "dl": 1
+      }
+    },
+    "569384-2526": {
+      "label": "Lucien Agoumé · Sevilla FC",
+      "abilities": {
+        "rb": 3,
+        "a": 2,
+        "rg": 2,
+        "pc": 2,
+        "pl": 2
+      }
+    },
+    "571020-2526": {
+      "label": "Oihan Sancet · Athletic Club",
+      "abilities": {
+        "d": 2,
+        "rg": 3,
+        "pc": 3,
+        "pl": 2,
+        "dl": 2
+      }
+    },
+    "573775-2526": {
+      "label": "Hugo Duro · Valencia CF",
+      "abilities": {
+        "rc": 2,
+        "d": 2,
+        "v": 2,
+        "dl": 2,
+        "rm": 3
+      }
+    },
+    "57500-2526": {
+      "label": "César Azpilicueta · Sevilla FC",
+      "abilities": {
+        "rb": 2,
+        "a": 2,
+        "rc": 2,
+        "pl": 2,
+        "pa": 2
+      }
+    },
+    "576024-2526": {
+      "label": "Julián Alvarez · Atlético de Madrid",
+      "abilities": {
+        "rc": 3,
+        "d": 3,
+        "v": 2,
+        "dl": 3,
+        "rm": 3
+      }
+    },
+    "576028-2526": {
+      "label": "Thiago Almada · Atlético de Madrid",
+      "abilities": {
+        "d": 2,
+        "rg": 2,
+        "v": 3,
+        "pc": 2,
+        "rm": 2
+      }
+    },
+    "578419-2526": {
+      "label": "Federico Viñas · Real Oviedo",
+      "abilities": {
+        "rc": 2,
+        "d": 2,
+        "v": 2,
+        "dl": 2,
+        "rm": 2
+      }
+    },
+    "580560-2526": {
+      "label": "Jon Pacheco · Deportivo Alavés",
+      "abilities": {
+        "rb": 2,
+        "a": 2,
+        "rc": 2,
+        "pl": 2,
+        "pa": 2
+      }
+    },
+    "581326-2526": {
+      "label": "Ville Koski · Deportivo Alavés",
+      "abilities": {
+        "rb": 2,
+        "a": 2,
+        "rc": 2,
+        "pl": 1,
+        "pa": 2
+      }
+    },
+    "581678-2526": {
+      "label": "Jude Bellingham · Real Madrid",
+      "abilities": {
+        "d": 2,
+        "rg": 3,
+        "pc": 3,
+        "pl": 3,
+        "dl": 3
+      }
+    },
+    "583510-2526": {
+      "label": "Miguel Rubio · RCD Espanyol Barcelona",
+      "abilities": {
+        "rb": 2,
+        "a": 2,
+        "rc": 2,
+        "pl": 1,
+        "pa": 2
+      }
+    },
+    "59016-2526": {
+      "label": "David Alaba · Real Madrid",
+      "abilities": {
+        "rb": 2,
+        "a": 2,
+        "rc": 2,
+        "pl": 2,
+        "pa": 2
+      }
+    },
+    "590690-2526": {
+      "label": "Víctor García · Levante UD",
+      "abilities": {
+        "rb": 2,
+        "a": 2,
+        "rg": 1,
+        "v": 2,
+        "pc": 2
+      }
+    },
+    "591916-2526": {
+      "label": "Aitor Paredes · Athletic Club",
+      "abilities": {
+        "rb": 3,
+        "a": 2,
+        "rc": 2,
+        "pl": 2,
+        "pa": 2
+      }
+    },
+    "591957-2526": {
+      "label": "Victor Parada · Deportivo Alavés",
+      "abilities": {
+        "rb": 2,
+        "a": 2,
+        "rg": 1,
+        "v": 2,
+        "pc": 2
+      }
+    },
+    "59323-2526": {
+      "label": "Cristhian Stuani · Girona FC",
+      "abilities": {
+        "rc": 2,
+        "d": 2,
+        "v": 2,
+        "dl": 2,
+        "rm": 2
+      }
+    },
+    "593412-2526": {
+      "label": "Ilyas Chaira · Real Oviedo",
+      "abilities": {
+        "d": 2,
+        "rg": 2,
+        "v": 2,
+        "pc": 2,
+        "rm": 2
+      }
+    },
+    "593482-2526": {
+      "label": "Azzedine Ounahi · Girona FC",
+      "abilities": {
+        "a": 2,
+        "rg": 2,
+        "pc": 3,
+        "pl": 2,
+        "dl": 2
+      }
+    },
+    "59561-2526": {
+      "label": "Dani Parejo · Villarreal CF",
+      "abilities": {
+        "a": 2,
+        "rg": 2,
+        "pc": 2,
+        "pl": 2,
+        "dl": 2
+      }
+    },
+    "596122-2526": {
+      "label": "Pep Chavarría · Rayo Vallecano",
+      "abilities": {
+        "rb": 3,
+        "a": 2,
+        "rg": 2,
+        "v": 2,
+        "pc": 2
+      }
+    },
+    "599231-2526": {
+      "label": "Ferran Jutglà · RC Celta",
+      "abilities": {
+        "rc": 2,
+        "d": 2,
+        "v": 2,
+        "dl": 2,
+        "rm": 2
+      }
+    },
+    "602105-2526": {
+      "label": "Antony · Real Betis Balompié",
+      "abilities": {
+        "d": 2,
+        "rg": 3,
+        "v": 3,
+        "pc": 2,
+        "rm": 2
+      }
+    },
+    "603696-2526": {
+      "label": "Alberto Reina · Real Oviedo",
+      "abilities": {
+        "a": 2,
+        "rg": 2,
+        "pc": 2,
+        "pl": 2,
+        "dl": 1
+      }
+    },
+    "607034-2526": {
+      "label": "Akor Adams · Sevilla FC",
+      "abilities": {
+        "rc": 2,
+        "d": 2,
+        "v": 2,
+        "dl": 2,
+        "rm": 3
+      }
+    },
+    "610083-2526": {
+      "label": "Unai Vencedor · Levante UD",
+      "abilities": {
+        "a": 2,
+        "rg": 2,
+        "pc": 2,
+        "pl": 2,
+        "dl": 1
+      }
+    },
+    "610622-2526": {
+      "label": "Urko Izeta · Athletic Club",
+      "abilities": {
+        "rc": 2,
+        "d": 2,
+        "v": 1,
+        "dl": 2,
+        "rm": 2
+      }
+    },
+    "616369-2526": {
+      "label": "Ander Barrenetxea · Real Sociedad",
+      "abilities": {
+        "d": 2,
+        "rg": 2,
+        "v": 3,
+        "pc": 2,
+        "rm": 2
+      }
+    },
+    "616631-2526": {
+      "label": "Matteo Ruggeri · Atlético de Madrid",
+      "abilities": {
+        "rb": 3,
+        "a": 2,
+        "rg": 2,
+        "v": 2,
+        "pc": 2
+      }
+    },
+    "617059-2526": {
+      "label": "Pablo Campos · Levante UD",
+      "abilities": {
+        "rf": 2,
+        "co": 2
+      }
+    },
+    "617074-2526": {
+      "label": "Ilaix Moriba · RC Celta",
+      "abilities": {
+        "a": 2,
+        "rg": 2,
+        "pc": 3,
+        "pl": 2,
+        "dl": 2
+      }
+    },
+    "617081-2526": {
+      "label": "Diego López · Valencia CF",
+      "abilities": {
+        "d": 2,
+        "rg": 2,
+        "v": 3,
+        "pc": 2,
+        "rm": 2
+      }
+    },
+    "61812-2526": {
+      "label": "Yuri Berchiche · Athletic Club",
+      "abilities": {
+        "rb": 2,
+        "a": 2,
+        "rg": 2,
+        "v": 2,
+        "pc": 2
+      }
+    },
+    "618801-2526": {
+      "label": "Alejandro Iturbe · Elche CF",
+      "abilities": {
+        "rf": 2,
+        "co": 2
+      }
+    },
+    "618809-2526": {
+      "label": "Manu Sánchez · Levante UD",
+      "abilities": {
+        "rb": 2,
+        "a": 2,
+        "rg": 2,
+        "v": 2,
+        "pc": 2
+      }
+    },
+    "618813-2526": {
+      "label": "Carlos Martín · Rayo Vallecano",
+      "abilities": {
+        "d": 2,
+        "rg": 2,
+        "v": 2,
+        "pc": 2,
+        "rm": 1
+      }
+    },
+    "620164-2526": {
+      "label": "Haissem Hassan · Real Oviedo",
+      "abilities": {
+        "d": 2,
+        "rg": 2,
+        "v": 2,
+        "pc": 2,
+        "rm": 2
+      }
+    },
+    "620696-2526": {
+      "label": "Ibrahim Diabate · Deportivo Alavés",
+      "abilities": {
+        "rc": 2,
+        "d": 2,
+        "v": 1,
+        "dl": 2,
+        "rm": 2
+      }
+    },
+    "622988-2526": {
+      "label": "Fran Pérez · Rayo Vallecano",
+      "abilities": {
+        "d": 2,
+        "rg": 2,
+        "v": 2,
+        "pc": 2,
+        "rm": 2
+      }
+    },
+    "623024-2526": {
+      "label": "Jesús Vázquez · Valencia CF",
+      "abilities": {
+        "rb": 2,
+        "a": 2,
+        "rg": 2,
+        "v": 2,
+        "pc": 2
+      }
+    },
+    "624942-2526": {
+      "label": "Raúl Moro · CA Osasuna",
+      "abilities": {
+        "d": 2,
+        "rg": 2,
+        "v": 2,
+        "pc": 2,
+        "rm": 2
+      }
+    },
+    "625014-2526": {
+      "label": "Julen Agirrezabala · Valencia CF",
+      "abilities": {
+        "rf": 3,
+        "co": 2
+      }
+    },
+    "625047-2526": {
+      "label": "Beñat Prados · Athletic Club",
+      "abilities": {
+        "a": 2,
+        "rg": 2,
+        "pc": 3,
+        "pl": 2,
+        "dl": 2
+      }
+    },
+    "625651-2526": {
+      "label": "Urko González de Zárate · RCD Espanyol Barcelona",
+      "abilities": {
+        "rb": 3,
+        "a": 2,
+        "rg": 2,
+        "pc": 2,
+        "pl": 2
+      }
+    },
+    "625657-2526": {
+      "label": "Unai Marrero · Real Sociedad",
+      "abilities": {
+        "rf": 2,
+        "co": 2
+      }
+    },
+    "625660-2526": {
+      "label": "Jon Ander Olasagasti · Levante UD",
+      "abilities": {
+        "a": 2,
+        "rg": 2,
+        "pc": 2,
+        "pl": 2,
+        "dl": 1
+      }
+    },
+    "626953-2526": {
+      "label": "Álvaro Núñez · RC Celta",
+      "abilities": {
+        "rb": 2,
+        "a": 2,
+        "rg": 2,
+        "v": 2,
+        "pc": 2
+      }
+    },
+    "627290-2526": {
+      "label": "John Donald · Elche CF",
+      "abilities": {
+        "rb": 2,
+        "a": 2,
+        "rc": 2,
+        "pl": 1,
+        "pa": 2
+      }
+    },
+    "628366-2526": {
+      "label": "Lucas Beltrán · Valencia CF",
+      "abilities": {
+        "rc": 2,
+        "d": 2,
+        "v": 2,
+        "dl": 2,
+        "rm": 2
+      }
+    },
+    "628487-2526": {
+      "label": "Ángel Fortuño · RCD Espanyol Barcelona",
+      "abilities": {
+        "rf": 2,
+        "co": 1
+      }
+    },
+    "628498-2526": {
+      "label": "Jofre Carreras · RCD Espanyol Barcelona",
+      "abilities": {
+        "d": 2,
+        "rg": 2,
+        "v": 2,
+        "pc": 2,
+        "rm": 2
+      }
+    },
+    "628886-2526": {
+      "label": "Iván Romero · Levante UD",
+      "abilities": {
+        "rc": 2,
+        "d": 2,
+        "v": 2,
+        "dl": 2,
+        "rm": 2
+      }
+    },
+    "631002-2526": {
+      "label": "Raúl García · CA Osasuna",
+      "abilities": {
+        "rc": 2,
+        "d": 2,
+        "v": 2,
+        "dl": 2,
+        "rm": 2
+      }
+    },
+    "631821-2526": {
+      "label": "Vladyslav Vanat · Girona FC",
+      "abilities": {
+        "rc": 2,
+        "d": 2,
+        "v": 2,
+        "dl": 2,
+        "rm": 3
+      }
+    },
+    "632741-2526": {
+      "label": "Iker Losada · Levante UD",
+      "abilities": {
+        "d": 2,
+        "rg": 2,
+        "pc": 1,
+        "dl": 2,
+        "rm": 2
+      }
+    },
+    "632896-2526": {
+      "label": "Alejandro Francés · Girona FC",
+      "abilities": {
+        "rb": 2,
+        "a": 2,
+        "rc": 2,
+        "pl": 2,
+        "pa": 2
+      }
+    },
+    "634131-2526": {
+      "label": "Aimar Oroz · CA Osasuna",
+      "abilities": {
+        "d": 2,
+        "rg": 2,
+        "pc": 2,
+        "pl": 2,
+        "dl": 2
+      }
+    },
+    "634431-2526": {
+      "label": "Beñat Turrientes · Real Sociedad",
+      "abilities": {
+        "a": 2,
+        "rg": 2,
+        "pc": 3,
+        "pl": 2,
+        "dl": 2
+      }
+    },
+    "636093-2526": {
+      "label": "Carlos Domínguez · RC Celta",
+      "abilities": {
+        "rb": 2,
+        "a": 2,
+        "rc": 2,
+        "pl": 2,
+        "pa": 2
+      }
+    },
+    "636688-2526": {
+      "label": "Alejandro Balde · FC Barcelona",
+      "abilities": {
+        "rb": 3,
+        "a": 3,
+        "rg": 2,
+        "v": 2,
+        "pc": 2
+      }
+    },
+    "636695-2526": {
+      "label": "Marc Casadó · FC Barcelona",
+      "abilities": {
+        "rb": 3,
+        "a": 2,
+        "rg": 2,
+        "pc": 2,
+        "pl": 2
+      }
+    },
+    "636703-2526": {
+      "label": "Fermín López · FC Barcelona",
+      "abilities": {
+        "d": 2,
+        "rg": 3,
+        "pc": 3,
+        "pl": 2,
+        "dl": 3
+      }
+    },
+    "638124-2526": {
+      "label": "Manu Fernández · RC Celta",
+      "abilities": {
+        "rb": 2,
+        "a": 2,
+        "rc": 2,
+        "pl": 1,
+        "pa": 2
+      }
+    },
+    "638793-2526": {
+      "label": "Tajon Buchanan · Villarreal CF",
+      "abilities": {
+        "d": 2,
+        "rg": 2,
+        "v": 3,
+        "pc": 2,
+        "rm": 2
+      }
+    },
+    "639733-2526": {
+      "label": "Peque Fernández · Sevilla FC",
+      "abilities": {
+        "d": 2,
+        "rg": 2,
+        "pc": 2,
+        "dl": 2,
+        "rm": 2
+      }
+    },
+    "640109-2526": {
+      "label": "Martín Satriano · Getafe CF",
+      "abilities": {
+        "rc": 2,
+        "d": 2,
+        "v": 2,
+        "dl": 2,
+        "rm": 2
+      }
+    },
+    "640428-2526": {
+      "label": "Eduardo Camavinga · Real Madrid",
+      "abilities": {
+        "a": 2,
+        "rg": 2,
+        "pc": 3,
+        "pl": 3,
+        "dl": 2
+      }
+    },
+    "646740-2526": {
+      "label": "Gavi · FC Barcelona",
+      "abilities": {
+        "a": 2,
+        "rg": 2,
+        "pc": 3,
+        "pl": 3,
+        "dl": 2
+      }
+    },
+    "646824-2526": {
+      "label": "Manuel Ángel · Real Madrid",
+      "abilities": {
+        "a": 2,
+        "rg": 2,
+        "pc": 2,
+        "pl": 2,
+        "dl": 2
+      }
+    },
+    "647435-2526": {
+      "label": "Tyrhys Dolan · RCD Espanyol Barcelona",
+      "abilities": {
+        "d": 2,
+        "rg": 2,
+        "v": 3,
+        "pc": 2,
+        "rm": 2
+      }
+    },
+    "652331-2526": {
+      "label": "Javi Rueda · RC Celta",
+      "abilities": {
+        "rb": 2,
+        "a": 2,
+        "rg": 2,
+        "v": 2,
+        "pc": 2
+      }
+    },
+    "657430-2526": {
+      "label": "Samú Costa · RCD Mallorca",
+      "abilities": {
+        "rb": 3,
+        "a": 2,
+        "rg": 2,
+        "pc": 2,
+        "pl": 2
+      }
+    },
+    "658115-2526": {
+      "label": "Abel Bretones · CA Osasuna",
+      "abilities": {
+        "rb": 2,
+        "a": 2,
+        "rg": 2,
+        "v": 2,
+        "pc": 2
+      }
+    },
+    "660438-2526": {
+      "label": "Orri Óskarsson · Real Sociedad",
+      "abilities": {
+        "rc": 2,
+        "d": 2,
+        "v": 2,
+        "dl": 2,
+        "rm": 3
+      }
+    },
+    "660735-2526": {
+      "label": "Federico Gattoni · Sevilla FC",
+      "abilities": {
+        "rb": 2,
+        "a": 2,
+        "rc": 2,
+        "pl": 1,
+        "pa": 2
+      }
+    },
+    "661145-2526": {
+      "label": "Jon Aramburu · Real Sociedad",
+      "abilities": {
+        "rb": 3,
+        "a": 2,
+        "rg": 2,
+        "v": 2,
+        "pc": 2
+      }
+    },
+    "662261-2526": {
+      "label": "Rafa Marín · Villarreal CF",
+      "abilities": {
+        "rb": 3,
+        "a": 2,
+        "rc": 2,
+        "pl": 2,
+        "pa": 2
+      }
+    },
+    "666547-2526": {
+      "label": "Zito Luvumbo · RCD Mallorca",
+      "abilities": {
+        "d": 2,
+        "rg": 2,
+        "v": 2,
+        "pc": 2,
+        "rm": 2
+      }
+    },
+    "668179-2526": {
+      "label": "Carlos Álvarez · Levante UD",
+      "abilities": {
+        "d": 2,
+        "rg": 2,
+        "pc": 3,
+        "pl": 2,
+        "dl": 2
+      }
+    },
+    "668183-2526": {
+      "label": "Nico Serrano · Athletic Club",
+      "abilities": {
+        "d": 2,
+        "rg": 2,
+        "v": 2,
+        "pc": 2,
+        "rm": 1
+      }
+    },
+    "676042-2526": {
+      "label": "Juanlu Sánchez · Sevilla FC",
+      "abilities": {
+        "rb": 3,
+        "a": 2,
+        "rg": 2,
+        "v": 2,
+        "pc": 2
+      }
+    },
+    "678406-2526": {
+      "label": "Sergi Cardona · Villarreal CF",
+      "abilities": {
+        "rb": 2,
+        "a": 2,
+        "rg": 2,
+        "v": 2,
+        "pc": 2
+      }
+    },
+    "683840-2526": {
+      "label": "Pedri · FC Barcelona",
+      "abilities": {
+        "a": 3,
+        "rg": 3,
+        "pc": 3,
+        "pl": 3,
+        "dl": 2
+      }
+    },
+    "687609-2526": {
+      "label": "Isaac Romero · Sevilla FC",
+      "abilities": {
+        "rc": 2,
+        "d": 2,
+        "v": 2,
+        "dl": 2,
+        "rm": 2
+      }
+    },
+    "689505-2526": {
+      "label": "Johnny Cardoso · Atlético de Madrid",
+      "abilities": {
+        "a": 2,
+        "rg": 2,
+        "pc": 3,
+        "pl": 2,
+        "dl": 2
+      }
+    },
+    "692070-2526": {
+      "label": "Clemens Riedel · RCD Espanyol Barcelona",
+      "abilities": {
+        "rb": 2,
+        "a": 2,
+        "rc": 2,
+        "pl": 2,
+        "pa": 2
+      }
+    },
+    "696764-2526": {
+      "label": "Abu Kamara · Getafe CF",
+      "abilities": {
+        "d": 2,
+        "rg": 2,
+        "v": 2,
+        "pc": 2,
+        "rm": 2
+      }
+    },
+    "705395-2526": {
+      "label": "Gerard Martín · FC Barcelona",
+      "abilities": {
+        "rb": 3,
+        "a": 3,
+        "rg": 2,
+        "v": 2,
+        "pc": 2
+      }
+    },
+    "705813-2526": {
+      "label": "Rubén Sánchez · RCD Espanyol Barcelona",
+      "abilities": {
+        "rb": 2,
+        "a": 2,
+        "rg": 1,
+        "v": 2,
+        "pc": 2
+      }
+    },
+    "706138-2526": {
+      "label": "Javi Llabrés · RCD Mallorca",
+      "abilities": {
+        "d": 2,
+        "rg": 2,
+        "v": 2,
+        "pc": 1,
+        "rm": 1
+      }
+    },
+    "706947-2526": {
+      "label": "Yago Santiago · Elche CF",
+      "abilities": {
+        "d": 2,
+        "rg": 2,
+        "v": 2,
+        "pc": 2,
+        "rm": 1
+      }
+    },
+    "707230-2526": {
+      "label": "Ugo Raghouber · Levante UD",
+      "abilities": {
+        "rb": 2,
+        "a": 2,
+        "rg": 2,
+        "pc": 2,
+        "pl": 2
+      }
+    },
+    "707274-2526": {
+      "label": "César Tárrega · Valencia CF",
+      "abilities": {
+        "rb": 3,
+        "a": 2,
+        "rc": 2,
+        "pl": 2,
+        "pa": 2
+      }
+    },
+    "709187-2526": {
+      "label": "Nico Williams · Athletic Club",
+      "abilities": {
+        "d": 2,
+        "rg": 3,
+        "v": 3,
+        "pc": 2,
+        "rm": 2
+      }
+    },
+    "709372-2526": {
+      "label": "Carlos Romero · RCD Espanyol Barcelona",
+      "abilities": {
+        "rb": 3,
+        "a": 3,
+        "rg": 2,
+        "v": 2,
+        "pc": 2
+      }
+    },
+    "709380-2526": {
+      "label": "Álex Forés · Real Oviedo",
+      "abilities": {
+        "rc": 2,
+        "d": 2,
+        "v": 1,
+        "dl": 1,
+        "rm": 2
+      }
+    },
+    "709969-2526": {
+      "label": "Ilias Akhomach · Rayo Vallecano",
+      "abilities": {
+        "d": 2,
+        "rg": 2,
+        "v": 3,
+        "pc": 2,
+        "rm": 2
+      }
+    },
+    "710671-2526": {
+      "label": "Adama Boiro · Athletic Club",
+      "abilities": {
+        "rb": 2,
+        "a": 2,
+        "rg": 2,
+        "v": 2,
+        "pc": 2
+      }
+    },
+    "710677-2526": {
+      "label": "Iker Muñoz · CA Osasuna",
+      "abilities": {
+        "rb": 2,
+        "a": 2,
+        "rg": 1,
+        "pc": 2,
+        "pl": 2
+      }
+    },
+    "710679-2526": {
+      "label": "Iker Benito · CA Osasuna",
+      "abilities": {
+        "d": 2,
+        "rg": 2,
+        "v": 2,
+        "pc": 2,
+        "rm": 1
+      }
+    },
+    "711374-2526": {
+      "label": "Jon Gorrotxategi · Real Sociedad",
+      "abilities": {
+        "rb": 3,
+        "a": 3,
+        "rg": 2,
+        "pc": 2,
+        "pl": 2
+      }
+    },
+    "711382-2526": {
+      "label": "Jon Karrikaburu · Real Sociedad",
+      "abilities": {
+        "rc": 2,
+        "d": 2,
+        "v": 1,
+        "dl": 2,
+        "rm": 2
+      }
+    },
+    "711625-2526": {
+      "label": "José Ángel Carmona · Sevilla FC",
+      "abilities": {
+        "rb": 3,
+        "a": 2,
+        "rg": 2,
+        "v": 2,
+        "pc": 2
+      }
+    },
+    "712107-2526": {
+      "label": "Luiz Júnior · Villarreal CF",
+      "abilities": {
+        "rf": 3,
+        "co": 2
+      }
+    },
+    "71271-2526": {
+      "label": "Adrián San Miguel · Real Betis Balompié",
+      "abilities": {
+        "rf": 2,
+        "co": 2
+      }
+    },
+    "718034-2526": {
+      "label": "Abde Rebbach · Deportivo Alavés",
+      "abilities": {
+        "d": 2,
+        "rg": 2,
+        "v": 2,
+        "pc": 2,
+        "rm": 1
+      }
+    },
+    "719999-2526": {
+      "label": "Andrés Castrín · Sevilla FC",
+      "abilities": {
+        "rb": 2,
+        "a": 2,
+        "rc": 2,
+        "pl": 1,
+        "pa": 2
+      }
+    },
+    "720038-2526": {
+      "label": "Pablo Torre · RCD Mallorca",
+      "abilities": {
+        "d": 2,
+        "rg": 2,
+        "pc": 2,
+        "pl": 2,
+        "dl": 2
+      }
+    },
+    "72047-2526": {
+      "label": "Iago Aspas · RC Celta",
+      "abilities": {
+        "rc": 2,
+        "d": 2,
+        "v": 2,
+        "dl": 2,
+        "rm": 3
+      }
+    },
+    "720518-2526": {
+      "label": "Roberto Fernández · RCD Espanyol Barcelona",
+      "abilities": {
+        "rc": 2,
+        "d": 2,
+        "v": 2,
+        "dl": 2,
+        "rm": 3
+      }
+    },
+    "724520-2526": {
+      "label": "Abde Ezzalzouli · Real Betis Balompié",
+      "abilities": {
+        "d": 2,
+        "rg": 3,
+        "v": 3,
+        "pc": 2,
+        "rm": 2
+      }
+    },
+    "729814-2526": {
+      "label": "Georges Mikautadze · Villarreal CF",
+      "abilities": {
+        "rc": 2,
+        "d": 3,
+        "v": 2,
+        "dl": 2,
+        "rm": 3
+      }
+    },
+    "733576-2526": {
+      "label": "Alberto Moleiro · Villarreal CF",
+      "abilities": {
+        "d": 2,
+        "rg": 3,
+        "v": 3,
+        "pc": 2,
+        "rm": 2
+      }
+    },
+    "73517-2526": {
+      "label": "Ørjan Nyland · Sevilla FC",
+      "abilities": {
+        "rf": 2,
+        "co": 2
+      }
+    },
+    "735568-2526": {
+      "label": "Natan · Real Betis Balompié",
+      "abilities": {
+        "rb": 3,
+        "a": 3,
+        "rc": 2,
+        "pl": 2,
+        "pa": 2
+      }
+    },
+    "741142-2526": {
+      "label": "Zaid Romero · Getafe CF",
+      "abilities": {
+        "rb": 2,
+        "a": 2,
+        "rc": 2,
+        "pl": 1,
+        "pa": 2
+      }
+    },
+    "741289-2526": {
+      "label": "Youssef Enríquez · Deportivo Alavés",
+      "abilities": {
+        "rb": 2,
+        "a": 2,
+        "rg": 2,
+        "v": 2,
+        "pc": 2
+      }
+    },
+    "742201-2526": {
+      "label": "Giuliano Simeone · Atlético de Madrid",
+      "abilities": {
+        "d": 2,
+        "rg": 3,
+        "v": 3,
+        "pc": 2,
+        "rm": 2
+      }
+    },
+    "74229-2526": {
+      "label": "Koke · Atlético de Madrid",
+      "abilities": {
+        "a": 2,
+        "rg": 2,
+        "pc": 3,
+        "pl": 2,
+        "dl": 2
+      }
+    },
+    "74294-2526": {
+      "label": "Nemanja Gudelj · Sevilla FC",
+      "abilities": {
+        "rb": 2,
+        "a": 2,
+        "rg": 2,
+        "pc": 2,
+        "pl": 2
+      }
+    },
+    "743951-2526": {
+      "label": "Thiago Borbas · Real Oviedo",
+      "abilities": {
+        "rc": 2,
+        "d": 2,
+        "v": 2,
+        "dl": 2,
+        "rm": 2
+      }
+    },
+    "74857-2526": {
+      "label": "Marc-André ter Stegen · Girona FC",
+      "abilities": {
+        "rf": 3,
+        "co": 2
+      }
+    },
+    "76467-2526": {
+      "label": "Kiko Femenía · Getafe CF",
+      "abilities": {
+        "rb": 2,
+        "a": 2,
+        "rg": 1,
+        "v": 2,
+        "pc": 2
+      }
+    },
+    "764859-2526": {
+      "label": "Williot Swedberg · RC Celta",
+      "abilities": {
+        "d": 2,
+        "rg": 2,
+        "v": 3,
+        "pc": 2,
+        "rm": 2
+      }
+    },
+    "765467-2526": {
+      "label": "Jozhua Vertrouwd · Rayo Vallecano",
+      "abilities": {
+        "rb": 2,
+        "a": 2,
+        "rc": 2,
+        "pl": 1,
+        "pa": 2
+      }
+    },
+    "766583-2526": {
+      "label": "Kike Salas · Sevilla FC",
+      "abilities": {
+        "rb": 2,
+        "a": 2,
+        "rc": 2,
+        "pl": 2,
+        "pa": 2
+      }
+    },
+    "766723-2526": {
+      "label": "Manu Bueno · Sevilla FC",
+      "abilities": {
+        "a": 2,
+        "rg": 2,
+        "pc": 2,
+        "pl": 2,
+        "dl": 1
+      }
+    },
+    "775605-2526": {
+      "label": "Pablo Barrios · Atlético de Madrid",
+      "abilities": {
+        "a": 2,
+        "rg": 3,
+        "pc": 3,
+        "pl": 3,
+        "dl": 2
+      }
+    },
+    "780630-2526": {
+      "label": "Willy Kambwala · Villarreal CF",
+      "abilities": {
+        "rb": 2,
+        "a": 2,
+        "rc": 2,
+        "pl": 2,
+        "pa": 2
+      }
+    },
+    "783396-2526": {
+      "label": "Ramón Terrats · RCD Espanyol Barcelona",
+      "abilities": {
+        "a": 2,
+        "rg": 2,
+        "pc": 2,
+        "pl": 2,
+        "dl": 2
+      }
+    },
+    "785353-2526": {
+      "label": "Pablo Ibáñez · Deportivo Alavés",
+      "abilities": {
+        "a": 2,
+        "rg": 2,
+        "pc": 2,
+        "pl": 2,
+        "dl": 2
+      }
+    },
+    "792331-2526": {
+      "label": "Roony Bardghji · FC Barcelona",
+      "abilities": {
+        "d": 2,
+        "rg": 2,
+        "v": 3,
+        "pc": 2,
+        "rm": 2
+      }
+    },
+    "798114-2526": {
+      "label": "Calebe · Deportivo Alavés",
+      "abilities": {
+        "d": 1,
+        "rg": 2,
+        "pc": 2,
+        "pl": 2,
+        "dl": 2
+      }
+    },
+    "805714-2526": {
+      "label": "Renato Veiga · Villarreal CF",
+      "abilities": {
+        "rb": 3,
+        "a": 3,
+        "rc": 2,
+        "pl": 2,
+        "pa": 2
+      }
+    },
+    "811778-2526": {
+      "label": "Álvaro Carreras · Real Madrid",
+      "abilities": {
+        "rb": 3,
+        "a": 3,
+        "rg": 2,
+        "v": 3,
+        "pc": 2
+      }
+    },
+    "819590-2526": {
+      "label": "José Salinas · RCD Espanyol Barcelona",
+      "abilities": {
+        "rb": 2,
+        "a": 2,
+        "rg": 2,
+        "v": 2,
+        "pc": 2
+      }
+    },
+    "822331-2526": {
+      "label": "Omar El Hilali · RCD Espanyol Barcelona",
+      "abilities": {
+        "rb": 3,
+        "a": 2,
+        "rg": 2,
+        "v": 2,
+        "pc": 2
+      }
+    },
+    "826224-2526": {
+      "label": "Arnau Martínez · Girona FC",
+      "abilities": {
+        "rb": 3,
+        "a": 2,
+        "rg": 2,
+        "v": 2,
+        "pc": 2
+      }
+    },
+    "834483-2526": {
+      "label": "Álex Padilla · Athletic Club",
+      "abilities": {
+        "rf": 2,
+        "co": 2
+      }
+    },
+    "834485-2526": {
+      "label": "Unai Egiluz · Athletic Club",
+      "abilities": {
+        "rb": 2,
+        "a": 2,
+        "rc": 2,
+        "pl": 1,
+        "pa": 1
+      }
+    },
+    "834487-2526": {
+      "label": "Hugo Rincón · Girona FC",
+      "abilities": {
+        "rb": 2,
+        "a": 2,
+        "rg": 2,
+        "v": 2,
+        "pc": 2
+      }
+    },
+    "834491-2526": {
+      "label": "Alejandro Rego · Athletic Club",
+      "abilities": {
+        "a": 2,
+        "rg": 2,
+        "pc": 2,
+        "pl": 2,
+        "dl": 2
+      }
+    },
+    "834742-2526": {
+      "label": "Mateo Joseph · RCD Mallorca",
+      "abilities": {
+        "rc": 2,
+        "d": 2,
+        "v": 2,
+        "dl": 2,
+        "rm": 2
+      }
+    },
+    "834744-2526": {
+      "label": "Antoniu Roca · RCD Espanyol Barcelona",
+      "abilities": {
+        "d": 2,
+        "rg": 2,
+        "v": 2,
+        "pc": 2,
+        "rm": 1
+      }
+    },
+    "834752-2526": {
+      "label": "Unai Gómez · Athletic Club",
+      "abilities": {
+        "d": 2,
+        "rg": 2,
+        "pc": 2,
+        "pl": 2,
+        "dl": 2
+      }
+    },
+    "834764-2526": {
+      "label": "Javi Guerra · Valencia CF",
+      "abilities": {
+        "a": 2,
+        "rg": 2,
+        "pc": 3,
+        "pl": 3,
+        "dl": 2
+      }
+    },
+    "844516-2526": {
+      "label": "Luis Vázquez · Getafe CF",
+      "abilities": {
+        "rc": 2,
+        "d": 2,
+        "v": 1,
+        "dl": 2,
+        "rm": 2
+      }
+    },
+    "844637-2526": {
+      "label": "Marc Pubill · Atlético de Madrid",
+      "abilities": {
+        "rb": 3,
+        "a": 3,
+        "rc": 2,
+        "pl": 2,
+        "pa": 2
+      }
+    },
+    "85288-2526": {
+      "label": "Isco · Real Betis Balompié",
+      "abilities": {
+        "d": 2,
+        "rg": 2,
+        "pc": 3,
+        "pl": 2,
+        "dl": 2
+      }
+    },
+    "85295-2526": {
+      "label": "Iván Balliu · Rayo Vallecano",
+      "abilities": {
+        "rb": 2,
+        "a": 2,
+        "rg": 2,
+        "v": 2,
+        "pc": 2
+      }
+    },
+    "861410-2526": {
+      "label": "Arda Güler · Real Madrid",
+      "abilities": {
+        "d": 2,
+        "rg": 3,
+        "pc": 3,
+        "pl": 2,
+        "dl": 3
+      }
+    },
+    "861981-2526": {
+      "label": "Alan Matturro · Levante UD",
+      "abilities": {
+        "rb": 2,
+        "a": 2,
+        "rc": 2,
+        "pl": 2,
+        "pa": 2
+      }
+    },
+    "86202-2526": {
+      "label": "Antonio Rüdiger · Real Madrid",
+      "abilities": {
+        "rb": 3,
+        "a": 2,
+        "rc": 2,
+        "pl": 2,
+        "pa": 2
+      }
+    },
+    "86784-2526": {
+      "label": "Ricardo Rodríguez · Real Betis Balompié",
+      "abilities": {
+        "rb": 2,
+        "a": 2,
+        "rg": 2,
+        "v": 2,
+        "pc": 2
+      }
+    },
+    "889435-2526": {
+      "label": "Obed Vargas · Atlético de Madrid",
+      "abilities": {
+        "a": 2,
+        "rg": 2,
+        "pc": 2,
+        "pl": 2,
+        "dl": 2
+      }
+    },
+    "890290-2526": {
+      "label": "Dean Huijsen · Real Madrid",
+      "abilities": {
+        "rb": 3,
+        "a": 3,
+        "rc": 2,
+        "pl": 2,
+        "pa": 2
+      }
+    },
+    "892221-2526": {
+      "label": "Hugo Sotelo · RC Celta",
+      "abilities": {
+        "a": 2,
+        "rg": 2,
+        "pc": 2,
+        "pl": 2,
+        "dl": 2
+      }
+    },
+    "892929-2526": {
+      "label": "Hugo Álvarez · RC Celta",
+      "abilities": {
+        "d": 2,
+        "rg": 2,
+        "v": 2,
+        "pc": 2,
+        "rm": 2
+      }
+    },
+    "892932-2526": {
+      "label": "Miguel Román · RC Celta",
+      "abilities": {
+        "a": 2,
+        "rg": 2,
+        "pc": 3,
+        "pl": 2,
+        "dl": 2
+      }
+    },
+    "895326-2526": {
+      "label": "Joel Roca · Girona FC",
+      "abilities": {
+        "d": 2,
+        "rg": 2,
+        "v": 2,
+        "pc": 2,
+        "rm": 2
+      }
+    },
+    "898352-2526": {
+      "label": "Sebastián Boselli · Getafe CF",
+      "abilities": {
+        "rb": 2,
+        "a": 2,
+        "rc": 2,
+        "pl": 2,
+        "pa": 2
+      }
+    },
+    "905997-2526": {
+      "label": "Pablo Durán · RC Celta",
+      "abilities": {
+        "rc": 2,
+        "d": 2,
+        "v": 2,
+        "dl": 2,
+        "rm": 2
+      }
+    },
+    "907559-2526": {
+      "label": "Nelson Deossa · Real Betis Balompié",
+      "abilities": {
+        "a": 2,
+        "rg": 2,
+        "pc": 2,
+        "pl": 2,
+        "dl": 2
+      }
+    },
+    "907813-2526": {
+      "label": "Pablo Marín · Real Sociedad",
+      "abilities": {
+        "d": 2,
+        "rg": 2,
+        "pc": 2,
+        "pl": 2,
+        "dl": 2
+      }
+    },
+    "909758-2526": {
+      "label": "Federico Redondo · Elche CF",
+      "abilities": {
+        "rb": 2,
+        "a": 2,
+        "rg": 2,
+        "pc": 2,
+        "pl": 2
+      }
+    },
+    "912392-2526": {
+      "label": "Lucas Cepeda · Elche CF",
+      "abilities": {
+        "d": 2,
+        "rg": 2,
+        "v": 2,
+        "pc": 2,
+        "rm": 2
+      }
+    },
+    "921345-2526": {
+      "label": "Tay Abed · Levante UD",
+      "abilities": {
+        "d": 2,
+        "rg": 2,
+        "v": 2,
+        "pc": 1,
+        "rm": 1
+      }
+    },
+    "929899-2526": {
+      "label": "Rahim Alhassane · Real Oviedo",
+      "abilities": {
+        "rb": 2,
+        "a": 2,
+        "rg": 1,
+        "v": 2,
+        "pc": 2
+      }
+    },
+    "933908-2526": {
+      "label": "Ángel Ortiz · Real Betis Balompié",
+      "abilities": {
+        "rb": 2,
+        "a": 2,
+        "rg": 2,
+        "v": 2,
+        "pc": 2
+      }
+    },
+    "935230-2526": {
+      "label": "Gonzalo García · Real Madrid",
+      "abilities": {
+        "rc": 2,
+        "d": 3,
+        "v": 2,
+        "dl": 2,
+        "rm": 3
+      }
+    },
+    "935231-2526": {
+      "label": "Víctor Muñoz · CA Osasuna",
+      "abilities": {
+        "d": 2,
+        "rg": 2,
+        "v": 3,
+        "pc": 2,
+        "rm": 2
+      }
+    },
+    "935232-2526": {
+      "label": "Aitor Mañas · Deportivo Alavés",
+      "abilities": {
+        "rc": 2,
+        "d": 2,
+        "v": 1,
+        "dl": 1,
+        "rm": 2
+      }
+    },
+    "935245-2526": {
+      "label": "Raúl Asencio · Real Madrid",
+      "abilities": {
+        "rb": 3,
+        "a": 3,
+        "rc": 2,
+        "pl": 2,
+        "pa": 2
+      }
+    },
+    "937955-2526": {
+      "label": "Héctor Fort · Elche CF",
+      "abilities": {
+        "rb": 3,
+        "a": 2,
+        "rg": 2,
+        "v": 2,
+        "pc": 2
+      }
+    },
+    "937958-2526": {
+      "label": "Lamine Yamal · FC Barcelona",
+      "abilities": {
+        "d": 3,
+        "rg": 3,
+        "v": 3,
+        "pc": 2,
+        "rm": 2
+      }
+    },
+    "938144-2526": {
+      "label": "Diego Kochen · FC Barcelona",
+      "abilities": {
+        "rf": 2,
+        "co": 2
+      }
+    },
+    "938729-2526": {
+      "label": "Mikel Jauregizar · Athletic Club",
+      "abilities": {
+        "a": 2,
+        "rg": 2,
+        "pc": 3,
+        "pl": 3,
+        "dl": 2
+      }
+    },
+    "93936-2526": {
+      "label": "Kike García · RCD Espanyol Barcelona",
+      "abilities": {
+        "rc": 2,
+        "d": 2,
+        "v": 2,
+        "dl": 2,
+        "rm": 2
+      }
+    },
+    "939374-2526": {
+      "label": "Yoel Lago · RC Celta",
+      "abilities": {
+        "rb": 2,
+        "a": 2,
+        "rc": 2,
+        "pl": 1,
+        "pa": 2
+      }
+    },
+    "94308-2526": {
+      "label": "Marko Dmitrovic · RCD Espanyol Barcelona",
+      "abilities": {
+        "rf": 2,
+        "co": 2
+      }
+    },
+    "947431-2526": {
+      "label": "David López · RCD Mallorca",
+      "abilities": {
+        "rb": 2,
+        "a": 2,
+        "rc": 2,
+        "pl": 1,
+        "pa": 2
+      }
+    },
+    "948273-2526": {
+      "label": "Mario Martín · Getafe CF",
+      "abilities": {
+        "rb": 3,
+        "a": 2,
+        "rg": 2,
+        "pc": 2,
+        "pl": 2
+      }
+    },
+    "948275-2526": {
+      "label": "Álvaro Rodríguez · Elche CF",
+      "abilities": {
+        "rc": 2,
+        "d": 2,
+        "v": 2,
+        "dl": 2,
+        "rm": 2
+      }
+    },
+    "953901-2526": {
+      "label": "Santiago Mouriño · Villarreal CF",
+      "abilities": {
+        "rb": 3,
+        "a": 2,
+        "rg": 2,
+        "v": 2,
+        "pc": 2
+      }
+    },
+    "960571-2526": {
+      "label": "Jones El-Abdellaoui · RC Celta",
+      "abilities": {
+        "d": 2,
+        "rg": 2,
+        "v": 2,
+        "pc": 2,
+        "rm": 2
+      }
+    },
+    "961087-2526": {
+      "label": "Pablo García · Real Betis Balompié",
+      "abilities": {
+        "d": 2,
+        "rg": 2,
+        "v": 2,
+        "pc": 2,
+        "rm": 2
+      }
+    },
+    "961297-2526": {
+      "label": "Rodrigo Mendoza · Atlético de Madrid",
+      "abilities": {
+        "a": 2,
+        "rg": 2,
+        "pc": 3,
+        "pl": 2,
+        "dl": 2
+      }
+    },
+    "962110-2526": {
+      "label": "Pau Cubarsí · FC Barcelona",
+      "abilities": {
+        "rb": 3,
+        "a": 3,
+        "rc": 2,
+        "pl": 2,
+        "pa": 2
+      }
+    },
+    "962125-2526": {
+      "label": "Buba Sangaré · Elche CF",
+      "abilities": {
+        "rb": 2,
+        "a": 2,
+        "rg": 1,
+        "v": 2,
+        "pc": 2
+      }
+    },
+    "972465-2526": {
+      "label": "Tani Oluwaseyi · Villarreal CF",
+      "abilities": {
+        "rc": 2,
+        "d": 2,
+        "v": 2,
+        "dl": 2,
+        "rm": 2
+      }
+    },
+    "974251-2526": {
+      "label": "Lass Kourouma · Girona FC",
+      "abilities": {
+        "a": 1,
+        "rg": 2,
+        "pc": 2,
+        "pl": 2,
+        "dl": 1
+      }
+    },
+    "985383-2526": {
+      "label": "Valentín Gómez · Real Betis Balompié",
+      "abilities": {
+        "rb": 3,
+        "a": 2,
+        "rc": 2,
+        "pl": 2,
+        "pa": 2
+      }
+    },
+    "985806-2526": {
+      "label": "Alex Freeman · Villarreal CF",
+      "abilities": {
+        "rb": 2,
+        "a": 2,
+        "rg": 2,
+        "v": 2,
+        "pc": 2
+      }
+    },
+    "99353-2526": {
+      "label": "Portu · Girona FC",
+      "abilities": {
+        "d": 2,
+        "rg": 2,
+        "v": 2,
+        "pc": 2,
+        "rm": 2
+      }
+    },
+    "994536-2526": {
+      "label": "Claudio Echeverri · Girona FC",
+      "abilities": {
+        "d": 2,
+        "rg": 2,
+        "pc": 3,
+        "pl": 2,
+        "dl": 2
+      }
+    },
+    "99922-2526": {
+      "label": "Marc Bartra · Real Betis Balompié",
+      "abilities": {
+        "rb": 2,
+        "a": 2,
+        "rc": 2,
+        "pl": 2,
+        "pa": 2
+      }
+    }
+  }
+}

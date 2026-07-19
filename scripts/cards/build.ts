@@ -15,7 +15,7 @@
 import { readFileSync, writeFileSync } from 'node:fs'
 import { fileURLToPath } from 'node:url'
 import { dirname, join } from 'node:path'
-import { buildRows, loadAbilities, SEASON_TAG, type CardRow, type TmLeague } from './rows'
+import { buildRows, loadOverrides, SEASON_TAG, type CardRow, type TmLeague } from './rows'
 import { STARTER_IDS } from './data/starter-deck'
 
 const HERE = dirname(fileURLToPath(import.meta.url))
@@ -102,19 +102,19 @@ function summarize(rows: CardRow[]): void {
 
 function main() {
   const league: TmLeague = JSON.parse(readFileSync(join(HERE, 'data', 'laliga-2025.json'), 'utf8'))
-  // Abilities come from the hand-editable data/abilities.json when present; ids
-  // absent from it (e.g. a newly-vendored roster player) fall back to derived.
-  const overrides = loadAbilities()
+  // Hand-authored fields come from the overlay data/overrides.json when present; ids
+  // absent from it (e.g. a newly-vendored roster player) fall back to pure derived.
+  const overrides = loadOverrides()
   const hasOverrides = Object.keys(overrides).length > 0
   const missing: string[] = []
   const rows = buildRows(league, hasOverrides ? overrides : undefined, (id) => missing.push(id))
   writeFileSync(OUT_FILE, toSql(rows))
   console.log(`wrote ${rows.length} cards -> ${OUT_FILE.replace(ROOT + '/', '')}`)
   if (!hasOverrides) {
-    console.log('note: data/abilities.json absent — using derived abilities. Run `npm run reseed:cards` to create it.')
+    console.log('note: data/overrides.json absent — using derived cards. Run `npm run reseed:cards` to create it.')
   } else if (missing.length > 0) {
     console.log(
-      `note: ${missing.length} card(s) not in abilities.json — used derived abilities. ` +
+      `note: ${missing.length} card(s) not in overrides.json — used derived values. ` +
         'Run `npm run reseed:cards` to bake them in.',
     )
   }

@@ -6,7 +6,7 @@
 // so a role's most-defining factors are the ones a strong player maxes out. The
 // list is deliberately position-coherent: robo (`rb`) lives only on defenders and
 // defensive-mids, remate (`rm`) only on attackers. Any extra/flavour attributes
-// are added by hand afterwards in scripts/cards/data/abilities.json, never rolled.
+// are added by hand afterwards in scripts/cards/data/overrides.json, never rolled.
 
 import type { AbilityKey } from '../lib/types'
 

@@ -62,10 +62,10 @@ export function useCardFilters<T>(
     initialSort = 'cost-desc' as SortKey,
     /**
      * Also match the card id. Off by default, and that default is load-bearing:
-     * ids are slugs of name + club + season (`thibaut-courtois-rma-2526`), so
-     * folding them into the player-facing search corpus would make "rma" match
-     * every Real Madrid card and "2526" match all 518. The admin catalog wants
-     * exactly that — Colección very much does not.
+     * ids are `{transfermarktId}-{season}` (`401530-2526`), so folding them into
+     * the player-facing search corpus would make "2526" match all 518 and stray
+     * digit runs match arbitrary players. The admin catalog wants exact-id lookup —
+     * Colección very much does not.
      */
     searchId = false,
     /**
