@@ -14,9 +14,11 @@ function isPositionGroup(value: string | null | undefined): value is PositionGro
 // The point cap is a deliberate deck-building deviation: the basic game itself
 // «no utiliza la ficha» (page 12), so the cap is borrowed from the tournament rule
 // (page 29), which limits the sum of 16 players' fichas to 100 (~6.25/player). Scaled
-// to this game's 11-player squad that is 100 × 11/16 ≈ 70, which also matches the
-// catalog's mean squad cost (~11 × 6.34). At 100 the cap barely binds for 11 players;
-// 70 makes it a real budget. See docs/rulebook/DEVIATIONS.md.
+// to this game's 11-player squad that is 100 × 11/16 ≈ 70. The catalog's mean card
+// cost is ~5.8 (a typical XI ~64), so 70 sits deliberately above the mean: it leaves
+// just enough headroom to afford one star and cheap fillers, while still barring an
+// all-star XI. At 100 the cap barely binds for 11 players; 70 makes it a real budget.
+// See docs/rulebook/DEVIATIONS.md.
 export const POINT_CAP = 70
 export const STARTER_COUNT = 11
 

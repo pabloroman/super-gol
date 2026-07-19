@@ -69,9 +69,13 @@ export function rarityFor(overall: number): Rarity {
   return 'comun'
 }
 
-/** Squad-point cost from overall (roughly 1..12, median around 6). */
+// Squad-point cost from overall (1..12). Deliberately steep so the cheap end has
+// real depth: the bulk of the catalog sits at overall ~62..76, and this curve maps
+// that cluster down to ~2..7 (mean ~5.8) while stars stay dear (~11..12). That
+// spread is what lets a squad afford one star and fill the rest with cheap players
+// under the POINT_CAP — see docs/rulebook/DEVIATIONS.md.
 export function costFor(overall: number): number {
-  return clamp(Math.round((overall - 58) / 4.5) + 3, 1, 12)
+  return clamp(Math.round((overall - 60) / 3.4) + 2, 1, 12)
 }
 
 export interface CardFactors {

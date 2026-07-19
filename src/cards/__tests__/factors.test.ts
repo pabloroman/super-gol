@@ -155,4 +155,12 @@ describe('rarity and cost bands', () => {
     expect(costFor(55)).toBeGreaterThanOrEqual(1)
     expect(costFor(85)).toBeGreaterThan(costFor(65))
   })
+  it('gives the mid-tier cluster a genuinely cheap tail', () => {
+    // The bulk of the catalog sits at overall ~62..72; the widened curve must map
+    // that cluster low (<=4) so a squad can fill around one star under the cap.
+    expect(costFor(67)).toBeLessThanOrEqual(4)
+    expect(costFor(62)).toBeLessThanOrEqual(3)
+    // Stars stay dear at the top.
+    expect(costFor(95)).toBeGreaterThanOrEqual(11)
+  })
 })
