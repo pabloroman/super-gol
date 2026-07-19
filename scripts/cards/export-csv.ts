@@ -1,5 +1,9 @@
-// Emit the admin-import CSV for the LaLiga catalog. Run:
+// Emit the admin-import CSV for the LaLiga catalog. Run standalone for the CSV only:
 //   npm run export:cards:csv
+// but `npm run build:cards` chains this after the seed, so the everyday refresh emits
+// both from one shared derivation (buildRows) and they can't drift. This half does NOT
+// prune the SofaScore photo map (build.ts does, before this runs); run standalone only
+// when the map is already pruned (e.g. a prod-bootstrap CSV that skips the local seed).
 // Produces the same 518 cards as the local seed (supabase/seed_cards.sql), in the
 // exact column shape the in-app admin importer (src/cards/csv.ts) expects — so
 // importing it bootstraps or refreshes the catalog on a hosted DB, where the catalog

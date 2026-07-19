@@ -263,15 +263,22 @@ from `overrides.json`, so they converge.
 - `npm run reseed:cards` — (re)write `overrides.json` from the deterministic core.
   Run once to bootstrap, or after re-vendoring a roster to bake in new players
   (existing cards diff empty). **This clobbers hand-edits** — it's the reset button.
-- `npm run build:cards` — regenerate the local catalog **seed**
-  `supabase/seed_cards.sql` from `overrides.json` (offline; no credentials). Never
-  hand-edit the generated seed — edit `overrides.json` (abilities + any hand-authored
-  field) or `scripts/cards/` + `src/cards/` (derivation logic) and re-run. Refresh a
-  season by re-vendoring the JSON snapshots under `scripts/cards/data/`.
-- `npm run export:cards:csv` — emit `scripts/cards/data/laliga-2025-cards.csv`, the
-  same catalog in the admin importer's column shape, carrying `is_starter` so
-  importing it into a fresh (e.g. wiped prod) DB bootstraps the catalog **and** the
-  55-card starter deck (`scripts/cards/data/starter-deck.ts`).
+- `npm run build:cards` — regenerate **both** catalog artifacts from `overrides.json`
+  (offline; no credentials): the local **seed** `supabase/seed_cards.sql` **and** the
+  admin CSV (chains `export:cards:csv` after the seed). They share one derivation
+  (`buildRows`) and must never drift, so the everyday "I changed a card, refresh"
+  command emits both — and only this one prunes the SofaScore photo map, which the CSV
+  emit then reads. Never hand-edit the generated seed — edit `overrides.json`
+  (abilities + any hand-authored field) or `scripts/cards/` + `src/cards/` (derivation
+  logic) and re-run. Refresh a season by re-vendoring the JSON snapshots under
+  `scripts/cards/data/`.
+- `npm run export:cards:csv` — the CSV-only subset of `build:cards`: emit just
+  `scripts/cards/data/laliga-2025-cards.csv` (the catalog in the admin importer's column
+  shape, carrying `is_starter` so importing it into a fresh e.g. wiped prod DB
+  bootstraps the catalog **and** the 55-card starter deck,
+  `scripts/cards/data/starter-deck.ts`). Kept for the prod-bootstrap flow, which wants
+  the CSV without touching the local seed; assumes the photo map is already pruned (run
+  `build:cards` for a full refresh).
 - `npm run push:cards` — apply `overrides.json`'s abilities to a live DB (dry-run
   unless `-- --commit`; needs `SUPABASE_URL` + `SUPABASE_SERVICE_ROLE_KEY`).
 
@@ -391,7 +398,9 @@ none of; a name/email substring is the whole of what it needs.
 - `npm run build` — typecheck + production build
 - `npm run reseed:cards` — (re)write `scripts/cards/data/overrides.json` from the
   deterministic core (clobbers hand-edits; see above)
-- `npm run build:cards` — regenerate the local catalog seed `seed_cards.sql` (see above)
-- `npm run export:cards:csv` — regenerate the importable catalog CSV
+- `npm run build:cards` — regenerate **both** catalog artifacts: the local seed
+  `seed_cards.sql` and the admin CSV (see above)
+- `npm run export:cards:csv` — regenerate only the importable catalog CSV (the CSV-only
+  subset of `build:cards`)
 - `npm run push:cards` — push `overrides.json` abilities to a live DB (dry-run
   unless `-- --commit`; see above)
