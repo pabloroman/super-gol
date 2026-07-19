@@ -150,11 +150,26 @@ export function parseMarketValue(raw: string | null | undefined): number {
 /** Season the vendored dataset represents (data/2025 → the 2025/26 campaign). */
 export const SEASON_START = new Date('2025-08-01T00:00:00Z')
 
+/**
+ * Parse a bare calendar date like "May 11, 1992" to UTC midnight of that day,
+ * timezone-independently. `new Date("May 11, 1992")` yields LOCAL midnight, so reading
+ * it back through UTC getters (ageAt) or toISOString (parseBirthDate) rolls the day
+ * back in zones east of UTC — which silently shifted every card's birth_date by a day
+ * when the seed was regenerated off-CI. Re-anchoring via the local getters, which always
+ * report the intended calendar day, makes both emitters reproducible in any timezone.
+ * Returns null on an unparseable/absent string.
+ */
+export function parseCalendarDate(s: string | null | undefined): Date | null {
+  if (!s) return null
+  const d = new Date(s)
+  if (isNaN(d.getTime())) return null
+  return new Date(Date.UTC(d.getFullYear(), d.getMonth(), d.getDate()))
+}
+
 /** Whole-years age at a reference date. Parses "May 11, 1992". Deterministic. */
 export function ageAt(dateOfBirth: string | null | undefined, ref = SEASON_START): number {
-  if (!dateOfBirth) return 27 // prime default when DOB is missing
-  const dob = new Date(dateOfBirth)
-  if (isNaN(dob.getTime())) return 27
+  const dob = parseCalendarDate(dateOfBirth)
+  if (!dob) return 27 // prime default when DOB is missing or unparseable
   let age = ref.getUTCFullYear() - dob.getUTCFullYear()
   const beforeBirthday =
     ref.getUTCMonth() < dob.getUTCMonth() ||

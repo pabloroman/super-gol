@@ -6,7 +6,7 @@ import { existsSync, readFileSync } from 'node:fs'
 import { fileURLToPath } from 'node:url'
 import { dirname, join } from 'node:path'
 import type { Abilities } from '../../src/lib/types'
-import { ageAt, marketValueToOverall, parseMarketValue } from '../../src/cards/valuation'
+import { ageAt, marketValueToOverall, parseCalendarDate, parseMarketValue } from '../../src/cards/valuation'
 import { deriveCard } from '../../src/cards/factors'
 import { clubSlug } from '../../src/cards/clubs'
 import { photoUrl } from './photos'
@@ -103,9 +103,9 @@ function parseHeightCm(height: string | undefined): number | null {
 }
 
 function parseBirthDate(dob: string | undefined): string | null {
-  if (!dob) return null
-  const d = new Date(dob)
-  return isNaN(d.getTime()) ? null : d.toISOString().slice(0, 10)
+  // parseCalendarDate anchors "May 11, 1992" to UTC midnight so slicing the ISO date is
+  // timezone-independent; a bare new Date(dob).toISOString() shifts the day off-CI.
+  return parseCalendarDate(dob)?.toISOString().slice(0, 10) ?? null
 }
 
 /**
