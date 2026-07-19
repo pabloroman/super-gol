@@ -16,6 +16,7 @@ import { readFileSync, writeFileSync } from 'node:fs'
 import { fileURLToPath } from 'node:url'
 import { dirname, join } from 'node:path'
 import { buildRows, loadOverrides, SEASON_TAG, type CardRow, type TmLeague } from './rows'
+import { prunePhotoMap } from './photos'
 import { STARTER_IDS } from './data/starter-deck'
 
 const HERE = dirname(fileURLToPath(import.meta.url))
@@ -102,6 +103,10 @@ function summarize(rows: CardRow[]): void {
 
 function main() {
   const league: TmLeague = JSON.parse(readFileSync(join(HERE, 'data', 'laliga-2025.json'), 'utf8'))
+  // Keep the SofaScore photo map in lockstep with the roster: drop any id not in this
+  // snapshot (a no-op once pruned; the real work happens after a full-upstream refresh).
+  const photos = prunePhotoMap(league.clubs.flatMap((c) => (c.players ?? []).map((p) => p.id)))
+  console.log(`photo map: kept ${photos.kept} SofaScore ids, removed ${photos.removed} unreferenced`)
   // Hand-authored fields come from the overlay data/overrides.json when present; ids
   // absent from it (e.g. a newly-vendored roster player) fall back to pure derived.
   const overrides = loadOverrides()
