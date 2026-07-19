@@ -174,13 +174,12 @@ export function Naipe({
           </span>
 
           {/* Condensed, like the print — and it buys the ~25% extra characters
-              that keep «23/03/68 - 1,87. 84 kg» from truncating mid-value. */}
+              that keep «23/03/68 - 1,87» from truncating mid-value. */}
           <span
             className="min-w-0 flex-1 font-display leading-snug text-white"
             style={{ fontSize: '6.6cqw' }}
           >
             {card.full_name && <span className="block truncate">{card.full_name}</span>}
-            {card.birthplace && <span className="block truncate">{card.birthplace}</span>}
             {physical && <span className="block truncate">{physical}</span>}
           </span>
 

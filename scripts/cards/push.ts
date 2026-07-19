@@ -1,12 +1,13 @@
-// Push the hand-edited scripts/cards/data/abilities.json to a live Super Gol database.
+// Push the abilities from the hand-edited scripts/cards/data/overrides.json to a live Super
+// Gol database.
 //
-// This is the ONLY channel that changes card attributes on a live (hosted) database: the
+// This is the ONLY channel that changes card ABILITIES on a live (hosted) database: the
 // catalog is not a migration — it is a local seed (seed_cards.sql) plus the admin CSV import
-// on prod — so a local `db reset` and this push both derive from abilities.json and converge.
-// It writes ONLY the `abilities` column — the starter deck (owned by starter-deck.ts, applied
-// via the seed and the CSV's is_starter column) and every other field (name, cost, rarity,
-// photo, zone grid) are left untouched. It DOES overwrite any in-app admin edits to abilities
-// for the cards it touches; that is the point.
+// on prod — so a local `db reset` and this push both derive from overrides.json and converge.
+// It writes ONLY the `abilities` column — every other overlay field (name, cost, rarity, photo,
+// zone grid) and the starter deck reach a live DB through the admin CSV import, not here, so
+// they are left untouched. It DOES overwrite any in-app admin edits to abilities for the cards
+// it touches; that is the point.
 //
 // Auth: uses the service_role key to call service_set_card_abilities (0018), a SECURITY DEFINER
 // RPC granted to service_role alone. (admin_upsert_cards is unusable here — its require_admin()
@@ -21,7 +22,7 @@
 
 import { createClient } from '@supabase/supabase-js'
 import type { Abilities, AbilityKey } from '../../src/lib/types'
-import { loadAbilities } from './rows'
+import { loadOverrides } from './rows'
 
 const args = new Set(process.argv.slice(2))
 const COMMIT = args.has('--commit')
@@ -52,9 +53,12 @@ function sameAbilities(a: Abilities, b: Abilities): boolean {
 }
 
 async function main() {
-  const cards = loadAbilities()
+  // push writes ONLY the abilities column — pull just that field out of each overlay entry.
+  const overrides = loadOverrides()
+  const cards: Record<string, Abilities> = {}
+  for (const [id, o] of Object.entries(overrides)) if (o.abilities) cards[id] = o.abilities
   const ids = Object.keys(cards)
-  if (ids.length === 0) die('abilities.json is empty or absent — run `npm run reseed:cards` first.')
+  if (ids.length === 0) die('overrides.json has no abilities or is absent — run `npm run reseed:cards` first.')
 
   const supabase = createClient(url!, key!, {
     auth: { persistSession: false, autoRefreshToken: false },
@@ -69,7 +73,7 @@ async function main() {
   const inDbNotJson = [...dbById.keys()].filter((id) => !(id in cards))
 
   console.log(`target:        ${hostname} (${ref})`)
-  console.log(`abilities.json: ${ids.length} cards`)
+  console.log(`overrides.json: ${ids.length} cards`)
   console.log(`  to update:    ${changed.length}`)
   console.log(`  unchanged:    ${ids.length - changed.length - missingInDb.length}`)
   console.log(`  not in DB:    ${missingInDb.length} (skipped)`)
@@ -90,7 +94,7 @@ async function main() {
     die(`refusing to write to remote project "${ref}" — re-run with PUSH_CONFIRM=${ref}.`)
   }
   if (changed.length === 0) {
-    console.log('\nnothing to update — DB already matches abilities.json.')
+    console.log('\nnothing to update — DB already matches overrides.json.')
     return
   }
 

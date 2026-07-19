@@ -23,10 +23,8 @@ export interface Card {
   club: string | null
   club_slug: string | null
   nationality: string | null
-  birthplace: string | null
   birth_date: string | null
   height_cm: number | null
-  weight_kg: number | null
   position: string | null
   cost: number
   rarity: Rarity

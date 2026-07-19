@@ -10,7 +10,7 @@ import { fileURLToPath } from 'node:url'
 import { dirname, join } from 'node:path'
 import type { Card, Rarity } from '../../src/lib/types'
 import { cardsToCsv } from '../../src/cards/csv'
-import { buildRows, loadAbilities, type TmLeague } from './rows'
+import { buildRows, loadOverrides, type TmLeague } from './rows'
 import { STARTER_IDS } from './data/starter-deck'
 
 const HERE = dirname(fileURLToPath(import.meta.url))
@@ -19,9 +19,9 @@ const OUT_FILE = join(HERE, 'data', 'laliga-2025-cards.csv')
 
 const league: TmLeague = JSON.parse(readFileSync(join(HERE, 'data', 'laliga-2025.json'), 'utf8'))
 
-// Same abilities source as the seed (data/abilities.json) so the CSV and the seed
+// Same overlay source as the seed (data/overrides.json) so the CSV and the seed
 // can never disagree; empty map → derived fallback inside buildRows.
-const overrides = loadAbilities()
+const overrides = loadOverrides()
 const starters = new Set(STARTER_IDS)
 const cards: Card[] = buildRows(league, Object.keys(overrides).length ? overrides : undefined).map((r) => ({
   id: r.id,
@@ -30,10 +30,8 @@ const cards: Card[] = buildRows(league, Object.keys(overrides).length ? override
   club: r.club,
   club_slug: r.club_slug,
   nationality: r.nationality,
-  birthplace: null,
   birth_date: r.birth_date,
   height_cm: r.height_cm,
-  weight_kg: null,
   position: r.position,
   cost: r.cost,
   rarity: r.rarity as Rarity,

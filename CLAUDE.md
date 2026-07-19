@@ -226,36 +226,53 @@ carries 13: `f` (falta), `lf` (lanz. faltas), `sa` (salida por alto) and `sp`
 represented. The 0–3 ceiling above is an **assumption** — the rulebook states no
 range anywhere (only the floor, page 6: a missing factor is zero) and real cards
 show a 4. The generator emits a clean **functional core** per role and nothing
-more; any per-card variety or extra attributes are added **by hand**, not rolled.
+more; any per-card variety or extra attributes are added **by hand** through the
+overlay (below), not rolled.
 
-**The ability blob is owned by `scripts/cards/data/abilities.json`**, keyed by card
-row id — the hand-editable source of truth. `npm run reseed:cards` writes it from
-the deterministic generator (the ONLY writer; re-running is an empty diff, so it
-can't silently churn hand-edits); thereafter you edit it directly. Both emitters
-read it, so a hand-edit flows into `seed_cards.sql` (fresh local `db:reset`) and the
-CSV, and via `npm run push:cards` into a live database. `push:cards` writes ONLY
-the `abilities` column with the **service_role** key (bypasses RLS; the
-`admin_upsert_cards` RPC is unusable — its `require_admin()` needs an `auth.uid()`
-a service key lacks), is **dry-run by default**, and knowingly overwrites in-app
-admin ability edits for the cards it touches. Because the catalog is a local-only
-seed (`seed_cards.sql`, guarded off hosted DBs) plus the admin CSV import on prod,
-never a migration, prod catalog and ability changes go through the admin importer
-and `push:cards`; local `db reset` and a push both derive from `abilities.json`, so
-they converge.
+**Card ids are `{transfermarktId}-{season}`** (e.g. `401530-2526`) — the
+Transfermarkt id from the snapshot plus the season tag. This is deliberate: the
+catalog is a **live** table re-pulled mid-season, and the Transfermarkt id is stable
+across the name and club changes a re-pull brings (a transfer, a diacritic fix), so a
+re-pull **updates a card in place** instead of forking it into a duplicate that
+orphans owners (via the `user_cards` / `squad_slots` FKs) and strands hand-edits. The
+season stays in the key so the same player next season is a distinct card; `buildRows`
+throws on a duplicate id (a snapshot data error). The old `{name-slug}-{club}-{season}`
+scheme baked two volatile fields into the PK and was abandoned for exactly this reason.
 
-- `npm run reseed:cards` — (re)write `abilities.json` from the deterministic core.
+**Hand-authored fields live in `scripts/cards/data/overrides.json`**, a JSON
+**overlay** keyed by card id — the hand-editable source of truth. Each entry can
+override **any** card field, not just abilities:
+`{ label, abilities?, cost?, rarity?, name?, … }`, shallow-merged over the derived row
+(`abilities` replaces the derived set wholesale; anything not named stays derived).
+`label` (`"Éder Militão · Real Madrid"`) is descriptive only — ignored by the build,
+it keeps the opaque numeric keys navigable while hand-editing. `npm run reseed:cards`
+writes the file from the deterministic generator (the ONLY writer; re-running is an
+empty diff, so it can't silently churn hand-edits); thereafter you edit it directly.
+Both emitters read it, so a hand-edit flows into `seed_cards.sql` (fresh local
+`db:reset`) and the CSV, and via `npm run push:cards` into a live database.
+`push:cards` writes ONLY the `abilities` column with the **service_role** key
+(bypasses RLS; the `admin_upsert_cards` RPC is unusable — its `require_admin()` needs
+an `auth.uid()` a service key lacks), is **dry-run by default**, and knowingly
+overwrites in-app admin ability edits for the cards it touches; a hand-edited *scalar*
+(cost, rarity, name…) reaches prod through the admin CSV import, not `push:cards`.
+Because the catalog is a local-only seed (`seed_cards.sql`, guarded off hosted DBs)
+plus the admin CSV import on prod, never a migration, prod catalog and ability changes
+go through the admin importer and `push:cards`; local `db reset` and a push both derive
+from `overrides.json`, so they converge.
+
+- `npm run reseed:cards` — (re)write `overrides.json` from the deterministic core.
   Run once to bootstrap, or after re-vendoring a roster to bake in new players
   (existing cards diff empty). **This clobbers hand-edits** — it's the reset button.
 - `npm run build:cards` — regenerate the local catalog **seed**
-  `supabase/seed_cards.sql` from `abilities.json` (offline; no credentials). Never
-  hand-edit the generated seed — edit `abilities.json` (abilities) or `scripts/cards/`
-  + `src/cards/` (everything else) and re-run. Refresh a season by re-vendoring the
-  JSON snapshots under `scripts/cards/data/`.
+  `supabase/seed_cards.sql` from `overrides.json` (offline; no credentials). Never
+  hand-edit the generated seed — edit `overrides.json` (abilities + any hand-authored
+  field) or `scripts/cards/` + `src/cards/` (derivation logic) and re-run. Refresh a
+  season by re-vendoring the JSON snapshots under `scripts/cards/data/`.
 - `npm run export:cards:csv` — emit `scripts/cards/data/laliga-2025-cards.csv`, the
   same catalog in the admin importer's column shape, carrying `is_starter` so
   importing it into a fresh (e.g. wiped prod) DB bootstraps the catalog **and** the
   55-card starter deck (`scripts/cards/data/starter-deck.ts`).
-- `npm run push:cards` — apply `abilities.json`'s abilities to a live DB (dry-run
+- `npm run push:cards` — apply `overrides.json`'s abilities to a live DB (dry-run
   unless `-- --commit`; needs `SUPABASE_URL` + `SUPABASE_SERVICE_ROLE_KEY`).
 
 ## The naipe (card UI)
@@ -323,9 +340,9 @@ The catalog is a list below `md` and a real `<table>` above it, from **one rende
 double the DOM. The editor is a `Sheet` wrapping a `<form>`: **every button that
 isn't Guardar needs `type="button"`**, since the default inside a form is submit
 and a missed one turns Cancelar into a save. Search is `useCardFilters` with
-`searchId: true` — that flag is opt-in because ids are slugs of name+club+season,
-so matching them by default would make "rma" return every Real Madrid card in
-Colección. Its `getCard` must stay at module scope (it's a `useMemo` dep).
+`searchId: true` — that flag is opt-in because ids are `{transfermarktId}-{season}`,
+so matching them by default would make "2526" return all 518 cards in Colección while
+helping no one search. Its `getCard` must stay at module scope (it's a `useMemo` dep).
 
 ### Usuarios
 
@@ -372,9 +389,9 @@ none of; a name/email substring is the whole of what it needs.
 - `npm run test` — Vitest run (engine tests in `src/game/engine/__tests__/`,
   catalog inference + CSV tests in `src/cards/__tests__/`)
 - `npm run build` — typecheck + production build
-- `npm run reseed:cards` — (re)write `scripts/cards/data/abilities.json` from the
+- `npm run reseed:cards` — (re)write `scripts/cards/data/overrides.json` from the
   deterministic core (clobbers hand-edits; see above)
-- `npm run build:cards` — regenerate the LaLiga catalog migration (see above)
+- `npm run build:cards` — regenerate the local catalog seed `seed_cards.sql` (see above)
 - `npm run export:cards:csv` — regenerate the importable catalog CSV
-- `npm run push:cards` — push `abilities.json` abilities to a live DB (dry-run
+- `npm run push:cards` — push `overrides.json` abilities to a live DB (dry-run
   unless `-- --commit`; see above)

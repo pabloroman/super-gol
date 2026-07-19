@@ -16,8 +16,8 @@ const ABILITY_KEYS: AbilityKey[] = [
   'rb', 'a', 'rc', 'd', 'rg', 'v', 'pc', 'pl', 'pa', 'dl', 'rm', 'rf', 'co',
 ]
 const SCALAR_COLUMNS = [
-  'id', 'name', 'full_name', 'club', 'club_slug', 'nationality', 'birthplace',
-  'birth_date', 'height_cm', 'weight_kg', 'position', 'cost', 'rarity',
+  'id', 'name', 'full_name', 'club', 'club_slug', 'nationality',
+  'birth_date', 'height_cm', 'position', 'cost', 'rarity',
   'is_starter', 'image_url',
 ] as const
 const RARITIES: Rarity[] = ['comun', 'frecuente', 'rara']
@@ -108,10 +108,8 @@ export function parseCardsCsv(text: string): ParseResult {
       club: (row.club ?? '').trim() || null,
       club_slug: (row.club_slug ?? '').trim() || null,
       nationality: (row.nationality ?? '').trim() || null,
-      birthplace: (row.birthplace ?? '').trim() || null,
       birth_date: (row.birth_date ?? '').trim() || null,
       height_cm: intOrNull(row.height_cm),
-      weight_kg: intOrNull(row.weight_kg),
       position: position || null,
       cost,
       rarity,
@@ -152,10 +150,8 @@ export function cardsToCsv(cards: Card[], opts: { includeStarter?: boolean } = {
       club: c.club ?? '',
       club_slug: c.club_slug ?? '',
       nationality: c.nationality ?? '',
-      birthplace: c.birthplace ?? '',
       birth_date: c.birth_date ?? '',
       height_cm: c.height_cm == null ? '' : String(c.height_cm),
-      weight_kg: c.weight_kg == null ? '' : String(c.weight_kg),
       position: c.position ?? '',
       cost: String(c.cost),
       rarity: c.rarity,

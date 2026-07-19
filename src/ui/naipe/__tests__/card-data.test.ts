@@ -10,10 +10,8 @@ function card(over: Partial<Card>): Card {
     club: null,
     club_slug: null,
     nationality: null,
-    birthplace: null,
     birth_date: null,
     height_cm: null,
-    weight_kg: null,
     position: 'FW',
     cost: 5,
     rarity: 'comun',
@@ -48,16 +46,13 @@ describe('formatHeight', () => {
 })
 
 describe('physicalLine', () => {
-  it('builds the full line when everything is present, as on the naipe', () => {
-    expect(
-      physicalLine(card({ birth_date: '1968-03-23', height_cm: 187, weight_kg: 84 })),
-    ).toBe('23/03/68 - 1,87. 84 kg')
+  it('builds the line from birth date and height, as on the naipe', () => {
+    expect(physicalLine(card({ birth_date: '1968-03-23', height_cm: 187 }))).toBe('23/03/68 - 1,87')
   })
 
-  it('degrades without weight — the generated catalog has none', () => {
-    expect(physicalLine(card({ birth_date: '1998-12-20', height_cm: 180 }))).toBe(
-      '20/12/98 - 1,80',
-    )
+  it('degrades to whichever of date / height is present', () => {
+    expect(physicalLine(card({ birth_date: '1998-12-20' }))).toBe('20/12/98')
+    expect(physicalLine(card({ height_cm: 180 }))).toBe('1,80')
   })
 
   it('returns null rather than stray separators when nothing is known', () => {

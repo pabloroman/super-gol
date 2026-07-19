@@ -10,10 +10,8 @@ function card(over: Partial<Card>): Card {
     club: null,
     club_slug: null,
     nationality: null,
-    birthplace: null,
     birth_date: null,
     height_cm: null,
-    weight_kg: null,
     position: 'FW',
     cost: 5,
     rarity: 'comun',
@@ -25,10 +23,10 @@ function card(over: Partial<Card>): Card {
   }
 }
 
-// A real catalog row: ids are slugs of name + club + season, which is the whole
-// reason searchId has to be opt-in.
+// A real catalog row: ids are `{transfermarktId}-{season}`, which is the whole
+// reason searchId has to be opt-in — the season suffix is a substring of every id.
 const militao = card({
-  id: 'eder-militao-rma-2526',
+  id: '401530-2526',
   name: 'Militão',
   full_name: 'Éder Gabriel Militão',
   club: 'Real Madrid',
@@ -54,16 +52,16 @@ describe('cardMatchesQuery', () => {
   })
 
   it('does not match the id by default — the player-facing default', () => {
-    // Both of these are substrings of the id. If they ever match here, every
-    // Real Madrid card answers "rma" and all 518 answer "2526" in Colección.
-    expect(cardMatchesQuery(militao, 'rma')).toBe(false)
+    // The season suffix and tm-id are substrings of the id. If they ever matched
+    // here, all 518 cards would answer "2526" in Colección.
     expect(cardMatchesQuery(militao, '2526')).toBe(false)
+    expect(cardMatchesQuery(militao, '401530')).toBe(false)
   })
 
   it('matches the id when searchId is on — the admin catalog wants that', () => {
-    expect(cardMatchesQuery(militao, 'rma', true)).toBe(true)
     expect(cardMatchesQuery(militao, '2526', true)).toBe(true)
-    expect(cardMatchesQuery(militao, 'eder-militao', true)).toBe(true)
+    expect(cardMatchesQuery(militao, '401530', true)).toBe(true)
+    expect(cardMatchesQuery(militao, '401530-2526', true)).toBe(true)
   })
 
   it('still misses what it should miss', () => {

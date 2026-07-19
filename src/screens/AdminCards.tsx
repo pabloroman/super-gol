@@ -27,10 +27,8 @@ function blankCard(): Card {
     club: null,
     club_slug: null,
     nationality: null,
-    birthplace: null,
     birth_date: null,
     height_cm: null,
-    weight_kg: null,
     position: 'MF',
     cost: 1,
     rarity: 'comun',
@@ -69,9 +67,9 @@ function CardEditor({
   const [error, setError] = useState<string | null>(null)
 
   const set = <K extends keyof Card>(k: K, v: Card[K]) => setCard((c) => ({ ...c, [k]: v }))
-  const setNum = (k: 'height_cm' | 'weight_kg', raw: string) =>
+  const setNum = (k: 'height_cm', raw: string) =>
     set(k, raw === '' ? null : Number(raw))
-  const setStr = (k: 'full_name' | 'club' | 'club_slug' | 'nationality' | 'birthplace' | 'birth_date' | 'image_url', raw: string) =>
+  const setStr = (k: 'full_name' | 'club' | 'club_slug' | 'nationality' | 'birth_date' | 'image_url', raw: string) =>
     set(k, raw === '' ? null : raw)
   const setAbility = (key: AbilityKey, raw: string) => {
     const v = raw === '' ? 0 : Math.max(0, Math.min(3, Number(raw) || 0))
@@ -156,21 +154,11 @@ function CardEditor({
           <label className="text-xs text-slate-400">nationality
             <input className={field} value={card.nationality ?? ''} onChange={(e) => setStr('nationality', e.target.value)} />
           </label>
-          {/* birthplace was wired end to end — typed in setStr, initialized in
-              blankCard, carried by the CSV, and *printed on the naipe* — but the
-              input was never written, so the card showed a field no admin could
-              fill and the generator leaves empty on all 518 rows. */}
-          <label className="text-xs text-slate-400">birthplace
-            <input className={field} value={card.birthplace ?? ''} onChange={(e) => setStr('birthplace', e.target.value)} />
-          </label>
           <label className="text-xs text-slate-400">birth_date
             <input className={field} value={card.birth_date ?? ''} placeholder="YYYY-MM-DD" onChange={(e) => setStr('birth_date', e.target.value)} />
           </label>
           <label className="text-xs text-slate-400">height_cm
             <input className={field} type="number" value={card.height_cm ?? ''} onChange={(e) => setNum('height_cm', e.target.value)} />
-          </label>
-          <label className="text-xs text-slate-400">weight_kg
-            <input className={field} type="number" value={card.weight_kg ?? ''} onChange={(e) => setNum('weight_kg', e.target.value)} />
           </label>
           <label className="text-xs text-slate-400">position
             <select className={field} value={card.position ?? 'MF'} onChange={(e) => set('position', e.target.value)}>

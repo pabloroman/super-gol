@@ -10,7 +10,7 @@
 // elite forward maxes remate/desmarque; a keeper maxes reflejos. The 0-3 ceiling
 // matches the decoded originals in supabase/seed.sql and the rulebook's small
 // factor range (a single die + factor clears the TABLA thresholds). Extra/flavour
-// attributes are added by hand later in scripts/cards/data/abilities.json.
+// attributes are added by hand later in scripts/cards/data/overrides.json.
 
 import type { Abilities, AbilityKey, Rarity } from '../lib/types'
 import { roleProfile, zoneForPosition, type RoleProfile } from './positions'
