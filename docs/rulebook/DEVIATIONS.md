@@ -38,10 +38,11 @@ limit at all. To keep squad-building meaningful the app borrows the point cap fr
 
 That 100 is a **16-player** ceiling (~6.25 points/player). This game fields an
 **11-player** squad (page 12's «10 de campo + 1 portero», no bench), so applying 100
-directly would allow ~9.1 points/player — the cap would barely bind, since the LaLiga
-catalog's mean card cost is ~6.34 and a typical XI already costs only ~70. The app
-therefore scales the ceiling to the squad size: **100 × 11/16 ≈ 70**, which also lands
-on the catalog's mean squad cost (~11 × 6.34). The number lives once in `POINT_CAP`
+directly would allow ~9.1 points/player — the cap would barely bind. The app therefore
+scales the ceiling to the squad size: **100 × 11/16 ≈ 70**. The `costFor` curve
+(`src/cards/factors.ts`) puts the catalog's mean card cost at ~5.8 (a typical XI ~64),
+so 70 sits **deliberately above** the mean: enough headroom to afford one star plus
+cheap fillers, while still barring an all-star XI. The number lives once in `POINT_CAP`
 (`src/game/squad.ts`) and is enforced authoritatively in `save_squad`
 (`supabase/migrations/0019_squad_point_cap.sql`).
 
