@@ -272,6 +272,11 @@ from `overrides.json`, so they converge.
   same catalog in the admin importer's column shape, carrying `is_starter` so
   importing it into a fresh (e.g. wiped prod) DB bootstraps the catalog **and** the
   55-card starter deck (`scripts/cards/data/starter-deck.ts`).
+- `npm run build:cards:all` — run `build:cards` then `export:cards:csv` in one shot.
+  Both artifacts (`seed_cards.sql` + the admin CSV) are projections of the same
+  `overrides.json`, so they must be regenerated together; prefer this over the two
+  individually after re-vendoring a season or editing `overrides.json`, so the local
+  seed and the prod-import CSV can't drift out of sync.
 - `npm run push:cards` — apply `overrides.json`'s abilities to a live DB (dry-run
   unless `-- --commit`; needs `SUPABASE_URL` + `SUPABASE_SERVICE_ROLE_KEY`).
 
