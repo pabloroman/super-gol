@@ -2,12 +2,14 @@ import { useState } from 'react'
 import { useAuth } from '@/auth/AuthProvider'
 import { AdminCards } from '@/screens/AdminCards'
 import { AdminUsers } from '@/screens/AdminUsers'
+import { AdminWaitlist } from '@/screens/AdminWaitlist'
 
-type TabId = 'cards' | 'users'
+type TabId = 'cards' | 'users' | 'waitlist'
 
 const TABS: { id: TabId; label: string }[] = [
   { id: 'cards', label: 'Cartas' },
   { id: 'users', label: 'Usuarios' },
+  { id: 'waitlist', label: 'Lista de espera' },
 ]
 
 /**
@@ -65,7 +67,13 @@ export function Admin() {
           keeping it mounted behind the other tab would leave that DOM live for
           nothing. The cost is a re-fetch on tab switch, which is the cheaper
           side of the trade. */}
-      {tab === 'cards' ? <AdminCards /> : <AdminUsers />}
+      {tab === 'cards' ? (
+        <AdminCards />
+      ) : tab === 'users' ? (
+        <AdminUsers />
+      ) : (
+        <AdminWaitlist />
+      )}
     </div>
   )
 }

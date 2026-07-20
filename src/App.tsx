@@ -110,6 +110,7 @@ function hasAuthHash(): boolean {
  * form's mode so the CTA the visitor pressed matches what they see.
  */
 function Unauthenticated() {
+  const { waitlistEnabled } = useAuth()
   const [view, setView] = useState<'landing' | 'auth'>(
     hasAuthHash() ? 'auth' : 'landing',
   )
@@ -120,6 +121,7 @@ function Unauthenticated() {
   }
   return (
     <Landing
+      waitlistEnabled={waitlistEnabled}
       onStart={() => {
         setMode('signup')
         setView('auth')

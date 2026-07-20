@@ -1,6 +1,7 @@
 import { requireSupabase } from '@/lib/supabase'
 import type {
   AdminUser,
+  AppSettings,
   Card,
   CollectionEntry,
   Match,
@@ -8,8 +9,33 @@ import type {
   Profile,
   Squad,
   SquadSlot,
+  WaitlistEntry,
 } from '@/lib/types'
 import type { ImportedCard } from '@/cards/csv'
+
+// ---------- app settings (public config) ----------
+/**
+ * The public config singleton (0021). Anon-readable, so it loads before there is
+ * a session. Falls back to `waitlist_enabled: false` if the row is somehow
+ * absent — the server trigger is the real gate, so failing open here at worst
+ * shows the signup form (whose signUp the trigger still refuses while gated).
+ */
+export async function fetchAppSettings(): Promise<AppSettings> {
+  const { data, error } = await requireSupabase()
+    .from('app_settings')
+    .select('waitlist_enabled')
+    .maybeSingle()
+  if (error) throw new Error(error.message)
+  return data ?? { waitlist_enabled: false }
+}
+
+// ---------- waitlist ----------
+/** Add an email to the pre-launch waitlist. Idempotent server-side (a repeat is a
+ *  silent success), so the caller can always show the same confirmation. */
+export async function joinWaitlist(email: string): Promise<void> {
+  const { error } = await requireSupabase().rpc('join_waitlist', { p_email: email })
+  if (error) throw new Error(error.message)
+}
 
 // ---------- profile / wallet ----------
 export async function fetchProfile(): Promise<Profile | null> {
@@ -176,4 +202,20 @@ export async function adminAdjustCoins(
   })
   if (error) throw new Error(error.message)
   return data as number
+}
+
+// ---------- admin (waitlist) ----------
+// Same posture (0021): the flag and the list of emails are written/read through
+// SECURITY DEFINER RPCs behind require_admin(), not client table access.
+export async function adminSetWaitlist(enabled: boolean): Promise<void> {
+  const { error } = await requireSupabase().rpc('admin_set_waitlist', {
+    p_enabled: enabled,
+  })
+  if (error) throw new Error(error.message)
+}
+
+export async function adminListWaitlist(): Promise<WaitlistEntry[]> {
+  const { data, error } = await requireSupabase().rpc('admin_list_waitlist')
+  if (error) throw new Error(error.message)
+  return (data ?? []) as WaitlistEntry[]
 }

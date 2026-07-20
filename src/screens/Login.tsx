@@ -1,5 +1,6 @@
 import { useEffect, useState, type FormEvent } from 'react'
 import { requireSupabase } from '@/lib/supabase'
+import { useAuth } from '@/auth/AuthProvider'
 import { USERNAME_MAX, USERNAME_MIN, usernameError } from '@/lib/username'
 import { authErrorMessage } from '@/lib/authErrors'
 import { readHashError } from '@/lib/authHash'
@@ -52,7 +53,14 @@ export function Login({
   initialMode?: 'signin' | 'signup'
   onBack?: () => void
 } = {}) {
-  const [mode, setMode] = useState<Mode>(initialMode)
+  // Pre-launch waitlist mode closes signup: the landing page never routes here in
+  // signup, but force it to signin anyway and hide the signup toggle below, so the
+  // only reachable modes are signin/reset. The server trigger (0021) is the real
+  // gate; this just keeps the UI from offering a door that would be slammed.
+  const { waitlistEnabled } = useAuth()
+  const [mode, setMode] = useState<Mode>(
+    waitlistEnabled && initialMode === 'signup' ? 'signin' : initialMode,
+  )
   const [email, setEmail] = useState('')
   // Sign-in accepts either a username or an email in one field.
   const [loginId, setLoginId] = useState('')
@@ -410,14 +418,17 @@ export function Login({
           ‹ Volver a entrar
         </button>
       ) : (
-        <button
-          onClick={() => switchMode(mode === 'signin' ? 'signup' : 'signin')}
-          className="text-sm text-slate-400 hover:text-slate-200"
-        >
-          {mode === 'signin'
-            ? '¿No tienes cuenta? Crea una'
-            : '¿Ya tienes cuenta? Entra'}
-        </button>
+        // Hidden while waitlist mode is on — no signup path is offered.
+        !waitlistEnabled && (
+          <button
+            onClick={() => switchMode(mode === 'signin' ? 'signup' : 'signin')}
+            className="text-sm text-slate-400 hover:text-slate-200"
+          >
+            {mode === 'signin'
+              ? '¿No tienes cuenta? Crea una'
+              : '¿Ya tienes cuenta? Entra'}
+          </button>
+        )
       )}
     </div>
   )
