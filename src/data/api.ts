@@ -61,6 +61,22 @@ export async function fetchCatalog(): Promise<Card[]> {
   return data as Card[]
 }
 
+/**
+ * Fetch specific cards by id (the landing showcase pool). Anon-readable, same as
+ * `fetchCatalog` — the `cards` "public" SELECT policy (0002) + anon grant (0007).
+ * NOTE: `.in()` does not preserve the order of `ids` and returns only the ids that
+ * still exist in the catalog, so callers must not assume a 1:1 length or ordering.
+ */
+export async function fetchCardsByIds(ids: string[]): Promise<Card[]> {
+  if (ids.length === 0) return []
+  const { data, error } = await requireSupabase()
+    .from('cards')
+    .select('*')
+    .in('id', ids)
+  if (error) throw new Error(error.message)
+  return data as Card[]
+}
+
 // ---------- collection ----------
 export async function fetchCollection(): Promise<CollectionEntry[]> {
   const { data, error } = await requireSupabase()

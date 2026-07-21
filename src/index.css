@@ -116,6 +116,54 @@ body {
     }
   }
 
+  /* The landing hero's fan deals its cards in once the live catalog resolves:
+     each naipe fades and lifts into its slot, staggered by an inline
+     animation-delay per card. The fan's box is height-reserved on the wrappers,
+     so the deal never shifts the page below it. Compositor props only
+     (transform + opacity); reduced-motion collapses it to a plain fade. */
+  .card-deal {
+    animation: card-deal 420ms ease-out both;
+  }
+  @keyframes card-deal {
+    from {
+      opacity: 0;
+      transform: translateY(12px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .card-deal {
+      animation: card-deal-fade 200ms ease-out both;
+    }
+    @keyframes card-deal-fade {
+      from {
+        opacity: 0;
+      }
+      to {
+        opacity: 1;
+      }
+    }
+  }
+
+  /* The auth-boot splash label only reveals itself if loading is genuinely slow:
+     it holds at opacity 0 for ~450ms, then fades in. A fast boot (the common
+     case) finishes first and unmounts the splash, so "Cargando…" never flashes
+     for a frame before the landing paints. Opacity only. */
+  .boot-splash {
+    animation: boot-splash 160ms ease-out 450ms both;
+  }
+  @keyframes boot-splash {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+
   /* The app's width scale. Below md both are the 448px phone measure the whole
      app used to be hard-coded to, so the mobile layout is untouched by
      definition — the desktop layout is added on top of it, never traded for it.
