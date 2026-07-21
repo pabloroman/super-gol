@@ -1,17 +1,19 @@
 import { useEffect, useState } from 'react'
 import type { Card } from '@/lib/types'
 import { fetchCardsByIds } from '@/data/api'
-import { SAMPLE_CARDS } from '@/screens/landing/sample-cards'
 
 /**
- * Live data for the Landing hero's decorative card fan (replaces the hand-copied
- * `SAMPLE_CARDS`, which drifted from the catalog). A curated pool of card ids is
+ * Live data for the Landing hero's decorative card fan (replaces a hand-copied
+ * constant, which drifted from the catalog). A curated pool of card ids is
  * fetched from the anon-readable `cards` table, cached in `localStorage` with a
  * TTL, and a fresh random trio is shown on each mount — so the fan reflects the
  * real catalog and can't silently go stale, while still rotating for variety.
  *
- * `SAMPLE_CARDS` stays as the instant-paint / offline fallback: the hook seeds
- * state with it (or a fresh cached pool) synchronously, then swaps to live cards.
+ * Returns `[]` until a trio is available: a repeat visitor within the TTL seeds
+ * synchronously from the cache and paints instantly; a cold-cache visitor gets an
+ * empty array, and the fan (whose slots reserve their space) deals the cards in
+ * once the fetch resolves. On fetch failure it stays empty — the fan is decorative
+ * and `aria-hidden`, so an absent fan is an acceptable degradation.
  */
 
 /**
@@ -94,14 +96,14 @@ function pickThree(pool: Card[]): Card[] {
 }
 
 /**
- * Returns exactly 3 cards for the hero fan. Seeds from a fresh cache (or the static
- * fallback) synchronously so the fan paints instantly, then fetches + caches the
- * live pool on a cold cache and swaps in a fresh random trio.
+ * Returns a trio for the hero fan, or `[]` until one is available. A fresh cache
+ * seeds the trio synchronously (instant paint); otherwise it fetches + caches the
+ * live pool and swaps in a fresh random trio when it resolves.
  */
 export function useShowcaseCards(): Card[] {
   const [cards, setCards] = useState<Card[]>(() => {
     const pool = readCache()
-    return pool && pool.length >= 3 ? pickThree(pool) : SAMPLE_CARDS
+    return pool && pool.length >= 3 ? pickThree(pool) : []
   })
 
   useEffect(() => {
@@ -110,12 +112,13 @@ export function useShowcaseCards(): Card[] {
     let alive = true
     fetchCardsByIds(SHOWCASE_IDS)
       .then((pool) => {
-        if (!alive || pool.length < 3) return // too few live cards: keep the fallback
+        if (!alive || pool.length < 3) return // too few live cards: leave the fan empty
         writeCache(pool)
         setCards(pickThree(pool))
       })
       .catch(() => {
-        // Decorative: on failure keep SAMPLE_CARDS rather than erroring the page.
+        // Decorative + aria-hidden: on failure leave the fan empty rather than
+        // erroring the page.
       })
     return () => {
       alive = false
