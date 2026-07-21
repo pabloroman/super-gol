@@ -57,6 +57,14 @@ begin
                  'it does not want these accounts.';
   end if;
 
+  -- Open registration on the local stack. 0021 defaults waitlist_enabled = true
+  -- (a fresh prod DB ships gated), and its BEFORE INSERT trigger on auth.users
+  -- would then refuse the account inserts below. Flipping it off here — after the
+  -- local-only guard above, so a bare `db reset --linked` never reaches it — lets
+  -- the dev accounts seed and gives local dev a working signup form. Toggle
+  -- waitlist mode from the Admin screen to exercise it locally.
+  update public.app_settings set waitlist_enabled = false;
+
   for acct in
     select *
     from (values

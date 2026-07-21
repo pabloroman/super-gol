@@ -9,6 +9,7 @@ import { Naipe } from '@/ui/naipe/Naipe'
 import { Coin } from '@/ui/Coin'
 import { Footer } from '@/ui/Footer'
 import { SAMPLE_CARDS } from '@/screens/landing/sample-cards'
+import { WaitlistForm } from '@/screens/landing/WaitlistForm'
 
 /**
  * The public marketing page — the first thing an unauthenticated visitor sees,
@@ -58,9 +59,13 @@ const STEPS: Step[] = [
 export function Landing({
   onStart,
   onSignIn,
+  waitlistEnabled,
 }: {
   onStart: () => void
   onSignIn: () => void
+  /** Pre-launch mode: swap the signup CTA for the waitlist email capture. Read
+   *  from the app_settings flag in AuthProvider (0021). */
+  waitlistEnabled: boolean
 }) {
   return (
     <div className="flex min-h-screen flex-col bg-pitch-900">
@@ -73,8 +78,9 @@ export function Landing({
           Colecciona. Ficha. Compite.
         </p>
         <p className="mt-4 max-w-md text-slate-400">
-          El mítico juego de cartas de fútbol, ahora en tu móvil. Reúne tu
-          colección, alinea tu once y compite partido a partido.
+          {waitlistEnabled
+            ? 'El mítico juego de cartas de fútbol, ahora en tu móvil. Estamos afinando los últimos detalles: únete a la lista de espera y sé de los primeros en jugar.'
+            : 'El mítico juego de cartas de fútbol, ahora en tu móvil. Reúne tu colección, alinea tu once y compite partido a partido.'}
         </p>
 
         {/* Decorative fan of sample cards */}
@@ -90,14 +96,26 @@ export function Landing({
           </div>
         </div>
 
-        <div className="mt-12 flex w-full flex-col gap-3 md:w-auto md:flex-row md:justify-center">
-          <button onClick={onStart} className="btn-primary md:px-8">
-            Empezar a jugar
-          </button>
-          <button onClick={onSignIn} className="btn-ghost md:px-8">
-            Ya tengo cuenta
-          </button>
-        </div>
+        {waitlistEnabled ? (
+          <div className="mt-12 flex w-full flex-col items-center gap-4">
+            <WaitlistForm />
+            <button
+              onClick={onSignIn}
+              className="text-sm text-slate-400 md:hover:text-slate-200"
+            >
+              Ya tengo cuenta
+            </button>
+          </div>
+        ) : (
+          <div className="mt-12 flex w-full flex-col gap-3 md:w-auto md:flex-row md:justify-center">
+            <button onClick={onStart} className="btn-primary md:px-8">
+              Empezar a jugar
+            </button>
+            <button onClick={onSignIn} className="btn-ghost md:px-8">
+              Ya tengo cuenta
+            </button>
+          </div>
+        )}
       </header>
 
       {/* Cómo funciona */}
@@ -128,9 +146,13 @@ export function Landing({
         </ol>
 
         <div className="mt-10 flex justify-center">
-          <button onClick={onStart} className="btn-primary px-8">
-            Empezar a jugar
-          </button>
+          {waitlistEnabled ? (
+            <WaitlistForm />
+          ) : (
+            <button onClick={onStart} className="btn-primary px-8">
+              Empezar a jugar
+            </button>
+          )}
         </div>
       </section>
 

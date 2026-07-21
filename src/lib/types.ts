@@ -45,6 +45,21 @@ export interface Profile {
   is_admin: boolean
 }
 
+// Public, non-sensitive app config — the app_settings singleton (0021). Read by
+// anon so the landing page can pick its CTA before there is a session; written
+// only through the admin_set_waitlist RPC.
+export interface AppSettings {
+  waitlist_enabled: boolean
+}
+
+// One pre-registration on the waitlist (0021). The shape of admin_list_waitlist();
+// email is admin-only PII, never returned by a player-facing query.
+export interface WaitlistEntry {
+  id: string
+  email: string
+  created_at: string
+}
+
 // A row of the admin Usuarios list. Not a table mirror like the types above: it
 // is the shape of `admin_list_users()` (0011), which joins the profile to its
 // email and to the two counts the screen shows. `email` is admin-only PII — no
