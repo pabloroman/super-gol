@@ -25,8 +25,6 @@ interface Step {
   icon: ReactNode
   title: string
   text: string
-  /** The coin step reads in gold (`text-rare`); the rest in grass. */
-  accent?: 'coin'
 }
 
 const STEPS: Step[] = [
@@ -49,7 +47,6 @@ const STEPS: Step[] = [
     icon: <Coin className="text-2xl" />,
     title: 'Gana monedas',
     text: 'Cada victoria llena tu hucha de monedas.',
-    accent: 'coin',
   },
   {
     icon: <GiftIcon className="h-6 w-6" aria-hidden />,
@@ -146,13 +143,7 @@ export function Landing({
         <ol className="grid gap-3 md:grid-cols-5">
           {STEPS.map((step) => (
             <li key={step.title} className="card-surface flex gap-4 p-4 md:flex-col md:gap-3">
-              <span
-                className={`grid h-11 w-11 shrink-0 place-items-center rounded-xl ${
-                  step.accent === 'coin'
-                    ? 'bg-rare/15 text-rare'
-                    : 'bg-grass-500/15 text-grass-400'
-                }`}
-              >
+              <span className="grid h-11 w-11 shrink-0 place-items-center rounded-xl bg-grass-500/15 text-grass-400">
                 {step.icon}
               </span>
               <div>

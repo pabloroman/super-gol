@@ -57,7 +57,13 @@ function Portrait({ card, quantity }: { card: Card; quantity?: number }) {
   )
 }
 
-/** Club crest. Silent when we have no id for the slug — better than a broken img. */
+/**
+ * Club crest. Silent when we have no id for the slug — better than a broken img.
+ * Oversized and absolutely positioned (relative to the card interior) so it
+ * overhangs the name band down into the portrait; the band reserves room for it
+ * on the right via `hasCrest`, and it's rendered after the portrait so it paints
+ * on top of the photo.
+ */
 function Crest({ card }: { card: Card }) {
   const [failed, setFailed] = useState(false)
   const url = crestUrl(card.club_slug)
@@ -68,8 +74,8 @@ function Crest({ card }: { card: Card }) {
       alt=""
       loading="lazy"
       onError={() => setFailed(true)}
-      className="shrink-0 object-contain"
-      style={{ width: '17cqw', height: '17cqw' }}
+      className="absolute right-[3%] top-[1%] object-contain drop-shadow-md"
+      style={{ width: '22cqw', height: '22cqw' }}
     />
   )
 }
@@ -124,6 +130,7 @@ export function Naipe({
   const factors = naipeFactors(card)
   const showLabels = variant === 'full'
   const physical = physicalLine(card)
+  const hasCrest = Boolean(crestUrl(card.club_slug))
 
   // Only interactive when it does something. The old CardTile rendered a
   // <button> even with no onClick, leaving Colección and Tienda full of
@@ -150,18 +157,26 @@ export function Naipe({
       } ${className}`}
     >
       <div className="relative flex h-full flex-col overflow-hidden bg-black text-left">
-        {/* Name band */}
-        <div className="flex shrink-0 items-center justify-between gap-1 bg-gradient-to-b from-naipe-band to-naipe-band-dark px-[4%] py-[2%]">
+        {/* Name band. The crest is rendered after the portrait (absolutely
+            positioned) so it overhangs this band into the photo; the name
+            reserves room for it on the right via paddingRight. */}
+        <div className="flex shrink-0 items-center bg-gradient-to-b from-naipe-band to-naipe-band-dark px-[4%] py-[3.5%]">
+          {/* The full name, not just the surname — at a reduced fixed cuerpo so
+              the long ones («Urko González de Zárate») shrink into the band, and
+              truncate past the widest. Falls back to the surname when a card has
+              no full_name. */}
           <span
             className="truncate font-display font-bold uppercase leading-tight text-white"
-            style={{ fontSize: '13cqw' }}
+            style={{ fontSize: '8.4cqw', paddingRight: hasCrest ? '21cqw' : undefined }}
           >
-            {card.name}
+            {card.full_name ?? card.name}
           </span>
-          <Crest card={card} />
         </div>
 
         <Portrait card={card} quantity={quantity} />
+
+        {/* Oversized crest, overhanging the name band into the portrait. */}
+        <Crest card={card} />
 
         {/* Data band: ficha, personal data, demarcación */}
         <div className="flex shrink-0 items-center gap-[2%] bg-gradient-to-b from-naipe-band to-naipe-band-dark px-[3%] py-[2%]">
