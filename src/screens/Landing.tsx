@@ -8,15 +8,17 @@ import {
 import { Naipe } from '@/ui/naipe/Naipe'
 import { Coin } from '@/ui/Coin'
 import { Footer } from '@/ui/Footer'
-import { SAMPLE_CARDS } from '@/screens/landing/sample-cards'
+import { useShowcaseCards } from '@/screens/landing/useShowcaseCards'
 import { WaitlistForm } from '@/screens/landing/WaitlistForm'
 
 /**
  * The public marketing page — the first thing an unauthenticated visitor sees,
- * with the auth form one tap away (`onStart` / `onSignIn`). Kept dependency-free
- * and data-free: it renders only static Spanish copy, a decorative fan of sample
- * `Naipe` cards, and the shared homage `Footer`. All product copy is Spanish and
- * the layout uses the single `md` breakpoint (no `sm:`), per the project rules.
+ * with the auth form one tap away (`onStart` / `onSignIn`). It renders static
+ * Spanish copy, a decorative fan of `Naipe` cards, and the shared homage `Footer`.
+ * The fan is the one bit of live data: `useShowcaseCards` fetches a rotating trio
+ * from the catalog (cached, degrading to the static `SAMPLE_CARDS` fallback). All
+ * product copy is Spanish and the layout uses the single `md` breakpoint (no `sm:`),
+ * per the project rules.
  */
 
 interface Step {
@@ -67,6 +69,7 @@ export function Landing({
    *  from the app_settings flag in AuthProvider (0021). */
   waitlistEnabled: boolean
 }) {
+  const showcase = useShowcaseCards()
   return (
     <div className="flex min-h-screen flex-col bg-pitch-900">
       {/* Hero */}
@@ -86,13 +89,13 @@ export function Landing({
         {/* Decorative fan of sample cards */}
         <div className="mt-10 flex items-end justify-center" aria-hidden>
           <div className="w-24 -mr-5 -rotate-[8deg] translate-y-2 md:-mr-8 md:w-40">
-            <Naipe card={SAMPLE_CARDS[0]} />
+            <Naipe card={showcase[0]} />
           </div>
           <div className="z-10 w-28 -translate-y-1 md:w-48">
-            <Naipe card={SAMPLE_CARDS[1]} />
+            <Naipe card={showcase[1]} />
           </div>
           <div className="w-24 -ml-5 rotate-[8deg] translate-y-2 md:-ml-8 md:w-40">
-            <Naipe card={SAMPLE_CARDS[2]} />
+            <Naipe card={showcase[2]} />
           </div>
         </div>
 
