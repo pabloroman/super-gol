@@ -9,11 +9,12 @@ import { fetchCardsByIds } from '@/data/api'
  * TTL, and a fresh random trio is shown on each mount — so the fan reflects the
  * real catalog and can't silently go stale, while still rotating for variety.
  *
- * Returns `[]` until a trio is available: a repeat visitor within the TTL seeds
- * synchronously from the cache and paints instantly; a cold-cache visitor gets an
- * empty array, and the fan (whose slots reserve their space) deals the cards in
- * once the fetch resolves. On fetch failure it stays empty — the fan is decorative
- * and `aria-hidden`, so an absent fan is an acceptable degradation.
+ * Returns `[]` until a trio is available. The pool comes from the TTL cache when
+ * fresh (else a fetch that primes it); the trio is then revealed only once its
+ * photos have decoded, so each card deals in fully imaged rather than popping its
+ * photo in a beat later. The fan's slots reserve their space, so this reveal never
+ * shifts the page. On fetch failure it stays empty — the fan is decorative and
+ * `aria-hidden`, so an absent fan is an acceptable degradation.
  */
 
 /**
@@ -95,31 +96,63 @@ function pickThree(pool: Card[]): Card[] {
   return copy.slice(0, 3)
 }
 
+/** Longest we wait on photo decoding before revealing the fan anyway — so one
+ *  slow/stalled image can't hold the hero blank. */
+const PRELOAD_CAP_MS = 2500
+
 /**
- * Returns a trio for the hero fan, or `[]` until one is available. A fresh cache
- * seeds the trio synchronously (instant paint); otherwise it fetches + caches the
- * live pool and swaps in a fresh random trio when it resolves.
+ * Resolve once the trio's photos are decoded (or `PRELOAD_CAP_MS` elapses).
+ * Revealing only after decode means each card deals in already-imaged, instead
+ * of the photo popping in a beat after the card. A missing/404 photo resolves
+ * immediately (Naipe shows the silhouette), so it never blocks the others.
+ */
+function preloadPhotos(cards: Card[]): Promise<void> {
+  const decoded = Promise.all(
+    cards.map((c) => {
+      if (!c.image_url) return Promise.resolve()
+      const img = new Image()
+      img.src = c.image_url
+      return img.decode().catch(() => undefined)
+    }),
+  ).then(() => undefined)
+  const cap = new Promise<void>((resolve) => setTimeout(resolve, PRELOAD_CAP_MS))
+  return Promise.race([decoded, cap])
+}
+
+/**
+ * Returns a trio for the hero fan, or `[]` until one is available. Resolves the
+ * pool (from the TTL cache, else a fetch that primes it), then reveals a random
+ * trio only once its photos have decoded — so the cards deal in fully imaged.
+ * Stays empty on fetch failure: the fan is decorative and `aria-hidden`.
  */
 export function useShowcaseCards(): Card[] {
-  const [cards, setCards] = useState<Card[]>(() => {
-    const pool = readCache()
-    return pool && pool.length >= 3 ? pickThree(pool) : []
-  })
+  const [cards, setCards] = useState<Card[]>([])
 
   useEffect(() => {
-    // Fresh cache already seeded the initial state — no network needed.
-    if (readCache()) return
     let alive = true
-    fetchCardsByIds(SHOWCASE_IDS)
-      .then((pool) => {
-        if (!alive || pool.length < 3) return // too few live cards: leave the fan empty
-        writeCache(pool)
-        setCards(pickThree(pool))
+    const reveal = (pool: Card[]) => {
+      if (pool.length < 3) return // too few live cards: leave the fan empty
+      const trio = pickThree(pool)
+      preloadPhotos(trio).then(() => {
+        if (alive) setCards(trio)
       })
-      .catch(() => {
-        // Decorative + aria-hidden: on failure leave the fan empty rather than
-        // erroring the page.
-      })
+    }
+
+    const cached = readCache()
+    if (cached) {
+      reveal(cached)
+    } else {
+      fetchCardsByIds(SHOWCASE_IDS)
+        .then((pool) => {
+          if (!alive) return
+          if (pool.length >= 3) writeCache(pool)
+          reveal(pool)
+        })
+        .catch(() => {
+          // Decorative + aria-hidden: on failure leave the fan empty rather than
+          // erroring the page.
+        })
+    }
     return () => {
       alive = false
     }
