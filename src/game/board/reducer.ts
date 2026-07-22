@@ -203,7 +203,7 @@ function applyPlacement(state: MatchState, action: Action): void {
   }
   // placement_done → hand off to the mandatory kickoff pase directo.
   const side = state.attacker
-  const kicker = kickoffCarrier(side)
+  const kicker = kickoffCarrier(state.players, side)
   giveBall(state, kicker)
   state.phase = { kind: 'kickoff', side }
 }
@@ -664,7 +664,7 @@ function concede(state: MatchState, scorer: Side, events: EngineEvent[]): void {
   resetAntiStall(state)
   state.possessionJugadas = 0
   state.libre = null
-  const kicker = kickoffCarrier(conceding)
+  const kicker = kickoffCarrier(state.players, conceding)
   giveBall(state, kicker)
   state.phase = { kind: 'kickoff', side: conceding }
 }

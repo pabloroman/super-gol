@@ -215,8 +215,8 @@ describe('pase al hueco — the roll decides move order, not possession (pages 7
   function huecoFrom(): { st: MatchState; target: Cell } {
     const st = structuredClone(kicked())
     const carrierId = st.ball.carrier!
-    put(st, carrierId, { col: 0, row: 2 }, false) // an empty home cell, alone
-    return { st, target: { col: 0, row: 3 } } // empty (away holds cols 1–3 in row 3)
+    put(st, carrierId, { col: 1, row: 2 }, false) // an empty home cell, alone
+    return { st, target: { col: 1, row: 3 } } // empty (away's front line holds cols 0,2,4 in row 3)
   }
 
   it('success: the ball goes loose and the ATTACKER moves first', () => {
@@ -259,7 +259,7 @@ describe('keeper restart (page 11)', () => {
     const st = keeperRestart()
     setAb(st, playerId('home', 0), { pl: 5 }) // a rating that MUST be ignored
     const mate = playerId('home', 5)
-    put(st, mate, { col: 2, row: 2 }, false) // distance 3 → PL range
+    put(st, mate, { col: 1, row: 2 }, false) // distance 3 from the keeper cell → PL range
     // One die (unmarked): 4 + 5(bonus) + 0 = 9 < 10 → fail. Were pl=5 used, 14 → success.
     const res = apply(st, { kind: 'keeper_pass', pass: 'PL', to: mate }, scriptedRng([4])).state
     expect(res.ball.carrier).not.toBe(mate) // the pass failed, so it never reached him

@@ -61,10 +61,21 @@ function buildState(): MatchState {
   for (const [side, fside] of [['home', 'blanco'], ['away', 'negro']] as const) {
     const lineup = LINEUPS[fside]
     const place = INITIAL_PLACEMENT[fside]
+    // Positions only feed the post-goal re-placement (autoPlace groups by line); a
+    // dorsal-based 4-3-3 keeps every line within the five-per-line board cap. The board
+    // figures and dice counts are position-independent — they come from INITIAL_PLACEMENT
+    // and the marcaje geometry, not from a card's position.
+    const positionOf = (i: number): string => {
+      const dorsal = i + 1
+      if (dorsal === place.keeperDorsal) return 'GK'
+      if (dorsal <= 5) return 'DF'
+      if (dorsal <= 8) return 'MF'
+      return 'FW'
+    }
     const card = (i: number): EngineCard => ({
       id: `${fside}-${lineup[i]}`,
       name: lineup[i],
-      position: i === place.keeperDorsal - 1 ? 'GK' : 'MF',
+      position: positionOf(i),
       abilities: RATINGS[lineup[i]] ?? {},
     })
     const kIdx = place.keeperDorsal - 1

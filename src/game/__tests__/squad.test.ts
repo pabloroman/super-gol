@@ -127,10 +127,28 @@ describe('validateSquad', () => {
     expect(v.errors).toContain(`Necesitas al menos 1 ${word}.`)
   })
 
-  it('accepts a minimal legal composition (1 of each line, rest forwards)', () => {
-    const minimal = [...line('GK', 1), ...line('DF', 1), ...line('MF', 1), ...line('FW', 8)]
+  it('accepts a minimal legal composition (1 defender, lines within the cap)', () => {
+    const minimal = [...line('GK', 1), ...line('DF', 1), ...line('MF', 4), ...line('FW', 5)]
     expect(minimal).toHaveLength(STARTER_COUNT)
     expect(validateSquad(minimal).ok).toBe(true)
+  })
+
+  // The pitch is five columns wide, so a demarcación line holds at most five.
+  it.each([
+    ['defensas', [...line('GK', 1), ...line('DF', 6), ...line('MF', 2), ...line('FW', 2)]],
+    ['medios', [...line('GK', 1), ...line('DF', 2), ...line('MF', 6), ...line('FW', 2)]],
+    ['delanteros', [...line('GK', 1), ...line('DF', 2), ...line('MF', 2), ...line('FW', 6)]],
+  ])('refuses more than five %s in a line', (word, cards) => {
+    expect(cards).toHaveLength(STARTER_COUNT)
+    const v = validateSquad(cards as Card[])
+    expect(v.ok).toBe(false)
+    expect(v.errors).toContain(`Máximo 5 ${word} (tienes 6).`)
+  })
+
+  it('accepts a line sitting exactly on the five-per-line cap', () => {
+    const full = [...line('GK', 1), ...line('DF', 5), ...line('MF', 3), ...line('FW', 2)]
+    expect(full).toHaveLength(STARTER_COUNT)
+    expect(validateSquad(full).ok).toBe(true)
   })
 
   it('reports every problem at once rather than the first', () => {
