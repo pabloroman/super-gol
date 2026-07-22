@@ -145,22 +145,6 @@ function playerId(side, index) {
   return `${side === "home" ? "h" : "a"}${index}`;
 }
 
-// src/ui/positions.ts
-var POSITION_ABBR = {
-  GK: "POR",
-  DF: "DEF",
-  MF: "MED",
-  FW: "DEL"
-};
-var POSITION_ORDER = ["GK", "DF", "MF", "FW"];
-function isPositionGroup(value) {
-  return !!value && value in POSITION_ABBR;
-}
-function positionRank(position) {
-  if (!isPositionGroup(position)) return POSITION_ORDER.length;
-  return POSITION_ORDER.indexOf(position);
-}
-
 // src/game/engine/pitch.ts
 var ZONE_MAP = [
   ["PA", "RM", "RM", "RM", "PA"],
@@ -240,30 +224,31 @@ function zoneOf(cell) {
 }
 
 // src/game/board/placement.ts
-var HOME_CELLS = [
-  { col: 0, row: 0 },
-  { col: 2, row: 0 },
-  { col: 4, row: 0 },
-  // back three
-  { col: 0, row: 1 },
-  { col: 1, row: 1 },
-  { col: 3, row: 1 },
-  { col: 4, row: 1 },
-  // middle four
-  { col: 1, row: 2 },
-  { col: 2, row: 2 },
-  { col: 3, row: 2 }
-  // front three (2 & 3 adjacent)
+function lineOf(position) {
+  switch (position) {
+    case "FW":
+      return 2;
+    case "MF":
+      return 1;
+    case "DF":
+    case "GK":
+      return 0;
+    default:
+      return 1;
+  }
+}
+var COLUMNS_BY_COUNT = [
+  [],
+  [2],
+  [1, 3],
+  [0, 2, 4],
+  [0, 1, 3, 4],
+  [0, 1, 2, 3, 4]
 ];
-var AWAY_CELLS = HOME_CELLS.map((c) => ({ col: c.col, row: 5 - c.row }));
-function kickoffCarrier(side) {
-  return playerId(side, 9);
+function lineRows(side) {
+  return side === "home" ? [0, 1, 2] : [5, 4, 3];
 }
 function autoPlace(squad, side) {
-  const cells = side === "home" ? HOME_CELLS : AWAY_CELLS;
-  const outfield = [...squad.outfield].sort(
-    (a, b) => positionRank(a.position) - positionRank(b.position)
-  );
   const players = {};
   players[playerId(side, 0)] = {
     id: playerId(side, 0),
@@ -272,11 +257,31 @@ function autoPlace(squad, side) {
     cell: keeperCell(side),
     onTop: false
   };
-  outfield.forEach((card, i) => {
-    const id = playerId(side, i + 1);
-    players[id] = { id, side, card, cell: cells[i], onTop: false };
+  const lines = [[], [], []];
+  for (const card of squad.outfield) lines[lineOf(card.position)].push(card);
+  const rows = lineRows(side);
+  let index = 1;
+  lines.forEach((members, line) => {
+    const cols = COLUMNS_BY_COUNT[members.length];
+    members.forEach((card, i) => {
+      const id = playerId(side, index++);
+      players[id] = { id, side, card, cell: { col: cols[i], row: rows[line] }, onTop: false };
+    });
   });
   return players;
+}
+function kickoffCarrier(players, side) {
+  const outfield = Object.values(players).filter(
+    (p) => p.side === side && !isKeeperCell(p.cell)
+  );
+  const frontRow = outfield.reduce(
+    (best, p) => side === "home" ? Math.max(best, p.cell.row) : Math.min(best, p.cell.row),
+    side === "home" ? -Infinity : Infinity
+  );
+  const front = outfield.filter((p) => p.cell.row === frontRow).sort(
+    (a, b) => Math.abs(a.cell.col - 2) - Math.abs(b.cell.col - 2) || a.id.localeCompare(b.id)
+  );
+  return front[0].id;
 }
 
 // src/game/board/actions.ts
@@ -706,7 +711,7 @@ function applyPlacement(state, action) {
     return;
   }
   const side = state.attacker;
-  const kicker = kickoffCarrier(side);
+  const kicker = kickoffCarrier(state.players, side);
   giveBall(state, kicker);
   state.phase = { kind: "kickoff", side };
 }
@@ -1057,7 +1062,7 @@ function concede(state, scorer, events) {
   resetAntiStall(state);
   state.possessionJugadas = 0;
   state.libre = null;
-  const kicker = kickoffCarrier(conceding);
+  const kicker = kickoffCarrier(state.players, conceding);
   giveBall(state, kicker);
   state.phase = { kind: "kickoff", side: conceding };
 }
@@ -1073,7 +1078,7 @@ var awaySquadOf = (s) => squadOf(s, "away");
 // src/game/board/index.ts
 function createMatch(input) {
   const players = { ...autoPlace(input.home, "home"), ...autoPlace(input.away, "away") };
-  const carrier2 = kickoffCarrier("home");
+  const carrier2 = kickoffCarrier(players, "home");
   return {
     version: STATE_VERSION,
     players,

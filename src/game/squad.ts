@@ -22,11 +22,15 @@ function isPositionGroup(value: string | null | undefined): value is PositionGro
 export const POINT_CAP = 70
 export const STARTER_COUNT = 11
 
-// Composition: exactly one portero, and at least one player in each outfield line.
-// The basic game has no formation (rulebook page 12 grants only «10 de campo + 1
-// portero»), so the remaining 7 outfielders are unconstrained.
+// Composition: exactly one portero, at least one player in each outfield line, and at
+// most five per line. The basic game grants no formation (rulebook page 12: «10 de campo
+// + 1 portero»); the per-line cap is this recreation's board constraint — the pitch is
+// five columns wide, so a line holds at most five, and the match engine lines each team
+// up by demarcación (`src/game/board/placement.ts`). Mirrored server-side in save_squad
+// (0025); with the cap enforced here, placement never has to absorb an over-full line.
 export const GK_COUNT = 1
 export const MIN_PER_LINE = 1
+export const MAX_PER_LINE = 5
 
 export function squadCost(cards: Card[]): number {
   return cards.reduce((sum, c) => sum + c.cost, 0)
@@ -84,6 +88,15 @@ export function validateSquad(starters: Card[]): SquadValidation {
   }
   if (counts.FW < MIN_PER_LINE) {
     errors.push('Necesitas al menos 1 delantero.')
+  }
+  if (counts.DF > MAX_PER_LINE) {
+    errors.push(`Máximo ${MAX_PER_LINE} defensas (tienes ${counts.DF}).`)
+  }
+  if (counts.MF > MAX_PER_LINE) {
+    errors.push(`Máximo ${MAX_PER_LINE} medios (tienes ${counts.MF}).`)
+  }
+  if (counts.FW > MAX_PER_LINE) {
+    errors.push(`Máximo ${MAX_PER_LINE} delanteros (tienes ${counts.FW}).`)
   }
 
   return { ok: errors.length === 0, cost, errors }

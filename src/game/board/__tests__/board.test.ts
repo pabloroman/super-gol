@@ -32,7 +32,7 @@ function freshMatch(): MatchState {
 }
 
 /** A cell no auto-placed player occupies, so a forced stack has exactly two players. */
-const EMPTY_CELL = { col: 0, row: 2 }
+const EMPTY_CELL = { col: 1, row: 2 }
 
 /** Force two players onto one cell with an explicit stacking, for marcaje tests. */
 function stack(state: MatchState, top: string, bottom: string, cell = EMPTY_CELL) {
@@ -88,6 +88,61 @@ describe('createMatch', () => {
       perCell.set(key, (perCell.get(key) ?? 0) + 1)
     }
     for (const count of perCell.values()) expect(count).toBe(1)
+  })
+})
+
+describe('autoPlace lines each team up by demarcación', () => {
+  /** A keeper + outfield with the given per-line counts (summing to 10). */
+  function lineup(prefix: string, df: number, mf: number, fw: number): EngineSquad {
+    const outfield: EngineCard[] = []
+    const add = (g: string, n: number) => {
+      for (let i = 0; i < n; i++) outfield.push(card(`${prefix}-${g}${i}`, g))
+    }
+    add('DF', df)
+    add('MF', mf)
+    add('FW', fw)
+    return { name: prefix, outfield, keeper: card(`${prefix}-gk`, 'GK', { rf: 2, co: 2 }) }
+  }
+
+  const outfieldOf = (s: MatchState, side: Side) =>
+    Object.values(s.players).filter((p) => p.side === side && !isKeeperCell(p.cell))
+
+  const colsOnRow = (s: MatchState, side: Side, row: number) =>
+    outfieldOf(s, side)
+      .filter((p) => p.cell.row === row)
+      .map((p) => p.cell.col)
+      .sort((a, b) => a - b)
+
+  it('puts defenders on the row by the keeper, midfielders next, forwards ahead (home)', () => {
+    const s = createMatch({ home: lineup('home', 4, 3, 3), away: squad('away'), difficulty: 'competitive' })
+    const rowsFor = (pos: string) =>
+      new Set(outfieldOf(s, 'home').filter((p) => p.card.position === pos).map((p) => p.cell.row))
+    expect(rowsFor('DF')).toEqual(new Set([0]))
+    expect(rowsFor('MF')).toEqual(new Set([1]))
+    expect(rowsFor('FW')).toEqual(new Set([2]))
+  })
+
+  it('spreads a 4-3-3 evenly and centred on each line', () => {
+    const s = createMatch({ home: lineup('home', 4, 3, 3), away: squad('away'), difficulty: 'competitive' })
+    expect(colsOnRow(s, 'home', 0)).toEqual([0, 1, 3, 4]) // 4 defenders
+    expect(colsOnRow(s, 'home', 1)).toEqual([0, 2, 4]) // 3 midfielders
+    expect(colsOnRow(s, 'home', 2)).toEqual([0, 2, 4]) // 3 forwards
+  })
+
+  it('fills a full five-player line across every column', () => {
+    const s = createMatch({ home: lineup('home', 5, 3, 2), away: squad('away'), difficulty: 'competitive' })
+    expect(colsOnRow(s, 'home', 0)).toEqual([0, 1, 2, 3, 4]) // 5 defenders
+    expect(colsOnRow(s, 'home', 1)).toEqual([0, 2, 4]) // 3 midfielders
+    expect(colsOnRow(s, 'home', 2)).toEqual([1, 3]) // 2 forwards
+  })
+
+  it('mirrors the away side into its own half (rows 5→3)', () => {
+    const s = createMatch({ home: squad('home'), away: lineup('away', 4, 3, 3), difficulty: 'competitive' })
+    const rowsFor = (pos: string) =>
+      new Set(outfieldOf(s, 'away').filter((p) => p.card.position === pos).map((p) => p.cell.row))
+    expect(rowsFor('DF')).toEqual(new Set([5]))
+    expect(rowsFor('MF')).toEqual(new Set([4]))
+    expect(rowsFor('FW')).toEqual(new Set([3]))
   })
 })
 

@@ -34,7 +34,7 @@ export interface CreateMatchInput {
  */
 export function createMatch(input: CreateMatchInput): MatchState {
   const players = { ...autoPlace(input.home, 'home'), ...autoPlace(input.away, 'away') }
-  const carrier = kickoffCarrier('home')
+  const carrier = kickoffCarrier(players, 'home')
   return {
     version: STATE_VERSION,
     players,
