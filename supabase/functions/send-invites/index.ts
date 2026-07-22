@@ -181,9 +181,17 @@ Deno.serve(async (req: Request): Promise<Response> => {
       }
     }
   } finally {
-    // A client that never connected (SMTP unreachable/misconfigured) throws on
-    // close; swallow it so teardown never masks the per-row results already sent.
-    if (client) await client.close().catch(() => {})
+    // denomailer's close() returns void (not a Promise) and throws SYNCHRONOUSLY
+    // when the connection never opened — so guard with try/catch, never `.catch()`
+    // (chaining on the void return is itself a TypeError). Teardown must not mask
+    // the per-row results already collected.
+    if (client) {
+      try {
+        await client.close()
+      } catch {
+        // connection never established or already closed — nothing to tear down
+      }
+    }
   }
 
   const sent = results.filter((r) => r.ok).length
