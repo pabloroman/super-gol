@@ -49,19 +49,27 @@ function resetRedirectTo(): string | undefined {
 export function Login({
   initialMode = 'signin',
   onBack,
+  inviteEmail,
 }: {
   initialMode?: 'signin' | 'signup'
   onBack?: () => void
+  /** Set when arriving via an `?invite=<id>` link (0022): the visitor is an
+   *  invited waitlist entry, so signup is allowed despite the gate and the email
+   *  is pre-filled + locked to the one that was invited (the allowlist trigger
+   *  only admits that address). */
+  inviteEmail?: string
 } = {}) {
   // Pre-launch waitlist mode closes signup: the landing page never routes here in
   // signup, but force it to signin anyway and hide the signup toggle below, so the
   // only reachable modes are signin/reset. The server trigger (0021) is the real
-  // gate; this just keeps the UI from offering a door that would be slammed.
+  // gate; this just keeps the UI from offering a door that would be slammed. An
+  // invite link is the exception: it opens signup and locks the invited email.
   const { waitlistEnabled } = useAuth()
+  const invited = Boolean(inviteEmail)
   const [mode, setMode] = useState<Mode>(
-    waitlistEnabled && initialMode === 'signup' ? 'signin' : initialMode,
+    invited ? 'signup' : waitlistEnabled && initialMode === 'signup' ? 'signin' : initialMode,
   )
-  const [email, setEmail] = useState('')
+  const [email, setEmail] = useState(inviteEmail ?? '')
   // Sign-in accepts either a username or an email in one field.
   const [loginId, setLoginId] = useState('')
   const [password, setPassword] = useState('')
@@ -303,8 +311,9 @@ export function Login({
                 type="email"
                 required
                 autoComplete="email"
+                readOnly={invited}
                 aria-invalid={Boolean(fieldErrors.email)}
-                className={inputClass}
+                className={`${inputClass}${invited ? ' cursor-not-allowed text-slate-400' : ''}`}
                 placeholder="Correo"
                 value={email}
                 onChange={(e) => {
@@ -312,7 +321,13 @@ export function Login({
                   clearOnEdit('email')
                 }}
               />
-              {fieldErrors.email && <p className="text-xs text-red-400">{fieldErrors.email}</p>}
+              {fieldErrors.email ? (
+                <p className="text-xs text-red-400">{fieldErrors.email}</p>
+              ) : invited ? (
+                <p className="text-xs text-grass-400">
+                  Estás invitado. Regístrate con este correo para entrar.
+                </p>
+              ) : null}
             </div>
           </>
         ) : mode === 'signin' ? (

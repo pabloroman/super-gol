@@ -191,6 +191,40 @@ whole thing together:
   The signup form is `noValidate` on purpose — native browser bubbles are
   locale-dependent English, so we own the messages instead.
 
+## Waitlist & invites
+
+- **The registration gate is a single flag** — `app_settings.waitlist_enabled`
+  (`0021`), toggled from Admin → **Lista de espera**. While on, the landing page
+  shows the waitlist email form and a `BEFORE INSERT` trigger on `auth.users`
+  (`enforce_signups_open`) refuses signups; signing *in* is never affected. Its
+  raise reaches the browser as `"{}"` (same as any `auth.users` trigger, see Auth
+  & signup), so it stays English/developer-facing.
+- **Invites are an allowlist on top of that gate (`0022`).** Each `waitlist` row
+  has a nullable `invited_at`; the trigger admits an email whose row is invited
+  even while gated, and refuses everyone else. So the gate can stay closed to the
+  public while invited people register — a batched rollout, not all-or-nothing.
+- **`send-invites` Edge Function** (`supabase/functions/send-invites/index.ts`,
+  `verify_jwt` in `config.toml`) does the inviting: admin-only (mirrors
+  `play-match`'s user-JWT verify + service-role client), it marks the selected
+  still-pending rows `invited_at = now()` and emails each a Spanish invite linking
+  to `${SITE_URL}/?invite=<id>`. Email is direct SMTP via **denomailer** over the
+  **same Cloudflare SMTP that Supabase Auth already uses** — no new provider; set
+  the same creds as function secrets: `SMTP_HOST`, `SMTP_PORT`, `SMTP_USERNAME`,
+  `SMTP_PASSWORD`, `INVITE_FROM_EMAIL`, `SITE_URL`. Edge Functions restrict some
+  outbound SMTP ports, so use **465/TLS** (587 auto-STARTTLS); GoTrue is a separate
+  service and isn't subject to that limit, which is why the same SMTP works for auth
+  mail. If `SMTP_HOST` is unset (local dev) the send is skipped and logged so the
+  flow is testable without a mail server. **Marking is done under service_role, not
+  an admin RPC** — `require_admin()` needs an `auth.uid()` a service key lacks (same
+  constraint `push:cards` documents).
+- **The invite link reveals the signup form.** `App.tsx`'s `Unauthenticated`
+  reads `?invite=<id>`, resolves it via the anon `waitlist_invite_email(id)` RPC
+  (returns the email only for an invited row — the random uuid is a magic-link-style
+  bearer token), and renders `Login` in signup mode with the email pre-filled +
+  **locked** (`Login.tsx`'s `inviteEmail` prop), bypassing the gate's UI hiding.
+  The trigger stays the real boundary; the link and the lock are UX that keep an
+  invited visitor from hitting the opaque `"{}"` refusal with a mismatched email.
+
 ## Card catalog pipeline (real players)
 
 The seasonal LaLiga catalog is **generated**, not hand-written. The pure

@@ -279,3 +279,27 @@ deploys the committed file, and it must never be hand-edited. Locally, `npx
 supabase start` serves the **generated** `index.ts`, so rerun `npm run
 build:function` after any `src/game/engine/` change or the local function stays
 stale.
+
+### Waitlist invite emails (`send-invites`)
+
+`supabase/functions/send-invites/index.ts` (declared in `config.toml`, deployed by
+the same integration) marks selected waitlist rows invited and emails them a signup
+link. It sends over **SMTP (denomailer) reusing the same SMTP that Supabase Auth
+already uses** — no separate email provider. Set these secrets on the hosted project
+(Dashboard → Edge Functions → Secrets, or `npx supabase secrets set …`):
+
+- `SMTP_HOST` / `SMTP_PORT` / `SMTP_USERNAME` / `SMTP_PASSWORD` — the same SMTP
+  credentials configured under Auth. **Use port `465` (implicit TLS)**: Edge
+  Functions restrict some outbound SMTP ports, and 465/TLS is the reliable one (587
+  auto-STARTTLS). GoTrue reaching the same host doesn't prove the function can — test
+  the send (below). `SMTP_PORT` defaults to `465`.
+- `INVITE_FROM_EMAIL` — e.g. `Super Gol <hola@tudominio>` (a From on your sending
+  domain).
+- `SITE_URL` — the deployed origin, used to build the `${SITE_URL}/?invite=<id>`
+  link. Defaults to `http://localhost:5173`.
+
+Locally the function is served by `npx supabase start` with no `SMTP_HOST`: it skips
+the real send, logs the would-be email, and still marks the row invited — so the
+invite + allowlist-signup flow is fully testable without a mail server. To exercise a
+real SMTP send locally, point `SMTP_*` at the stack's **Mailpit** SMTP (see
+`supabase status` / `config.toml`) and check its inbox.
