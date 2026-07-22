@@ -1,14 +1,16 @@
 import { useState } from 'react'
 import { useAuth } from '@/auth/AuthProvider'
 import { AdminCards } from '@/screens/AdminCards'
+import { AdminPacks } from '@/screens/AdminPacks'
 import { AdminUsers } from '@/screens/AdminUsers'
 import { AdminWaitlist } from '@/screens/AdminWaitlist'
 
-type TabId = 'cards' | 'users' | 'waitlist'
+type TabId = 'cards' | 'users' | 'packs' | 'waitlist'
 
 const TABS: { id: TabId; label: string }[] = [
   { id: 'cards', label: 'Cartas' },
   { id: 'users', label: 'Usuarios' },
+  { id: 'packs', label: 'Sobres' },
   { id: 'waitlist', label: 'Lista de espera' },
 ]
 
@@ -71,6 +73,8 @@ export function Admin() {
         <AdminCards />
       ) : tab === 'users' ? (
         <AdminUsers />
+      ) : tab === 'packs' ? (
+        <AdminPacks />
       ) : (
         <AdminWaitlist />
       )}
