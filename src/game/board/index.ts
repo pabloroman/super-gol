@@ -8,7 +8,7 @@
  * `createMatch`, all barrelled here.
  */
 
-import type { EngineSquad, Difficulty } from '../engine/types'
+import type { EngineSquad, GameMode } from '../engine/types'
 import type { MatchState } from './state'
 import { STATE_VERSION } from './state'
 import { autoPlace, kickoffCarrier } from './placement'
@@ -23,7 +23,7 @@ export { autoPlace, kickoffCarrier } from './placement'
 export interface CreateMatchInput {
   home: EngineSquad
   away: EngineSquad
-  difficulty: Difficulty
+  difficulty: GameMode
 }
 
 /**

@@ -85,9 +85,11 @@ the current engine.
   `npm run build:function` esbuild-bundles it — engine inlined, `@supabase/supabase-js`
   left as a `npm:` specifier — into the self-contained
   `supabase/functions/play-match/index.ts` that Supabase deploys. Keeping the engine
-  self-contained (its own `Difficulty` type; only the pure `ratings.ts`/`abilities.ts`
-  helpers as cross-module deps) is what makes this bundle clean. **Never hand-edit the
-  generated `index.ts`;** edit the `_src` source and rebuild.
+  self-contained (its own `GameMode` type; only pure cross-module deps — the
+  `ratings.ts`/`abilities.ts` helpers, plus `@/game/squad`'s `POINT_CAP` and the
+  type-only `Card` shape that `opponent.ts`/`squad.ts` draft against) is what makes this
+  bundle clean. **Never hand-edit the generated `index.ts`;** edit the `_src` source and
+  rebuild.
 - Missing ability ratings count as **0** (rulebook page 6); always read ratings
   through `abilityValue` in `src/game/ratings.ts`, never index `abilities[key]`.
 

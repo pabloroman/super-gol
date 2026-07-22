@@ -51,7 +51,7 @@ const noRng = scriptedRng([])
 
 /** Kick off so home holds the ball in an `attack` phase — the base for every mechanic. */
 function kicked(): MatchState {
-  const s = createMatch({ home: squad('home'), away: squad('away'), difficulty: 'normal' })
+  const s = createMatch({ home: squad('home'), away: squad('away'), difficulty: 'competitive' })
   return apply(s, legalActions(s)[0], noRng).state
 }
 

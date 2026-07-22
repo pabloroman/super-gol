@@ -19,7 +19,7 @@
 
 import { createClient, type SupabaseClient } from 'npm:@supabase/supabase-js@2.47.10'
 import type { Card, Squad, SquadSlot } from '@/lib/types.ts'
-import type { Difficulty } from '@/game/engine/types.ts'
+import type { GameMode } from '@/game/engine/types.ts'
 import { buildEngineSquad } from '@/game/engine/squad.ts'
 import { generateOpponent } from '@/game/engine/opponent.ts'
 import { createRng, seedFrom } from '@/game/engine/rng.ts'
@@ -39,7 +39,7 @@ const CORS_HEADERS = {
   'Access-Control-Allow-Methods': 'POST, OPTIONS',
 }
 
-const DIFFICULTIES: Difficulty[] = ['easy', 'normal', 'hard']
+const MODES: GameMode[] = ['friendly', 'competitive']
 
 function json(body: unknown, status = 200): Response {
   return new Response(JSON.stringify(body), {
@@ -48,8 +48,10 @@ function json(body: unknown, status = 200): Response {
   })
 }
 
-function pickDifficulty(raw: unknown): Difficulty {
-  return DIFFICULTIES.includes(raw as Difficulty) ? (raw as Difficulty) : 'normal'
+// Default a malformed/missing mode to `friendly`: the safe fallback pays no coins, so a
+// forged or omitted mode can never accidentally earn currency.
+function pickMode(raw: unknown): GameMode {
+  return MODES.includes(raw as GameMode) ? (raw as GameMode) : 'friendly'
 }
 
 /** Whose input a non-terminal phase needs. */
@@ -59,7 +61,13 @@ function phaseSide(state: MatchState): Side {
 
 // ── shared: build the human squad + its strength from the caller's own data ──────
 
-type HomeContext = { home: ReturnType<typeof buildEngineSquad>; strength: number; squadId: number }
+type HomeContext = {
+  home: ReturnType<typeof buildEngineSquad>
+  strength: number
+  squadId: number
+  /** The full card catalog, already loaded to build the home squad — the opponent draft pool. */
+  catalog: Card[]
+}
 
 async function loadHome(userClient: SupabaseClient): Promise<HomeContext | { error: string; status: number }> {
   const { data: squadRow, error: squadErr } = await userClient
@@ -91,7 +99,7 @@ async function loadHome(userClient: SupabaseClient): Promise<HomeContext | { err
   }
   const byId = new Map(cards.map((c) => [c.id, c]))
   const strength = squad.slots.reduce((sum, s) => sum + (byId.get(s.card_id)?.cost ?? 0), 0)
-  return { home, strength, squadId: squadRow.id }
+  return { home, strength, squadId: squadRow.id, catalog: cards }
 }
 
 // ── interactive: start | act | resume | resign ───────────────────────────────────
@@ -100,7 +108,7 @@ async function startMatch(
   userClient: SupabaseClient,
   adminClient: SupabaseClient,
   uid: string,
-  difficulty: Difficulty,
+  mode: GameMode,
 ): Promise<Response> {
   // One live session per user (the anti-farming spine). Refuse a second; the client must
   // resume or resign the existing one first.
@@ -115,15 +123,18 @@ async function startMatch(
   const ctx = await loadHome(userClient)
   if ('error' in ctx) return json({ error: ctx.error }, ctx.status)
 
-  const seed = seedFrom(Date.now(), difficulty, ctx.squadId)
-  const away = generateOpponent(difficulty, createRng(seedFrom(seed, 'opponent')))
-  const state = createMatch({ home: ctx.home, away, difficulty })
+  const seed = seedFrom(Date.now(), mode, ctx.squadId)
+  // The opponent is drafted from the live catalog under the human's own cap (competitive)
+  // or a softer budget (friendly) — see generateOpponent. The mode is persisted in the
+  // existing `difficulty` column (free text), so no schema change is needed.
+  const away = generateOpponent(mode, ctx.catalog, createRng(seedFrom(seed, 'opponent')))
+  const state = createMatch({ home: ctx.home, away, difficulty: mode })
 
   const { data: inserted, error: insErr } = await adminClient
     .from('match_sessions')
     .insert({
       user_id: uid,
-      difficulty,
+      difficulty: mode,
       status: 'active',
       seed,
       ply: state.ply,
@@ -232,7 +243,7 @@ async function actMatch(
   }
 
   const state = session.state as MatchState
-  const difficulty = pickDifficulty(session.difficulty)
+  const mode = pickMode(session.difficulty)
 
   // A prior act may have reached fulltime but not finished (e.g. a transient on the finish
   // RPC). Finish it now rather than stranding the session.
@@ -248,7 +259,7 @@ async function actMatch(
     // The AI's own jugada — the server chooses it (the client cranks with no action). The
     // choice RNG is addressed separately from the dice so the decision order can't reshuffle
     // the roll (see the RNG note in the plan).
-    action = chooseAction(state, createRng(seedFrom(session.seed, session.ply, 'ai')), difficulty)
+    action = chooseAction(state, createRng(seedFrom(session.seed, session.ply, 'ai')), mode)
   } else {
     // The human's jugada. Trust nothing about it beyond membership in legalActions, which
     // apply() re-derives and enforces below.
@@ -323,12 +334,12 @@ Deno.serve(async (req: Request): Promise<Response> => {
   try {
     body = (await req.json()) ?? {}
   } catch {
-    // empty/invalid body → treat as legacy with default difficulty
+    // empty/invalid body → treat as legacy with the default (friendly) mode
   }
 
   switch (body.op) {
     case 'start':
-      return startMatch(userClient, adminClient, uid, pickDifficulty(body.difficulty))
+      return startMatch(userClient, adminClient, uid, pickMode(body.difficulty))
     case 'act':
       return actMatch(adminClient, uid, body as { sessionId?: string; ply?: number; action?: Action })
     case 'resume':

@@ -87,7 +87,7 @@ function buildState(): MatchState {
     ply: 0,
     possessionJugadas: 0,
     antiStall: { pdChain: [], movedTo: {} },
-    difficulty: 'normal',
+    difficulty: 'competitive',
   }
 }
 

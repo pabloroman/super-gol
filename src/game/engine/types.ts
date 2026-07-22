@@ -8,11 +8,14 @@ import type { Abilities } from '@/lib/types'
  */
 
 /**
- * Opponent tier. Lives here (not in `@/game/engine`) so the whole engine module
- * stays free of any import that reaches back into browser code — that is what
- * lets the identical files run inside a Supabase Edge Function.
+ * Game mode. The two product modes double as the AI-skill knob: `friendly` is the
+ * weak, odds-blind rival for learning the rules (it pays no coins), `competitive` is
+ * the best-decision rival that fields a squad under the human's own 70-point cap.
+ * Lives here (not in `@/game/engine`) so the whole engine module stays free of any
+ * import that reaches back into browser code — that is what lets the identical files
+ * run inside a Supabase Edge Function.
  */
-export type Difficulty = 'easy' | 'normal' | 'hard'
+export type GameMode = 'friendly' | 'competitive'
 
 /** A player as the engine sees it: a name and its ratings. */
 export interface EngineCard {
@@ -32,7 +35,7 @@ export interface EngineSquad {
 export interface MatchInput {
   home: EngineSquad
   away: EngineSquad
-  difficulty: Difficulty
+  difficulty: GameMode
   seed: number
 }
 

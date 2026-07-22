@@ -1,14 +1,14 @@
 import { describe, it, expect } from 'vitest'
 import { createRng } from '@/game/engine/rng'
 import { scoreContest } from '@/game/engine/dice'
-import type { EngineCard, EngineSquad, Difficulty, Side } from '@/game/engine/types'
+import type { EngineCard, EngineSquad, GameMode, Side } from '@/game/engine/types'
 import { createMatch, apply, type MatchState } from '@/game/board'
 import { chooseAction, successProb } from '@/game/board/ai'
 
 // ── squads ────────────────────────────────────────────────────────────────────
 // Realistic ratings on the rulebook's 0–3 scale, and IDENTICAL for both sides, so a
 // match's only asymmetry is the AI skill driving each side — that is what isolates the
-// difficulty gap the last test asserts.
+// mode-skill gap the last test asserts.
 function card(id: string, position: string, ab: EngineCard['abilities']): EngineCard {
   return { id, name: id, position, abilities: ab }
 }
@@ -29,14 +29,14 @@ function squad(prefix: string): EngineSquad {
   }
 }
 
-/** Play a full AI-vs-AI match; each side acts with its own difficulty. */
-function playMatch(homeDiff: Difficulty, awayDiff: Difficulty, seed: number): MatchState {
-  let st = createMatch({ home: squad('H'), away: squad('A'), difficulty: awayDiff })
+/** Play a full AI-vs-AI match; each side acts with its own mode skill. */
+function playMatch(homeMode: GameMode, awayMode: GameMode, seed: number): MatchState {
+  let st = createMatch({ home: squad('H'), away: squad('A'), difficulty: awayMode })
   const rng = createRng(seed)
   let guard = 0
   while (st.phase.kind !== 'fulltime' && guard++ < 20000) {
     const side: Side = (st.phase as { side: Side }).side
-    st = apply(st, chooseAction(st, rng, side === 'home' ? homeDiff : awayDiff), rng).state
+    st = apply(st, chooseAction(st, rng, side === 'home' ? homeMode : awayMode), rng).state
   }
   return st
 }
@@ -81,14 +81,14 @@ describe('successProb is the closed form of scoreContest', () => {
   })
 })
 
-// ── every difficulty plays a complete, sane match ───────────────────────────────
+// ── every mode plays a complete, sane match ─────────────────────────────────────
 
-describe('AI-vs-AI matches complete at every difficulty with sane scores', () => {
-  for (const diff of ['easy', 'normal', 'hard'] as const) {
-    it(`${diff} vs ${diff} always reaches fulltime at the 15-possession clock`, () => {
+describe('AI-vs-AI matches complete in every mode with sane scores', () => {
+  for (const mode of ['friendly', 'competitive'] as const) {
+    it(`${mode} vs ${mode} always reaches fulltime at the 15-possession clock`, () => {
       let anyGoals = false
       for (const seed of [3, 17, 88, 250, 4096]) {
-        const st = playMatch(diff, diff, seed)
+        const st = playMatch(mode, mode, seed)
         expect(st.phase.kind).toBe('fulltime')
         expect(st.turno).toBeGreaterThanOrEqual(15)
         expect(st.score.home).toBeGreaterThanOrEqual(0)
@@ -97,42 +97,46 @@ describe('AI-vs-AI matches complete at every difficulty with sane scores', () =>
         expect(st.score.home + st.score.away).toBeLessThan(20)
         anyGoals ||= st.score.home + st.score.away > 0
       }
-      // A whole difficulty producing zero goals across five matches would mean the AI
-      // never shoots — a dead engine, not a cautious one.
+      // A whole mode producing zero goals across five matches would mean the AI never
+      // shoots — a dead engine, not a cautious one.
       expect(anyGoals).toBe(true)
     })
   }
 })
 
-// ── hard beats easy well above chance ───────────────────────────────────────────
+// ── competitive beats friendly well above chance ────────────────────────────────
 
-describe('hard beats easy over many seeded matches', () => {
+describe('competitive beats friendly over many seeded matches', () => {
   it('wins clearly more, and outscores it, with sides swapped each match', () => {
     const N = 80
-    let hardWins = 0
-    let easyWins = 0
+    let compWins = 0
+    let friendlyWins = 0
     let draws = 0
-    let hardGoals = 0
-    let easyGoals = 0
+    let compGoals = 0
+    let friendlyGoals = 0
     for (let i = 0; i < N; i++) {
-      // Swap ends every other match so a home advantage can't flatter either tier.
+      // Swap ends every other match so a home advantage can't flatter either mode.
       const swap = i % 2 === 1
-      const st = playMatch(swap ? 'easy' : 'hard', swap ? 'hard' : 'easy', 1000 + i * 7)
-      const hard = swap ? st.score.away : st.score.home
-      const easy = swap ? st.score.home : st.score.away
-      hardGoals += hard
-      easyGoals += easy
-      if (hard > easy) hardWins++
-      else if (easy > hard) easyWins++
+      const st = playMatch(
+        swap ? 'friendly' : 'competitive',
+        swap ? 'competitive' : 'friendly',
+        1000 + i * 7,
+      )
+      const comp = swap ? st.score.away : st.score.home
+      const friendly = swap ? st.score.home : st.score.away
+      compGoals += comp
+      friendlyGoals += friendly
+      if (comp > friendly) compWins++
+      else if (friendly > comp) friendlyWins++
       else draws++
     }
 
     // Deterministic (seeded), so these are fixed numbers; the thresholds sit well inside
-    // the observed margin (see the cross-seed stability sweep in the commit message):
-    // hard takes ~70% of decided matches and outscores easy ~1.7×.
-    expect(hardWins).toBeGreaterThan(easyWins * 2)
-    expect(hardWins / (hardWins + easyWins)).toBeGreaterThan(0.6)
-    expect(hardGoals).toBeGreaterThan(easyGoals * 1.3)
+    // the observed margin: competitive takes ~70% of decided matches and outscores
+    // friendly ~1.7× (the weights are the old hard/easy pair, so the gap is unchanged).
+    expect(compWins).toBeGreaterThan(friendlyWins * 2)
+    expect(compWins / (compWins + friendlyWins)).toBeGreaterThan(0.6)
+    expect(compGoals).toBeGreaterThan(friendlyGoals * 1.3)
     expect(draws).toBeLessThan(N) // sanity: not every match is a stalemate
   })
 })

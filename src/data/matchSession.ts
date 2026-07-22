@@ -15,7 +15,7 @@
 import { requireSupabase } from '@/lib/supabase'
 import type { MatchState, Action } from '@/game/board'
 import type { EngineEvent } from '@/game/engine/events'
-import type { Difficulty } from '@/game/engine/types'
+import type { GameMode } from '@/game/engine/types'
 
 /** A point-in-time view of a session: whose turn (`state.phase.side`) + the legal menu. */
 export interface MatchSnapshot {
@@ -24,7 +24,7 @@ export interface MatchSnapshot {
   state: MatchState
   legal: Action[]
   events: EngineEvent[]
-  /** The generated rival's club name (from `away_squad`); stable for the whole match. */
+  /** The rival's display name (from `away_squad`); the generated opponent is just "Rival". */
   opponent: string
 }
 
@@ -79,8 +79,8 @@ async function invoke<T>(body: Record<string, unknown>): Promise<T> {
 }
 
 /** Begin a new match. Rejects with `active_session` (carrying its id) if one is live. */
-export function startMatch(difficulty: Difficulty): Promise<MatchSnapshot> {
-  return invoke<MatchSnapshot>({ op: 'start', difficulty })
+export function startMatch(mode: GameMode): Promise<MatchSnapshot> {
+  return invoke<MatchSnapshot>({ op: 'start', difficulty: mode })
 }
 
 /** Reload the caller's live session (resume after a refresh). */

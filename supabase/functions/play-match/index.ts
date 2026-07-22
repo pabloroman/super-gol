@@ -28,62 +28,84 @@ function buildEngineSquad(name, squad, catalog) {
   return { name, outfield, keeper };
 }
 
+// src/game/squad.ts
+var POINT_CAP = 70;
+
 // src/game/engine/opponent.ts
-var OPPONENT_NAMES = {
-  easy: "CF Domingueros",
-  normal: "Atl\xE9tico Medio",
-  hard: "Real Elite CF"
-};
-var RATING_MEAN = {
-  easy: 1,
-  normal: 2,
-  hard: 3
-};
-var RATING_MAX = 5;
-var OUTFIELD_KEYS = [
-  "rb",
-  "a",
-  "rc",
-  "d",
-  "rg",
-  "v",
-  "pc",
-  "pl",
-  "pa",
-  "dl",
-  "rm"
+var LINES = ["GK", "DF", "MF", "FW"];
+var FORMATIONS = [
+  [4, 3, 3],
+  [4, 4, 2],
+  [3, 5, 2],
+  [5, 3, 2],
+  [4, 5, 1],
+  [3, 4, 3]
 ];
-function sampleRating(rng, mean) {
-  const draw = () => mean - 1 + rng.next() * 2;
-  const v = Math.round((draw() + draw()) / 2);
-  return Math.max(0, Math.min(RATING_MAX, v));
-}
-function outfieldAbilities(rng, mean) {
-  const a = {};
-  for (const k of OUTFIELD_KEYS) a[k] = sampleRating(rng, mean);
-  return a;
-}
-function keeperAbilities(rng, mean) {
-  return { rf: sampleRating(rng, mean), co: sampleRating(rng, mean) };
-}
-function generateOpponent(difficulty, rng) {
-  const mean = RATING_MEAN[difficulty];
-  const outfield = [];
-  for (let i = 0; i < 10; i++) {
-    outfield.push({
-      id: `ai-${difficulty}-${i}`,
-      name: `Rival ${i + 1}`,
-      position: null,
-      abilities: outfieldAbilities(rng, mean)
-    });
+var MODE = {
+  friendly: { cap: 45, quality: "low" },
+  competitive: { cap: POINT_CAP, quality: "high" }
+};
+var choose = (rng, xs) => xs[Math.floor(rng.next() * xs.length)];
+function shuffle(rng, xs) {
+  for (let i = xs.length - 1; i > 0; i--) {
+    const j = Math.floor(rng.next() * (i + 1));
+    [xs[i], xs[j]] = [xs[j], xs[i]];
   }
-  const keeper = {
-    id: `ai-${difficulty}-gk`,
-    name: "Portero rival",
-    position: "GK",
-    abilities: keeperAbilities(rng, mean)
+  return xs;
+}
+var isLine = (p) => p === "GK" || p === "DF" || p === "MF" || p === "FW";
+var toEngineCard = (c) => ({
+  id: c.id,
+  name: c.name,
+  position: c.position,
+  abilities: c.abilities
+});
+function minCompletion(rest, byLine, taken) {
+  const count = { GK: 0, DF: 0, MF: 0, FW: 0 };
+  for (const l of rest) count[l]++;
+  let sum = 0;
+  for (const l of LINES) {
+    let n = count[l];
+    for (const c of byLine[l]) {
+      if (n === 0) break;
+      if (!taken.has(c.id)) {
+        sum += c.cost;
+        n--;
+      }
+    }
+  }
+  return sum;
+}
+function generateOpponent(mode, catalog, rng) {
+  const { cap, quality } = MODE[mode];
+  const byLine = { GK: [], DF: [], MF: [], FW: [] };
+  for (const c of catalog) if (isLine(c.position)) byLine[c.position].push(c);
+  for (const l of LINES) byLine[l].sort((a, b) => a.cost - b.cost);
+  const [df, mf, fw] = choose(rng, FORMATIONS);
+  const need = { GK: 1, DF: df, MF: mf, FW: fw };
+  const slots = [];
+  for (const l of LINES) for (let i = 0; i < need[l]; i++) slots.push(l);
+  shuffle(rng, slots);
+  const taken = /* @__PURE__ */ new Set();
+  const picked = [];
+  let spent = 0;
+  for (let s = 0; s < slots.length; s++) {
+    const line = slots[s];
+    const ceiling = cap - spent - minCompletion(slots.slice(s + 1), byLine, taken);
+    const options = byLine[line].filter((c) => !taken.has(c.id) && c.cost <= ceiling);
+    const k = Math.min(4, options.length);
+    const slice = quality === "high" ? options.slice(-k) : options.slice(0, k);
+    const card = choose(rng, slice);
+    picked.push(card);
+    taken.add(card.id);
+    spent += card.cost;
+  }
+  const keeper = picked.find((c) => c.position === "GK");
+  return {
+    name: "Rival",
+    outfield: picked.filter((c) => c !== keeper).map(toEngineCard),
+    keeper: toEngineCard(keeper)
   };
-  return { name: OPPONENT_NAMES[difficulty], outfield, keeper };
 }
 
 // src/game/engine/rng.ts
@@ -1070,13 +1092,12 @@ function createMatch(input) {
 
 // src/game/board/ai.ts
 var AI_WEIGHTS = {
-  // easy is odds-blind and reckless (barely fears a turnover), so it chases raw upside;
-  // normal reads the odds partially; hard trusts them fully and, trusting them, is
-  // EV-neutral (risk 1) rather than extra-cautious — the true odds already price the
-  // gamble, so piling on aversion only makes it under-shoot.
-  easy: { noise: 26, oddsTrust: 0.1, risk: 0.45, pressure: 0.55 },
-  normal: { noise: 12, oddsTrust: 0.6, risk: 0.9, pressure: 1 },
-  hard: { noise: 4, oddsTrust: 1, risk: 1, pressure: 1.2 }
+  // friendly is odds-blind and reckless (barely fears a turnover), so it chases raw
+  // upside — a weak rival to learn against. competitive trusts the odds fully and, trusting
+  // them, is EV-neutral (risk 1) rather than extra-cautious — the true odds already price
+  // the gamble, so piling on aversion only makes it under-shoot; it plays the best decision.
+  friendly: { noise: 26, oddsTrust: 0.1, risk: 0.45, pressure: 0.55 },
+  competitive: { noise: 4, oddsTrust: 1, risk: 1, pressure: 1.2 }
 };
 var GOAL = 100;
 var KEEP = 18;
@@ -1236,10 +1257,10 @@ function score(state, action, w) {
       return 0;
   }
 }
-function chooseAction(state, rng, difficulty) {
+function chooseAction(state, rng, mode) {
   const options = legalActions(state);
   if (options.length === 0) throw new Error("AI asked to act with no legal actions");
-  const w = AI_WEIGHTS[difficulty];
+  const w = AI_WEIGHTS[mode];
   let best = options[0];
   let bestScore = -Infinity;
   for (const a of options) {
@@ -1258,15 +1279,15 @@ var CORS_HEADERS = {
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
   "Access-Control-Allow-Methods": "POST, OPTIONS"
 };
-var DIFFICULTIES = ["easy", "normal", "hard"];
+var MODES = ["friendly", "competitive"];
 function json(body, status = 200) {
   return new Response(JSON.stringify(body), {
     status,
     headers: { ...CORS_HEADERS, "Content-Type": "application/json" }
   });
 }
-function pickDifficulty(raw) {
-  return DIFFICULTIES.includes(raw) ? raw : "normal";
+function pickMode(raw) {
+  return MODES.includes(raw) ? raw : "friendly";
 }
 function phaseSide(state) {
   return state.phase.side;
@@ -1292,19 +1313,19 @@ async function loadHome(userClient) {
     var _a;
     return sum + (((_a = byId.get(s.card_id)) == null ? void 0 : _a.cost) ?? 0);
   }, 0);
-  return { home, strength, squadId: squadRow.id };
+  return { home, strength, squadId: squadRow.id, catalog: cards };
 }
-async function startMatch(userClient, adminClient, uid, difficulty) {
+async function startMatch(userClient, adminClient, uid, mode) {
   const { data: active } = await adminClient.from("match_sessions").select("id").eq("user_id", uid).eq("status", "active").maybeSingle();
   if (active) return json({ error: "active_session", sessionId: active.id }, 409);
   const ctx = await loadHome(userClient);
   if ("error" in ctx) return json({ error: ctx.error }, ctx.status);
-  const seed = seedFrom(Date.now(), difficulty, ctx.squadId);
-  const away = generateOpponent(difficulty, createRng(seedFrom(seed, "opponent")));
-  const state = createMatch({ home: ctx.home, away, difficulty });
+  const seed = seedFrom(Date.now(), mode, ctx.squadId);
+  const away = generateOpponent(mode, ctx.catalog, createRng(seedFrom(seed, "opponent")));
+  const state = createMatch({ home: ctx.home, away, difficulty: mode });
   const { data: inserted, error: insErr } = await adminClient.from("match_sessions").insert({
     user_id: uid,
-    difficulty,
+    difficulty: mode,
     status: "active",
     seed,
     ply: state.ply,
@@ -1369,7 +1390,7 @@ async function actMatch(adminClient, uid, body) {
     return json({ error: "stale_ply", ply: session.ply, state: session.state }, 409);
   }
   const state = session.state;
-  const difficulty = pickDifficulty(session.difficulty);
+  const mode = pickMode(session.difficulty);
   if (state.phase.kind === "fulltime") {
     const fin = await finishSession(adminClient, uid, sessionId);
     if ("error" in fin) return json({ error: fin.error }, fin.status);
@@ -1378,7 +1399,7 @@ async function actMatch(adminClient, uid, body) {
   const side = phaseSide(state);
   let action;
   if (side === "away") {
-    action = chooseAction(state, createRng(seedFrom(session.seed, session.ply, "ai")), difficulty);
+    action = chooseAction(state, createRng(seedFrom(session.seed, session.ply, "ai")), mode);
   } else {
     if (!body.action || typeof body.action.kind !== "string") {
       return json({ error: "action required" }, 400);
@@ -1432,7 +1453,7 @@ Deno.serve(async (req) => {
   }
   switch (body.op) {
     case "start":
-      return startMatch(userClient, adminClient, uid, pickDifficulty(body.difficulty));
+      return startMatch(userClient, adminClient, uid, pickMode(body.difficulty));
     case "act":
       return actMatch(adminClient, uid, body);
     case "resume":

@@ -18,7 +18,7 @@ function squad(prefix: string, ab: EngineCard['abilities'] = {}): EngineSquad {
 
 /** All home outfielders share `ab`, so the carrier's ratings are known regardless of who it is. */
 function matchWith(ab: EngineCard['abilities']): MatchState {
-  return createMatch({ home: squad('home', ab), away: squad('away'), difficulty: 'normal' })
+  return createMatch({ home: squad('home', ab), away: squad('away'), difficulty: 'competitive' })
 }
 
 describe('actionAbility', () => {

@@ -27,7 +27,7 @@ function squad(prefix: string, ab: EngineCard['abilities'] = {}): EngineSquad {
 }
 
 function freshMatch(homeAb: EngineCard['abilities'] = {}): MatchState {
-  return createMatch({ home: squad('home', homeAb), away: squad('away'), difficulty: 'normal' })
+  return createMatch({ home: squad('home', homeAb), away: squad('away'), difficulty: 'competitive' })
 }
 
 /** An Rng that hands out a fixed queue of die faces, for deterministic contests. */
@@ -183,12 +183,12 @@ describe('a full AI-vs-AI match always completes', () => {
       let st = createMatch({
         home: squad('home', { pc: 2, pl: 1, rg: 1, rm: 2, dl: 1 }),
         away: squad('away', { pc: 2, pl: 1, rg: 1, rm: 2, dl: 1 }),
-        difficulty: 'normal',
+        difficulty: 'competitive',
       })
       const rng = seededFaces(seed)
       let guard = 0
       while (st.phase.kind !== 'fulltime' && guard++ < 20000) {
-        st = apply(st, chooseAction(st, rng, 'normal'), rng).state
+        st = apply(st, chooseAction(st, rng, 'competitive'), rng).state
       }
       expect(st.phase.kind).toBe('fulltime')
       expect(st.turno).toBeGreaterThanOrEqual(15)
