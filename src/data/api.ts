@@ -234,6 +234,19 @@ export async function adminAdjustCoins(
   return data as number
 }
 
+// ---------- admin (store packs) ----------
+// Same posture again (0023): packs are read-only to clients (SELECT-only RLS), so
+// a price edit goes through a require_admin() RPC. The list itself is the public
+// fetchPacks() above. Prices are read live by the Store, so an edit needs no other
+// plumbing to take effect.
+export async function adminSetPackPrice(packId: string, price: number): Promise<void> {
+  const { error } = await requireSupabase().rpc('admin_set_pack_price', {
+    p_pack_id: packId,
+    p_price: price,
+  })
+  if (error) throw new Error(error.message)
+}
+
 // ---------- admin (waitlist) ----------
 // Same posture (0021): the flag and the list of emails are written/read through
 // SECURITY DEFINER RPCs behind require_admin(), not client table access.
