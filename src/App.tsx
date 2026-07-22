@@ -1,7 +1,8 @@
-import { useState } from 'react'
-import { Link, NavLink, Route, Routes, useLocation } from 'react-router-dom'
+import { useEffect, useState } from 'react'
+import { Link, NavLink, Route, Routes, useLocation, useSearchParams } from 'react-router-dom'
 import { Cog6ToothIcon } from '@heroicons/react/24/outline'
 import { isSupabaseConfigured } from '@/lib/supabase'
+import { fetchWaitlistInviteEmail } from '@/data/api'
 import { useAuth } from '@/auth/AuthProvider'
 import { BottomNav } from '@/ui/BottomNav'
 import { Footer } from '@/ui/Footer'
@@ -108,13 +109,64 @@ function hasAuthHash(): boolean {
  * away. A local toggle (not a route) keeps the existing all-or-nothing gate and
  * leaves Login's URL-hash handling untouched. `onStart`/`onSignIn` seed the auth
  * form's mode so the CTA the visitor pressed matches what they see.
+ *
+ * The `?invite=<id>` link (0022) is the one bypass: it resolves to an invited
+ * waitlist email and drops the visitor straight into signup (email pre-filled +
+ * locked), even while the gate hides signup for everyone else. The trigger stays
+ * the real boundary — the link only reveals the form.
  */
 function Unauthenticated() {
   const { waitlistEnabled } = useAuth()
+  const [searchParams, setSearchParams] = useSearchParams()
+  const inviteId = searchParams.get('invite')
+  const [inviteEmail, setInviteEmail] = useState<string | null>(null)
+  const [inviteResolved, setInviteResolved] = useState(!inviteId)
   const [view, setView] = useState<'landing' | 'auth'>(
     hasAuthHash() ? 'auth' : 'landing',
   )
   const [mode, setMode] = useState<'signin' | 'signup'>('signin')
+
+  useEffect(() => {
+    if (!inviteId) {
+      setInviteResolved(true)
+      return
+    }
+    let active = true
+    fetchWaitlistInviteEmail(inviteId)
+      .then((email) => active && setInviteEmail(email))
+      .catch(() => active && setInviteEmail(null))
+      .finally(() => active && setInviteResolved(true))
+    return () => {
+      active = false
+    }
+  }, [inviteId])
+
+  // Hold a beat while resolving an invite so we never flash the gated landing at
+  // an invited visitor before their signup form loads.
+  if (inviteId && !inviteResolved) {
+    return (
+      <div className="grid min-h-screen place-items-center text-slate-400">
+        <span className="boot-splash">Cargando…</span>
+      </div>
+    )
+  }
+
+  // A valid invite opens signup directly, bypassing the landing and the gate.
+  if (inviteEmail) {
+    return (
+      <Login
+        initialMode="signup"
+        inviteEmail={inviteEmail}
+        onBack={() => {
+          // Drop the invite param so Back returns to the normal landing/gate.
+          const next = new URLSearchParams(searchParams)
+          next.delete('invite')
+          setSearchParams(next, { replace: true })
+          setInviteEmail(null)
+        }}
+      />
+    )
+  }
 
   if (view === 'auth') {
     return <Login initialMode={mode} onBack={() => setView('landing')} />

@@ -37,6 +37,20 @@ export async function joinWaitlist(email: string): Promise<void> {
   if (error) throw new Error(error.message)
 }
 
+/**
+ * Resolve an `?invite=<id>` link to its email (0022) so the signup form can
+ * pre-fill and lock it. Anon-callable — the invited visitor has no session yet.
+ * Returns null for an unknown or still-pending id (an uninvited email is never
+ * disclosed), which the caller treats as "no valid invite".
+ */
+export async function fetchWaitlistInviteEmail(id: string): Promise<string | null> {
+  const { data, error } = await requireSupabase().rpc('waitlist_invite_email', {
+    p_id: id,
+  })
+  if (error) throw new Error(error.message)
+  return (data as string | null) ?? null
+}
+
 // ---------- profile / wallet ----------
 export async function fetchProfile(): Promise<Profile | null> {
   const sb = requireSupabase()
@@ -234,4 +248,29 @@ export async function adminListWaitlist(): Promise<WaitlistEntry[]> {
   const { data, error } = await requireSupabase().rpc('admin_list_waitlist')
   if (error) throw new Error(error.message)
   return (data ?? []) as WaitlistEntry[]
+}
+
+/**
+ * Invite the given waitlist entries (0022): the `send-invites` Edge Function marks
+ * each still-pending row invited and emails it a signup link. Admin-only, verified
+ * server-side. Returns per-run counts; a `failed` count means some emails didn't
+ * send (those rows stay pending and can be retried).
+ */
+export async function adminSendInvites(
+  ids: string[],
+): Promise<{ sent: number; failed: number }> {
+  const { data, error } = await requireSupabase().functions.invoke('send-invites', {
+    body: { ids },
+  })
+  if (error) {
+    // supabase-js wraps a non-2xx as a FunctionsHttpError with the Response in
+    // `.context`; surface the server's error string when present (mirrors matchSession).
+    const ctx = (error as { context?: Response }).context
+    if (ctx && typeof ctx.json === 'function') {
+      const payload = await ctx.json().catch(() => null)
+      if (payload && typeof payload.error === 'string') throw new Error(payload.error)
+    }
+    throw new Error(error.message)
+  }
+  return data as { sent: number; failed: number }
 }

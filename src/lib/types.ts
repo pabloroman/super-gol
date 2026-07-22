@@ -53,11 +53,14 @@ export interface AppSettings {
 }
 
 // One pre-registration on the waitlist (0021). The shape of admin_list_waitlist();
-// email is admin-only PII, never returned by a player-facing query.
+// email is admin-only PII, never returned by a player-facing query. `invited_at`
+// (0022) is null until an admin invites the entry, then stamps when the invite
+// email was sent — it's what the allowlist gate checks to admit that email.
 export interface WaitlistEntry {
   id: string
   email: string
   created_at: string
+  invited_at: string | null
 }
 
 // A row of the admin Usuarios list. Not a table mirror like the types above: it

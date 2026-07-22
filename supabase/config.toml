@@ -44,3 +44,9 @@ enable_confirmations = false
 # in Deno and commits the result via the service-role-only record_match function.
 [functions.play-match]
 verify_jwt = true
+
+# Admin-only waitlist inviter (0022). Marks selected waitlist rows invited and
+# emails them a signup link. verify_jwt rejects anon callers at the edge; the
+# function then re-checks profiles.is_admin before writing anything.
+[functions.send-invites]
+verify_jwt = true
