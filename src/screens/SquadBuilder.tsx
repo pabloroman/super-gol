@@ -1,9 +1,11 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
-import { CheckIcon, XMarkIcon } from '@heroicons/react/24/solid'
+import { useNavigate } from 'react-router-dom'
+import { XMarkIcon } from '@heroicons/react/24/solid'
 import { useAuth } from '@/auth/AuthProvider'
 import { fetchActiveSquad, fetchCollection, saveSquad } from '@/data/api'
 import { Naipe } from '@/ui/naipe/Naipe'
 import { Sheet } from '@/ui/Sheet'
+import { Toast } from '@/ui/Toast'
 import { CardFilters } from '@/ui/CardFilters'
 import { useCardFilters } from '@/ui/useCardFilters'
 import {
@@ -213,12 +215,13 @@ function SquadPicker({
 
 export function SquadBuilder() {
   const { refreshProfile } = useAuth()
+  const navigate = useNavigate()
   const [cards, setCards] = useState<Card[]>([])
   const [pickedIds, setPickedIds] = useState<string[]>([])
   const [name, setName] = useState('Mi equipo')
   const [loading, setLoading] = useState(true)
   const [busy, setBusy] = useState(false)
-  const [message, setMessage] = useState<string | null>(null)
+  const [saved, setSaved] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [pickerGroup, setPickerGroup] = useState<PositionGroup | null>(null)
 
@@ -297,7 +300,7 @@ export function SquadBuilder() {
   const commit = useCallback(
     (ids: string[]) => {
       if (!pickerGroup) return
-      setMessage(null)
+      setSaved(false)
       setPickedIds((prev) => {
         // Replacing the keeper: drop any existing GK first (also repairs a legacy
         // squad that somehow carried two).
@@ -316,18 +319,18 @@ export function SquadBuilder() {
   )
 
   const remove = useCallback((id: string) => {
-    setMessage(null)
+    setSaved(false)
     setPickedIds((prev) => prev.filter((x) => x !== id))
   }, [])
 
   async function save() {
     setBusy(true)
     setError(null)
-    setMessage(null)
+    setSaved(false)
     try {
       await saveSquad(name, pickedIds)
       await refreshProfile()
-      setMessage('Equipo guardado')
+      setSaved(true)
     } catch (e) {
       setError(e instanceof Error ? e.message : 'No se pudo guardar')
     } finally {
@@ -385,12 +388,6 @@ export function SquadBuilder() {
         </button>
       </div>
 
-      {message && (
-        <p className="flex items-center gap-1.5 text-sm text-grass-400">
-          <CheckIcon className="h-4 w-4 shrink-0" aria-hidden />
-          {message}
-        </p>
-      )}
       {error && <p className="text-sm text-red-400">{error}</p>}
       {!validation.ok && validation.errors.length > 0 && (
         <ul className="space-y-0.5 text-xs text-slate-500">
@@ -460,6 +457,13 @@ export function SquadBuilder() {
           />
         )}
       </Sheet>
+
+      <Toast
+        open={saved}
+        onClose={() => setSaved(false)}
+        message="Equipo guardado"
+        action={{ label: 'Jugar partido', onClick: () => navigate('/play') }}
+      />
     </div>
   )
 }

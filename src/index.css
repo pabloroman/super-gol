@@ -148,6 +148,37 @@ body {
     }
   }
 
+  /* The save-confirmation toast slides up into view: a short fade + rise as it
+     mounts, compositor props only (transform + opacity). It then persists until
+     dismissed, so this is a one-shot entrance like the goal burst above. Under
+     reduced-motion it collapses to a plain fade (no translate). */
+  .toast-in {
+    animation: toast-in 240ms cubic-bezier(0.22, 1, 0.36, 1) both;
+  }
+  @keyframes toast-in {
+    from {
+      opacity: 0;
+      transform: translateY(12px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .toast-in {
+      animation: toast-in-fade 200ms ease-out both;
+    }
+    @keyframes toast-in-fade {
+      from {
+        opacity: 0;
+      }
+      to {
+        opacity: 1;
+      }
+    }
+  }
+
   /* The auth-boot splash label only reveals itself if loading is genuinely slow:
      it holds at opacity 0 for ~450ms, then fades in. A fast boot (the common
      case) finishes first and unmounts the splash, so "Cargando…" never flashes
