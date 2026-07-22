@@ -4,7 +4,7 @@ import { renderEs } from '@/game/engine/format-es'
 import type { EngineEvent } from '@/game/engine/events'
 import type { MatchState, Action, Side } from '@/game/board'
 import type { AbilityKey } from '@/lib/types'
-import type { Difficulty } from '@/game/engine/types'
+import type { GameMode } from '@/game/engine/types'
 import {
   startMatch,
   resumeMatch,
@@ -77,7 +77,7 @@ function errMessage(err: unknown): string {
  * the async crank/act read the latest without re-subscribing; the React mirrors below
  * are only for rendering.
  */
-export function useInteractiveMatch(difficulty: Difficulty) {
+export function useInteractiveMatch(mode: GameMode) {
   const { refreshProfile } = useAuth()
   const [state, setState] = useState<MatchState | null>(null)
   const [legal, setLegal] = useState<Action[]>([])
@@ -180,7 +180,7 @@ export function useInteractiveMatch(difficulty: Difficulty) {
       // refresh a plain resume.
       let snap
       try {
-        snap = await startMatch(difficulty)
+        snap = await startMatch(mode)
       } catch (err) {
         if (err instanceof MatchProtocolError && err.code === 'active_session') {
           snap = await resumeMatch()
@@ -194,7 +194,7 @@ export function useInteractiveMatch(difficulty: Difficulty) {
       busy.current = false
       setLoading(false)
     }
-  }, [difficulty, applySnapshot])
+  }, [mode, applySnapshot])
 
   useEffect(() => {
     void start()

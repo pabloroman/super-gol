@@ -1,25 +1,29 @@
 import { useState } from 'react'
-import type { Difficulty } from '@/game/engine/types'
+import type { GameMode } from '@/game/engine/types'
 import { InteractiveMatch } from './play/InteractiveMatch'
 import { HowToPlay } from './play/HowToPlay'
 
 /**
- * Difficulty picker for the interactive match. The whole game is now turn-based and
+ * Mode picker for the interactive match. The whole game is now turn-based and
  * server-authoritative (`InteractiveMatch` → the `play-match` Edge Function); picking a
- * rival just opens the board. The old one-shot simulation + replay scrubber is gone.
+ * mode just opens the board. Amistoso is a weak rival for learning and pays no coins;
+ * Competitivo is the best-decision rival that fields a squad under the 70-point cap.
  */
-const DIFFICULTIES: { id: Difficulty; label: string; blurb: string }[] = [
-  { id: 'easy', label: 'Amistoso', blurb: 'Rival flojo. Ideal para empezar.' },
-  { id: 'normal', label: 'Liga', blurb: 'Un rival de mitad de tabla.' },
-  { id: 'hard', label: 'Champions', blurb: 'Los mejores. Máxima dificultad.' },
+const MODES: { id: GameMode; label: string; blurb: string }[] = [
+  { id: 'friendly', label: 'Amistoso', blurb: 'Aprende a jugar contra un rival fácil' },
+  {
+    id: 'competitive',
+    label: 'Competitivo',
+    blurb: 'Compite contra la máquina para ganar nuevas cartas',
+  },
 ]
 
 export function Play() {
-  const [liveMatch, setLiveMatch] = useState<Difficulty | null>(null)
+  const [liveMatch, setLiveMatch] = useState<GameMode | null>(null)
   const [showRules, setShowRules] = useState(false)
 
   if (liveMatch) {
-    return <InteractiveMatch difficulty={liveMatch} onExit={() => setLiveMatch(null)} />
+    return <InteractiveMatch mode={liveMatch} onExit={() => setLiveMatch(null)} />
   }
 
   return (
@@ -27,7 +31,7 @@ export function Play() {
     // wide board inside InteractiveMatch.
     <div className="app-measure flex flex-col gap-4">
       <div className="flex items-baseline justify-between gap-3">
-        <h1 className="font-display text-2xl font-bold">Elige rival</h1>
+        <h1 className="font-display text-2xl font-bold">Elige modo</h1>
         <button
           type="button"
           onClick={() => setShowRules(true)}
@@ -36,7 +40,7 @@ export function Play() {
           ¿Cómo se juega?
         </button>
       </div>
-      {DIFFICULTIES.map((d) => (
+      {MODES.map((d) => (
         <button
           key={d.id}
           onClick={() => setLiveMatch(d.id)}

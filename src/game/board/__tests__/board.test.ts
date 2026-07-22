@@ -28,7 +28,7 @@ function squad(prefix: string): EngineSquad {
 }
 
 function freshMatch(): MatchState {
-  return createMatch({ home: squad('home'), away: squad('away'), difficulty: 'normal' })
+  return createMatch({ home: squad('home'), away: squad('away'), difficulty: 'competitive' })
 }
 
 /** A cell no auto-placed player occupies, so a forced stack has exactly two players. */

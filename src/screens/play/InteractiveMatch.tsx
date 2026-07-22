@@ -7,7 +7,7 @@ import { ABILITY_META } from '@/game/abilities'
 import type { Action, Cell, MatchState, Side } from '@/game/board'
 import { cellKey, occupants } from '@/game/board'
 import { describeAction, phasePrompt, actionAbility, type ActionGroup, type ActionTarget } from '@/game/board/describe'
-import type { Difficulty } from '@/game/engine/types'
+import type { GameMode } from '@/game/engine/types'
 import { contestBreakdown } from '@/game/engine/dice'
 import { useInteractiveMatch, type Roll } from './useInteractiveMatch'
 import { InteractivePitchBoard } from './InteractivePitchBoard'
@@ -84,10 +84,10 @@ function phaseSideOf(state: MatchState): Side | null {
 }
 
 export function InteractiveMatch({
-  difficulty,
+  mode,
   onExit,
 }: {
-  difficulty: Difficulty
+  mode: GameMode
   onExit: () => void
 }) {
   // The name the player gave their squad in SquadBuilder (its «Nombre del equipo»
@@ -106,7 +106,7 @@ export function InteractiveMatch({
     }
   }, [])
 
-  const match = useInteractiveMatch(difficulty)
+  const match = useInteractiveMatch(mode)
   const { state, legal, chronicle, opponent, error, loading, pending, finish, lastRoll } = match
   const { act, resign, restart, humanTurn, finished, goalFlash, clearGoal } = match
 
@@ -334,7 +334,7 @@ export function InteractiveMatch({
               <p className="mt-1 text-3xl font-bold tabular-nums">
                 {score.gf} – {score.ga}
               </p>
-              {finish && (
+              {finish && finish.coins_awarded > 0 && (
                 <p className="mt-2 inline-block rounded-full bg-black/40 px-4 py-1 font-bold text-rare">
                   +{finish.coins_awarded} <Coin />
                 </p>

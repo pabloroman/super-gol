@@ -19,10 +19,10 @@
  */
 
 import type { Cell } from '../engine/pitch'
-import type { Side, Difficulty, EngineCard } from '../engine/types'
+import type { Side, GameMode, EngineCard } from '../engine/types'
 
 export type { Cell } from '../engine/pitch'
-export type { Side, Marcaje, Difficulty, EngineCard } from '../engine/types'
+export type { Side, Marcaje, GameMode, EngineCard } from '../engine/types'
 
 /** The 30 playable squares. The keeper cells (row -1 / row 6) are outside this grid. */
 export const COLS = 5
@@ -152,7 +152,7 @@ export interface MatchState {
    */
   possessionJugadas: number
   antiStall: AntiStall
-  difficulty: Difficulty
+  difficulty: GameMode
 }
 
 /** Which record key a side's Nth player uses (`0` = keeper). */

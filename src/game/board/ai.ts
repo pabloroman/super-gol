@@ -14,16 +14,16 @@
  * real football — it shoots good chances, completes safe passes, and only steals when the
  * numbers favour it.
  *
- * Difficulty is two knobs (plus two minor ones), and the important one is `oddsTrust`:
- * `mix` blends the true probability toward a coin flip, so an odds-blind `easy` AI cannot
- * tell a one-in-six shot from a five-in-six one and is seduced by raw upside — it wastes
- * possessions on hopeless shots and gifts the ball away, which is exactly how a weak
- * player blunders. `hard` sees the real odds and `noise` barely perturbs its choice.
+ * The mode is two knobs (plus two minor ones), and the important one is `oddsTrust`:
+ * `mix` blends the true probability toward a coin flip, so an odds-blind `friendly` AI
+ * cannot tell a one-in-six shot from a five-in-six one and is seduced by raw upside — it
+ * wastes possessions on hopeless shots and gifts the ball away, which is exactly how a
+ * weak player blunders. `competitive` sees the real odds and `noise` barely perturbs it.
  */
 
 import type { Rng } from '../engine/rng'
 import type { Action } from './actions'
-import type { MatchState, MatchPlayer, Side, Cell, Difficulty } from './state'
+import type { MatchState, MatchPlayer, Side, Cell, GameMode } from './state'
 import type { AbilityKey } from '@/lib/types'
 import { legalActions, keeperId, other } from './legal'
 import { marcajeOf, distance, sameCell } from './derive'
@@ -32,10 +32,10 @@ import { forDice } from '../engine/marcaje'
 import { passDice, contestDice } from '../engine/dice'
 
 /**
- * Per-difficulty behaviour. `oddsTrust` is the character knob: at 0 every gamble feels
- * 50/50, at 1 the AI reads the true dice odds. `noise` scrambles the ranking (a weak
- * player is inconsistent); `risk` scales turnover aversion; `pressure` scales how much
- * winning the ball back is worth on defence.
+ * Per-mode behaviour. `oddsTrust` is the character knob: at 0 every gamble feels 50/50,
+ * at 1 the AI reads the true dice odds. `noise` scrambles the ranking (a weak player is
+ * inconsistent); `risk` scales turnover aversion; `pressure` scales how much winning the
+ * ball back is worth on defence.
  */
 export interface AiWeights {
   noise: number
@@ -44,14 +44,13 @@ export interface AiWeights {
   pressure: number
 }
 
-export const AI_WEIGHTS: Record<Difficulty, AiWeights> = {
-  // easy is odds-blind and reckless (barely fears a turnover), so it chases raw upside;
-  // normal reads the odds partially; hard trusts them fully and, trusting them, is
-  // EV-neutral (risk 1) rather than extra-cautious — the true odds already price the
-  // gamble, so piling on aversion only makes it under-shoot.
-  easy: { noise: 26, oddsTrust: 0.1, risk: 0.45, pressure: 0.55 },
-  normal: { noise: 12, oddsTrust: 0.6, risk: 0.9, pressure: 1.0 },
-  hard: { noise: 4, oddsTrust: 1.0, risk: 1.0, pressure: 1.2 },
+export const AI_WEIGHTS: Record<GameMode, AiWeights> = {
+  // friendly is odds-blind and reckless (barely fears a turnover), so it chases raw
+  // upside — a weak rival to learn against. competitive trusts the odds fully and, trusting
+  // them, is EV-neutral (risk 1) rather than extra-cautious — the true odds already price
+  // the gamble, so piling on aversion only makes it under-shoot; it plays the best decision.
+  friendly: { noise: 26, oddsTrust: 0.1, risk: 0.45, pressure: 0.55 },
+  competitive: { noise: 4, oddsTrust: 1.0, risk: 1.0, pressure: 1.2 },
 }
 
 // ── Value scale (roughly 0..100, so `noise` is comparable across actions) ─────────
@@ -269,11 +268,11 @@ function score(state: MatchState, action: Action, w: AiWeights): number {
   }
 }
 
-/** Choose an action for `difficulty`'s side in the current phase. */
-export function chooseAction(state: MatchState, rng: Rng, difficulty: Difficulty): Action {
+/** Choose an action for `mode`'s side in the current phase. */
+export function chooseAction(state: MatchState, rng: Rng, mode: GameMode): Action {
   const options = legalActions(state)
   if (options.length === 0) throw new Error('AI asked to act with no legal actions')
-  const w = AI_WEIGHTS[difficulty]
+  const w = AI_WEIGHTS[mode]
 
   let best = options[0]
   let bestScore = -Infinity

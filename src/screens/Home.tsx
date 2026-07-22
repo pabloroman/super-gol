@@ -120,9 +120,11 @@ export function Home() {
                     <div className="truncate text-sm text-slate-200">{m.opponent_name}</div>
                     <div className="text-xs text-slate-500">{matchDate(m.created_at)}</div>
                   </div>
-                  <span className="shrink-0 text-xs font-bold text-rare">
-                    +{m.coins_awarded} <Coin />
-                  </span>
+                  {m.coins_awarded > 0 && (
+                    <span className="shrink-0 text-xs font-bold text-rare">
+                      +{m.coins_awarded} <Coin />
+                    </span>
+                  )}
                 </li>
               )
             })}
