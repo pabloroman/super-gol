@@ -14,7 +14,13 @@ export function buildEngineSquad(name: string, squad: Squad, catalog: Card[]): E
   const starters = squad.slots
     .map((s) => byId.get(s.card_id))
     .filter((c): c is Card => Boolean(c))
-    .map((c) => ({ id: c.id, name: c.name, position: c.position, abilities: c.abilities }))
+    .map((c) => ({
+      id: c.id,
+      name: c.name,
+      full_name: c.full_name,
+      position: c.position,
+      abilities: c.abilities,
+    }))
 
   if (starters.length === 0) throw new Error('your squad has no starters')
 

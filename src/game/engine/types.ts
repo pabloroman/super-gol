@@ -21,9 +21,18 @@ export type GameMode = 'friendly' | 'competitive'
 export interface EngineCard {
   id: string
   name: string
+  full_name: string | null
   position: string | null
   abilities: Abilities
 }
+
+/**
+ * The name to show for a card — the full name, falling back to the surname when a
+ * card has none. Mirrors the naipe card face (`full_name ?? name`) so match text
+ * and the card use one convention. Serialized states from before `full_name` was
+ * threaded in read `undefined ?? name`, degrading safely to the surname.
+ */
+export const displayName = (c: EngineCard): string => c.full_name ?? c.name
 
 /** One team: exactly 10 outfield players + 1 goalkeeper (basic mode). */
 export interface EngineSquad {

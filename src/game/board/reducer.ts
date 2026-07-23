@@ -20,6 +20,7 @@ import { resolveAnticipacion, resolveRobo } from '../engine/interrupt'
 import { resolveSave, isGoal } from '../engine/keeper'
 import { ev, evContest, type EngineEvent } from '../engine/events'
 import type { Cell } from '../engine/pitch'
+import { displayName } from '../engine/types'
 import type { Action, PassKind } from './actions'
 import { actionKey } from './actions'
 import { legalActions, other, keeperId, carrier, playersOf } from './legal'
@@ -134,7 +135,7 @@ function breakDown(state: MatchState, events: EngineEvent[]): void {
   const taker = playersOf(state, other(state.attacker))
     .filter((p) => p.id !== keeperId(other(state.attacker)))
     .sort((a, b) => distance(a.cell, holder.cell) - distance(b.cell, holder.cell))[0]
-  events.push(ev('turnover', other(state.attacker), { player: taker.card.name }))
+  events.push(ev('turnover', other(state.attacker), { player: displayName(taker.card) }))
   giveBall(state, taker.id)
   state.libre = null
   changePossession(state, events)
@@ -213,7 +214,7 @@ function applyKickoff(state: MatchState, action: Action, events: EngineEvent[]):
   const from = carrier(state)
   giveBall(state, action.to)
   state.antiStall.pdChain = [from.id, action.to]
-  events.push(ev('kickoff', state.attacker, { player: from.card.name, target: state.players[action.to].card.name }))
+  events.push(ev('kickoff', state.attacker, { player: displayName(from.card), target: displayName(state.players[action.to].card) }))
   state.phase = { kind: 'attack', side: state.attacker }
 }
 
@@ -262,7 +263,7 @@ function applyPass(
     giveBall(state, to)
     if (!state.antiStall.pdChain.includes(from.id)) state.antiStall.pdChain.push(from.id)
     state.antiStall.pdChain.push(to)
-    events.push(ev('pass', state.attacker, { player: from.card.name, target: state.players[to].card.name, ability: 'pc' }))
+    events.push(ev('pass', state.attacker, { player: displayName(from.card), target: displayName(state.players[to].card), ability: 'pc' }))
     if (cesion) return keeperFootRestart(state)
     state.phase = { kind: 'attack', side: state.attacker }
     return
@@ -283,8 +284,8 @@ function applyPass(
     giveBall(state, to)
     events.push(
       evContest('pass', state.attacker, {
-        player: from.card.name,
-        target: state.players[to].card.name,
+        player: displayName(from.card),
+        target: displayName(state.players[to].card),
         ability: ratingKey,
         contest,
         cell: state.players[to].cell,
@@ -302,11 +303,11 @@ function applyPass(
 
   // Failed cesión via PC/PL is an own goal (page 11).
   if (cesion) {
-    events.push(evContest('turnover', state.attacker, { player: from.card.name, ability: ratingKey, contest, cell: from.cell }))
+    events.push(evContest('turnover', state.attacker, { player: displayName(from.card), ability: ratingKey, contest, cell: from.cell }))
     return concede(state, other(state.attacker), events)
   }
   // Failed PC/PL: the defence recovers (page 7).
-  events.push(evContest('turnover', state.attacker, { player: from.card.name, ability: ratingKey, contest, cell: from.cell }))
+  events.push(evContest('turnover', state.attacker, { player: displayName(from.card), ability: ratingKey, contest, cell: from.cell }))
   recoverFailedPass(state, to, receiverMark, events)
 }
 
@@ -319,7 +320,7 @@ function applyRegate(state: MatchState, rng: Rng, events: EngineEvent[]): void {
   const contest = resolveRegate(rng, mark, rate(self, 'rg'))
   events.push(
     evContest('dribble', state.attacker, {
-      player: self.card.name,
+      player: displayName(self.card),
       ability: 'rg',
       marcaje: mark,
       contest,
@@ -351,7 +352,7 @@ function applyShot(state: MatchState, shot: 'RM' | 'DL', rng: Rng, events: Engin
   const rating = rate(self, shot === 'RM' ? 'rm' : 'dl')
   const contest = resolveShot(rng, shot, mark, rating)
   if (!contest.success) {
-    events.push(evContest('shot', state.attacker, { player: self.card.name, ability: shot === 'RM' ? 'rm' : 'dl', marcaje: mark, contest, cell: self.cell }))
+    events.push(evContest('shot', state.attacker, { player: displayName(self.card), ability: shot === 'RM' ? 'rm' : 'dl', marcaje: mark, contest, cell: self.cell }))
     return keeperRestartAfterShot(state, events)
   }
   // On target → the keeper tries to save.
@@ -359,10 +360,10 @@ function applyShot(state: MatchState, shot: 'RM' | 'DL', rng: Rng, events: Engin
   const stat = shot === 'RM' ? keeperStats(keeper.card).rf : keeperStats(keeper.card).co
   const { contest: saveContest, saved } = resolveSave(rng, stat)
   if (isGoal(true, saved)) {
-    events.push(evContest('goal', state.attacker, { player: self.card.name, ability: shot === 'RM' ? 'rm' : 'dl', contest, cell: self.cell }))
+    events.push(evContest('goal', state.attacker, { player: displayName(self.card), ability: shot === 'RM' ? 'rm' : 'dl', contest, cell: self.cell }))
     return concede(state, state.attacker, events)
   }
-  events.push(evContest('save', other(state.attacker), { player: keeper.card.name, ability: shot === 'RM' ? 'rf' : 'co', contest: saveContest, cell: self.cell }))
+  events.push(evContest('save', other(state.attacker), { player: displayName(keeper.card), ability: shot === 'RM' ? 'rf' : 'co', contest: saveContest, cell: self.cell }))
   keeperRestartAfterShot(state, events)
 }
 
@@ -404,7 +405,7 @@ function applyHueco(state: MatchState, pass: Exclude<PassKind, 'PD'>, to: Cell, 
   // The ball goes loose on the target cell either way; the roll only decides who moves
   // toward it first (pages 7–8).
   state.ball = { carrier: null, cell: { ...to } }
-  events.push(evContest('pass', state.attacker, { player: from.card.name, ability: pass === 'PL' ? 'pl' : 'pc', contest, cell: to }))
+  events.push(evContest('pass', state.attacker, { player: displayName(from.card), ability: pass === 'PL' ? 'pl' : 'pc', contest, cell: to }))
   const first = contest.success ? state.attacker : other(state.attacker)
   state.phase = { kind: 'hueco_move', side: first }
 }
@@ -500,7 +501,7 @@ function applyAnticipacion(state: MatchState, defenderId: PlayerId, rng: Rng, ev
     receiver.onTop = false
     giveBall(state, defender.id)
     state.libre = defender.id
-    events.push(evContest('interception', defender.side, { player: defender.card.name, ability: 'a', contest, cell: defender.cell }))
+    events.push(evContest('interception', defender.side, { player: displayName(defender.card), ability: 'a', contest, cell: defender.cell }))
     return changePossession(state, events)
   }
   // Failure: a man-marker drops to zona; either way the attacker is libre (page 8).
@@ -520,7 +521,7 @@ function applyRobo(state: MatchState, defenderId: PlayerId, rng: Rng, events: En
     holder.onTop = false
     giveBall(state, defender.id)
     state.libre = null
-    events.push(evContest('steal', defender.side, { player: defender.card.name, ability: 'rb', contest, cell: defender.cell }))
+    events.push(evContest('steal', defender.side, { player: displayName(defender.card), ability: 'rb', contest, cell: defender.cell }))
     return changePossession(state, events)
   }
   // Failure: the attacker may advance a cell (page 9) — a decision.
@@ -634,7 +635,7 @@ function applyKeeperRestart(state: MatchState, action: Action, rng: Rng, events:
     } else {
       // The keeper's own PC/PL count as zero (page 11).
       const contest = resolvePase(rng, action.pass, 'SM', marcajeOf(state, action.to), 0)
-      events.push(evContest('pass', side, { player: keeper.card.name, target: receiver.card.name, ability: action.pass === 'PL' ? 'pl' : 'pc', contest, cell: receiver.cell }))
+      events.push(evContest('pass', side, { player: displayName(keeper.card), target: displayName(receiver.card), ability: action.pass === 'PL' ? 'pl' : 'pc', contest, cell: receiver.cell }))
       if (!contest.success) return recoverFailedPass(state, action.to, marcajeOf(state, action.to), events)
       giveBall(state, action.to)
     }
@@ -644,7 +645,7 @@ function applyKeeperRestart(state: MatchState, action: Action, rng: Rng, events:
   if (action.kind === 'keeper_hueco') {
     const contest = resolvePaseHueco(rng, 0)
     state.ball = { carrier: null, cell: { ...action.to } }
-    events.push(evContest('pass', side, { player: keeper.card.name, ability: action.pass === 'PL' ? 'pl' : 'pc', contest, cell: action.to }))
+    events.push(evContest('pass', side, { player: displayName(keeper.card), ability: action.pass === 'PL' ? 'pl' : 'pc', contest, cell: action.to }))
     state.phase = { kind: 'hueco_move', side: contest.success ? side : other(side) }
     return
   }

@@ -10,6 +10,7 @@ import { abilityValue } from '@/game/ratings'
 import type { Action } from './actions'
 import type { MatchState, PlayerId } from './state'
 import { dorsal } from './state'
+import { displayName } from '../engine/types'
 import { occupants } from './derive'
 
 const PASS_LABEL: Record<string, string> = { PD: 'Pase directo', PC: 'Pase corto', PL: 'Pase largo' }
@@ -34,7 +35,7 @@ export interface ActionLabel {
 /** Name plus board number, split so the number can print as a chip that mirrors the pip. */
 function target(state: MatchState, id: string): ActionTarget {
   const p = state.players[id]
-  return { name: p ? p.card.name : id, dorsal: dorsal(id) }
+  return { name: p ? displayName(p.card) : id, dorsal: dorsal(id) }
 }
 
 export function describeAction(state: MatchState, action: Action): ActionLabel {

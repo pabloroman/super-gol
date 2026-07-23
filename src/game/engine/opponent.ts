@@ -52,6 +52,7 @@ const isLine = (p: string | null): p is Line =>
 const toEngineCard = (c: Card): EngineCard => ({
   id: c.id,
   name: c.name,
+  full_name: c.full_name,
   position: c.position,
   abilities: c.abilities,
 })
