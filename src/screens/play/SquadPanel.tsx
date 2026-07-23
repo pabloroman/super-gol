@@ -1,5 +1,6 @@
 import type { MatchState } from '@/game/board'
 import { dorsal } from '@/game/board'
+import { displayName } from '@/game/engine/types'
 import { ABILITY_META } from '@/game/abilities'
 import { abilityValue } from '@/game/ratings'
 import { naipeFactors } from '@/ui/naipe/factors'
@@ -56,7 +57,7 @@ export function SquadPanel({
               </span>
               <div className="flex min-w-0 flex-1 flex-col gap-1">
                 <div className="flex items-baseline gap-2">
-                  <span className="truncate font-semibold text-slate-100">{p.card.name}</span>
+                  <span className="truncate font-semibold text-slate-100">{displayName(p.card)}</span>
                   {position && <span className="shrink-0 text-xs text-slate-400">{position}</span>}
                   {hasBall && (
                     <span className="shrink-0 text-xs font-semibold text-amber-300">• balón</span>

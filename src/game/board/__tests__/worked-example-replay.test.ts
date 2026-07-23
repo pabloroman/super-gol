@@ -75,6 +75,7 @@ function buildState(): MatchState {
     const card = (i: number): EngineCard => ({
       id: `${fside}-${lineup[i]}`,
       name: lineup[i],
+      full_name: null,
       position: positionOf(i),
       abilities: RATINGS[lineup[i]] ?? {},
     })

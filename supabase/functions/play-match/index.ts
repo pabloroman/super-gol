@@ -19,7 +19,13 @@ function keeperStats(card) {
 // src/game/engine/squad.ts
 function buildEngineSquad(name, squad, catalog) {
   const byId = new Map(catalog.map((c) => [c.id, c]));
-  const starters = squad.slots.map((s) => byId.get(s.card_id)).filter((c) => Boolean(c)).map((c) => ({ id: c.id, name: c.name, position: c.position, abilities: c.abilities }));
+  const starters = squad.slots.map((s) => byId.get(s.card_id)).filter((c) => Boolean(c)).map((c) => ({
+    id: c.id,
+    name: c.name,
+    full_name: c.full_name,
+    position: c.position,
+    abilities: c.abilities
+  }));
   if (starters.length === 0) throw new Error("your squad has no starters");
   let keeperIdx = starters.findIndex(isGoalkeeper);
   if (keeperIdx < 0) keeperIdx = 0;
@@ -57,6 +63,7 @@ var isLine = (p) => p === "GK" || p === "DF" || p === "MF" || p === "FW";
 var toEngineCard = (c) => ({
   id: c.id,
   name: c.name,
+  full_name: c.full_name,
   position: c.position,
   abilities: c.abilities
 });
@@ -598,6 +605,9 @@ function evContest(type, side, opts) {
   };
 }
 
+// src/game/engine/types.ts
+var displayName = (c) => c.full_name ?? c.name;
+
 // src/game/board/reducer.ts
 var TURNO_LIMIT = 15;
 var POSSESSION_CAP = 24;
@@ -659,7 +669,7 @@ function changePossession(state, events, grantDefenderMove = false) {
 function breakDown(state, events) {
   const holder = carrier(state);
   const taker = playersOf(state, other(state.attacker)).filter((p) => p.id !== keeperId(other(state.attacker))).sort((a, b) => distance(a.cell, holder.cell) - distance(b.cell, holder.cell))[0];
-  events.push(ev("turnover", other(state.attacker), { player: taker.card.name }));
+  events.push(ev("turnover", other(state.attacker), { player: displayName(taker.card) }));
   giveBall(state, taker.id);
   state.libre = null;
   changePossession(state, events);
@@ -720,7 +730,7 @@ function applyKickoff(state, action, events) {
   const from = carrier(state);
   giveBall(state, action.to);
   state.antiStall.pdChain = [from.id, action.to];
-  events.push(ev("kickoff", state.attacker, { player: from.card.name, target: state.players[action.to].card.name }));
+  events.push(ev("kickoff", state.attacker, { player: displayName(from.card), target: displayName(state.players[action.to].card) }));
   state.phase = { kind: "attack", side: state.attacker };
 }
 function applyAttack(state, action, rng, events) {
@@ -753,7 +763,7 @@ function applyPass(state, pass, to, rng, events) {
     giveBall(state, to);
     if (!state.antiStall.pdChain.includes(from.id)) state.antiStall.pdChain.push(from.id);
     state.antiStall.pdChain.push(to);
-    events.push(ev("pass", state.attacker, { player: from.card.name, target: state.players[to].card.name, ability: "pc" }));
+    events.push(ev("pass", state.attacker, { player: displayName(from.card), target: displayName(state.players[to].card), ability: "pc" }));
     if (cesion) return keeperFootRestart(state);
     state.phase = { kind: "attack", side: state.attacker };
     return;
@@ -767,8 +777,8 @@ function applyPass(state, pass, to, rng, events) {
     giveBall(state, to);
     events.push(
       evContest("pass", state.attacker, {
-        player: from.card.name,
-        target: state.players[to].card.name,
+        player: displayName(from.card),
+        target: displayName(state.players[to].card),
         ability: ratingKey,
         contest,
         cell: state.players[to].cell
@@ -783,10 +793,10 @@ function applyPass(state, pass, to, rng, events) {
     return;
   }
   if (cesion) {
-    events.push(evContest("turnover", state.attacker, { player: from.card.name, ability: ratingKey, contest, cell: from.cell }));
+    events.push(evContest("turnover", state.attacker, { player: displayName(from.card), ability: ratingKey, contest, cell: from.cell }));
     return concede(state, other(state.attacker), events);
   }
-  events.push(evContest("turnover", state.attacker, { player: from.card.name, ability: ratingKey, contest, cell: from.cell }));
+  events.push(evContest("turnover", state.attacker, { player: displayName(from.card), ability: ratingKey, contest, cell: from.cell }));
   recoverFailedPass(state, to, receiverMark, events);
 }
 function applyRegate(state, rng, events) {
@@ -798,7 +808,7 @@ function applyRegate(state, rng, events) {
   const contest = resolveRegate(rng, mark, rate(self, "rg"));
   events.push(
     evContest("dribble", state.attacker, {
-      player: self.card.name,
+      player: displayName(self.card),
       ability: "rg",
       marcaje: mark,
       contest,
@@ -826,17 +836,17 @@ function applyShot(state, shot, rng, events) {
   const rating = rate(self, shot === "RM" ? "rm" : "dl");
   const contest = resolveShot(rng, shot, mark, rating);
   if (!contest.success) {
-    events.push(evContest("shot", state.attacker, { player: self.card.name, ability: shot === "RM" ? "rm" : "dl", marcaje: mark, contest, cell: self.cell }));
+    events.push(evContest("shot", state.attacker, { player: displayName(self.card), ability: shot === "RM" ? "rm" : "dl", marcaje: mark, contest, cell: self.cell }));
     return keeperRestartAfterShot(state, events);
   }
   const keeper = state.players[keeperId(other(state.attacker))];
   const stat = shot === "RM" ? keeperStats(keeper.card).rf : keeperStats(keeper.card).co;
   const { contest: saveContest, saved } = resolveSave(rng, stat);
   if (isGoal(true, saved)) {
-    events.push(evContest("goal", state.attacker, { player: self.card.name, ability: shot === "RM" ? "rm" : "dl", contest, cell: self.cell }));
+    events.push(evContest("goal", state.attacker, { player: displayName(self.card), ability: shot === "RM" ? "rm" : "dl", contest, cell: self.cell }));
     return concede(state, state.attacker, events);
   }
-  events.push(evContest("save", other(state.attacker), { player: keeper.card.name, ability: shot === "RM" ? "rf" : "co", contest: saveContest, cell: self.cell }));
+  events.push(evContest("save", other(state.attacker), { player: displayName(keeper.card), ability: shot === "RM" ? "rf" : "co", contest: saveContest, cell: self.cell }));
   keeperRestartAfterShot(state, events);
 }
 function applyMove(state, playerId2, to, handoff) {
@@ -858,7 +868,7 @@ function applyHueco(state, pass, to, rng, events) {
   state.antiStall.pdChain = [];
   const contest = resolvePaseHueco(rng, rate(from, pass === "PL" ? "pl" : "pc"));
   state.ball = { carrier: null, cell: { ...to } };
-  events.push(evContest("pass", state.attacker, { player: from.card.name, ability: pass === "PL" ? "pl" : "pc", contest, cell: to }));
+  events.push(evContest("pass", state.attacker, { player: displayName(from.card), ability: pass === "PL" ? "pl" : "pc", contest, cell: to }));
   const first = contest.success ? state.attacker : other(state.attacker);
   state.phase = { kind: "hueco_move", side: first };
 }
@@ -935,7 +945,7 @@ function applyAnticipacion(state, defenderId, rng, events) {
     receiver.onTop = false;
     giveBall(state, defender.id);
     state.libre = defender.id;
-    events.push(evContest("interception", defender.side, { player: defender.card.name, ability: "a", contest, cell: defender.cell }));
+    events.push(evContest("interception", defender.side, { player: displayName(defender.card), ability: "a", contest, cell: defender.cell }));
     return changePossession(state, events);
   }
   if (defender.onTop) defender.onTop = false;
@@ -952,7 +962,7 @@ function applyRobo(state, defenderId, rng, events) {
     holder.onTop = false;
     giveBall(state, defender.id);
     state.libre = null;
-    events.push(evContest("steal", defender.side, { player: defender.card.name, ability: "rb", contest, cell: defender.cell }));
+    events.push(evContest("steal", defender.side, { player: displayName(defender.card), ability: "rb", contest, cell: defender.cell }));
     return changePossession(state, events);
   }
   events.push(evContest("turnover", defender.side, { ability: "rb", contest, cell: defender.cell }));
@@ -1037,7 +1047,7 @@ function applyKeeperRestart(state, action, rng, events) {
       giveBall(state, action.to);
     } else {
       const contest = resolvePase(rng, action.pass, "SM", marcajeOf(state, action.to), 0);
-      events.push(evContest("pass", side, { player: keeper.card.name, target: receiver.card.name, ability: action.pass === "PL" ? "pl" : "pc", contest, cell: receiver.cell }));
+      events.push(evContest("pass", side, { player: displayName(keeper.card), target: displayName(receiver.card), ability: action.pass === "PL" ? "pl" : "pc", contest, cell: receiver.cell }));
       if (!contest.success) return recoverFailedPass(state, action.to, marcajeOf(state, action.to), events);
       giveBall(state, action.to);
     }
@@ -1047,7 +1057,7 @@ function applyKeeperRestart(state, action, rng, events) {
   if (action.kind === "keeper_hueco") {
     const contest = resolvePaseHueco(rng, 0);
     state.ball = { carrier: null, cell: { ...action.to } };
-    events.push(evContest("pass", side, { player: keeper.card.name, ability: action.pass === "PL" ? "pl" : "pc", contest, cell: action.to }));
+    events.push(evContest("pass", side, { player: displayName(keeper.card), ability: action.pass === "PL" ? "pl" : "pc", contest, cell: action.to }));
     state.phase = { kind: "hueco_move", side: contest.success ? side : other(side) };
     return;
   }
