@@ -5,7 +5,6 @@ import { cardsToCsv, parseCardsCsv } from '../csv'
 
 const fw: Card = {
   id: 'mbappe-rma-2526',
-  name: 'MBAPPÉ',
   full_name: 'Kylian Mbappé',
   club: 'Real Madrid',
   club_slug: 'rma',
@@ -23,7 +22,6 @@ const fw: Card = {
 
 const gk: Card = {
   id: 'courtois-rma-2526',
-  name: 'COURTOIS',
   full_name: 'Thibaut Courtois',
   club: 'Real Madrid',
   club_slug: 'rma',
@@ -89,7 +87,7 @@ describe('is_starter is only set when the column is present', () => {
 
 describe('parseCardsCsv validation', () => {
   const header =
-    'id,name,position,cost,rarity,rb,a,rc,d,rg,v,pc,pl,pa,dl,rm,rf,co'
+    'id,full_name,position,cost,rarity,rb,a,rc,d,rg,v,pc,pl,pa,dl,rm,rf,co'
 
   it('skips rows with a bad rarity and reports them', () => {
     const { cards, errors } = parseCardsCsv(`${header}\nx-1,X,FW,5,legendary,1,1,1,1,1,1,1,1,1,1,1,,`)
@@ -106,6 +104,12 @@ describe('parseCardsCsv validation', () => {
   it('rejects a row missing an id', () => {
     const { errors } = parseCardsCsv(`${header}\n,X,FW,5,comun,1,1,1,1,1,1,1,1,1,1,1,,`)
     expect(errors.some((e) => /missing id/.test(e))).toBe(true)
+  })
+
+  it('rejects a row missing a full_name', () => {
+    const { cards, errors } = parseCardsCsv(`${header}\nx-3,,FW,5,comun,1,1,1,1,1,1,1,1,1,1,1,,`)
+    expect(cards).toHaveLength(0)
+    expect(errors.some((e) => /missing full_name/.test(e))).toBe(true)
   })
 
   it('derives the grid from position when no zone_grid column is present', () => {

@@ -5,8 +5,7 @@ import { buildEngineSquad } from '../squad'
 function card(over: Partial<Card>): Card {
   return {
     id: 'x',
-    name: 'X',
-    full_name: null,
+    full_name: 'X',
     club: null,
     club_slug: null,
     nationality: null,
@@ -32,9 +31,9 @@ function squadOf(cards: Card[]): Squad {
   }
 }
 
-const keeper = card({ id: 'gk', name: 'Portero', position: 'GK', abilities: { rf: 3, co: 2 } })
+const keeper = card({ id: 'gk', full_name: 'Portero', position: 'GK', abilities: { rf: 3, co: 2 } })
 const outfield = Array.from({ length: 10 }, (_, i) =>
-  card({ id: `p${i}`, name: `Jugador ${i}`, position: 'MF', abilities: { pc: 2 } }),
+  card({ id: `p${i}`, full_name: `Jugador ${i}`, position: 'MF', abilities: { pc: 2 } }),
 )
 const eleven = [keeper, ...outfield]
 

@@ -18,8 +18,7 @@ export type Abilities = Partial<Record<AbilityKey, number>>
 
 export interface Card {
   id: string
-  name: string
-  full_name: string | null
+  full_name: string
   club: string | null
   club_slug: string | null
   nationality: string | null

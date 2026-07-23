@@ -58,7 +58,7 @@ function bySquadOrder(a: Card, b: Card) {
   return (
     positionRank(a.position) - positionRank(b.position) ||
     b.cost - a.cost ||
-    a.name.localeCompare(b.name, 'es')
+    a.full_name.localeCompare(b.full_name, 'es')
   )
 }
 
@@ -79,7 +79,7 @@ function SquadCard({ card, onRemove }: { card: Card; onRemove: () => void }) {
       <button
         type="button"
         onClick={onRemove}
-        aria-label={`Quitar a ${card.name} del equipo`}
+        aria-label={`Quitar a ${card.full_name} del equipo`}
         className="absolute -right-1.5 -top-1.5 grid h-6 w-6 place-items-center rounded-full bg-black/85 text-slate-300 ring-1 ring-white/20 transition hover:bg-red-500 hover:text-white"
       >
         <XMarkIcon className="h-4 w-4" aria-hidden />

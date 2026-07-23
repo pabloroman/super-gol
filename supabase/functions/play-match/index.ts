@@ -21,7 +21,6 @@ function buildEngineSquad(name, squad, catalog) {
   const byId = new Map(catalog.map((c) => [c.id, c]));
   const starters = squad.slots.map((s) => byId.get(s.card_id)).filter((c) => Boolean(c)).map((c) => ({
     id: c.id,
-    name: c.name,
     full_name: c.full_name,
     position: c.position,
     abilities: c.abilities
@@ -62,7 +61,6 @@ function shuffle(rng, xs) {
 var isLine = (p) => p === "GK" || p === "DF" || p === "MF" || p === "FW";
 var toEngineCard = (c) => ({
   id: c.id,
-  name: c.name,
   full_name: c.full_name,
   position: c.position,
   abilities: c.abilities
@@ -606,7 +604,7 @@ function evContest(type, side, opts) {
 }
 
 // src/game/engine/types.ts
-var displayName = (c) => c.full_name ?? c.name;
+var displayName = (c) => c.full_name;
 
 // src/game/board/reducer.ts
 var TURNO_LIMIT = 15;

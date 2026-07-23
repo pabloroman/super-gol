@@ -57,17 +57,17 @@ function toSql(rows: CardRow[]): string {
 
 `
   const cols =
-    '(id, name, full_name, club, club_slug, nationality, birth_date, height_cm, position, cost, rarity, is_starter, abilities, zone_grid, image_url)'
+    '(id, full_name, club, club_slug, nationality, birth_date, height_cm, position, cost, rarity, is_starter, abilities, zone_grid, image_url)'
   const values = rows
     .map(
       (r) =>
-        `  (${q(r.id)}, ${q(r.name)}, ${q(r.full_name)}, ${q(r.club)}, ${q(r.club_slug)}, ` +
+        `  (${q(r.id)}, ${q(r.full_name)}, ${q(r.club)}, ${q(r.club_slug)}, ` +
         `${q(r.nationality)}, ${q(r.birth_date)}, ${n(r.height_cm)}, ${q(r.position)}, ` +
         `${r.cost}, ${q(r.rarity)}, false, ${j(r.abilities)}, ${j(r.zone_grid)}, ${q(r.image_url)})`,
     )
     .join(',\n')
   const update =
-    'name = excluded.name, full_name = excluded.full_name, club = excluded.club, ' +
+    'full_name = excluded.full_name, club = excluded.club, ' +
     'club_slug = excluded.club_slug, nationality = excluded.nationality, ' +
     'birth_date = excluded.birth_date, height_cm = excluded.height_cm, ' +
     'position = excluded.position, cost = excluded.cost, rarity = excluded.rarity, ' +

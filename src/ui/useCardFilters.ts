@@ -50,8 +50,8 @@ export function cardMatchesQuery(card: Card, query: string, searchId = false): b
   const needle = fold(query.trim())
   if (!needle) return true
   const fields = searchId
-    ? [card.name, card.full_name, card.club, card.id]
-    : [card.name, card.full_name, card.club]
+    ? [card.full_name, card.club, card.id]
+    : [card.full_name, card.club]
   return fields.some((field) => field && fold(field).includes(needle))
 }
 
@@ -95,18 +95,18 @@ export function useCardFilters<T>(
       const y = getCard(b)
       switch (sort) {
         case 'cost-asc':
-          return x.cost - y.cost || collator.compare(x.name, y.name)
+          return x.cost - y.cost || collator.compare(x.full_name, y.full_name)
         case 'name':
-          return collator.compare(x.name, y.name)
+          return collator.compare(x.full_name, y.full_name)
         case 'position':
           return (
             positionRank(x.position) - positionRank(y.position) ||
             y.cost - x.cost ||
-            collator.compare(x.name, y.name)
+            collator.compare(x.full_name, y.full_name)
           )
         case 'cost-desc':
         default:
-          return y.cost - x.cost || collator.compare(x.name, y.name)
+          return y.cost - x.cost || collator.compare(x.full_name, y.full_name)
       }
     })
   }, [items, getCard, query, position, rarity, sort, searchId])

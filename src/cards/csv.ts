@@ -16,7 +16,7 @@ const ABILITY_KEYS: AbilityKey[] = [
   'rb', 'a', 'rc', 'd', 'rg', 'v', 'pc', 'pl', 'pa', 'dl', 'rm', 'rf', 'co',
 ]
 const SCALAR_COLUMNS = [
-  'id', 'name', 'full_name', 'club', 'club_slug', 'nationality',
+  'id', 'full_name', 'club', 'club_slug', 'nationality',
   'birth_date', 'height_cm', 'position', 'cost', 'rarity',
   'is_starter', 'image_url',
 ] as const
@@ -66,9 +66,9 @@ export function parseCardsCsv(text: string): ParseResult {
   parsed.data.forEach((row, i) => {
     const line = i + 2 // 1-based, +1 for the header row
     const id = (row.id ?? '').trim()
-    const name = (row.name ?? '').trim()
+    const full_name = (row.full_name ?? '').trim()
     if (!id) return errors.push(`row ${line}: missing id`)
-    if (!name) return errors.push(`row ${line}: missing name (${id})`)
+    if (!full_name) return errors.push(`row ${line}: missing full_name (${id})`)
 
     const rarity = ((row.rarity ?? '').trim() || 'comun') as Rarity
     if (!RARITIES.includes(rarity)) return errors.push(`row ${line}: bad rarity "${row.rarity}" (${id})`)
@@ -103,8 +103,7 @@ export function parseCardsCsv(text: string): ParseResult {
 
     const card: ImportedCard = {
       id,
-      name,
-      full_name: (row.full_name ?? '').trim() || null,
+      full_name,
       club: (row.club ?? '').trim() || null,
       club_slug: (row.club_slug ?? '').trim() || null,
       nationality: (row.nationality ?? '').trim() || null,
@@ -145,8 +144,7 @@ export function cardsToCsv(cards: Card[], opts: { includeStarter?: boolean } = {
   const rows = cards.map((c) => {
     const row: Record<string, string> = {
       id: c.id,
-      name: c.name,
-      full_name: c.full_name ?? '',
+      full_name: c.full_name,
       club: c.club ?? '',
       club_slug: c.club_slug ?? '',
       nationality: c.nationality ?? '',

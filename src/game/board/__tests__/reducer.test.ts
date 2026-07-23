@@ -14,7 +14,7 @@ import {
 import { chooseAction } from '@/game/board/ai'
 
 function card(id: string, position: string, abilities: EngineCard['abilities'] = {}): EngineCard {
-  return { id, name: id, full_name: null, position, abilities }
+  return { id, full_name: id, position, abilities }
 }
 
 function squad(prefix: string, ab: EngineCard['abilities'] = {}): EngineSquad {

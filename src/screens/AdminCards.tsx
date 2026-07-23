@@ -22,8 +22,7 @@ const getCard = (c: Card) => c
 function blankCard(): Card {
   return {
     id: '',
-    name: '',
-    full_name: null,
+    full_name: '',
     club: null,
     club_slug: null,
     nationality: null,
@@ -69,7 +68,7 @@ function CardEditor({
   const set = <K extends keyof Card>(k: K, v: Card[K]) => setCard((c) => ({ ...c, [k]: v }))
   const setNum = (k: 'height_cm', raw: string) =>
     set(k, raw === '' ? null : Number(raw))
-  const setStr = (k: 'full_name' | 'club' | 'club_slug' | 'nationality' | 'birth_date' | 'image_url', raw: string) =>
+  const setStr = (k: 'club' | 'club_slug' | 'nationality' | 'birth_date' | 'image_url', raw: string) =>
     set(k, raw === '' ? null : raw)
   const setAbility = (key: AbilityKey, raw: string) => {
     const v = raw === '' ? 0 : Math.max(0, Math.min(3, Number(raw) || 0))
@@ -81,8 +80,8 @@ function CardEditor({
     })
   }
   async function save() {
-    if (!card.id.trim() || !card.name.trim()) {
-      setError('id and name are required')
+    if (!card.id.trim() || !card.full_name.trim()) {
+      setError('id and full_name are required')
       return
     }
     setBusy(true)
@@ -138,12 +137,8 @@ function CardEditor({
               onChange={(e) => set('id', e.target.value)} />
           </label>
           <label className="col-span-1 text-xs text-slate-400 md:col-span-2">
-            name
-            <input className={field} value={card.name} onChange={(e) => set('name', e.target.value)} />
-          </label>
-          <label className="col-span-2 text-xs text-slate-400 md:col-span-4">
             full_name
-            <input className={field} value={card.full_name ?? ''} onChange={(e) => setStr('full_name', e.target.value)} />
+            <input className={field} value={card.full_name} onChange={(e) => set('full_name', e.target.value)} />
           </label>
           <label className="text-xs text-slate-400">club
             <input className={field} value={card.club ?? ''} onChange={(e) => setStr('club', e.target.value)} />
@@ -340,13 +335,10 @@ function CardRow({ card, onEdit }: { card: Card; onEdit: () => void }) {
           }}
           className="block max-w-full truncate text-left text-sm font-semibold transition md:hover:text-grass-400"
         >
-          {card.name}
+          {card.full_name}
         </button>
         <span className="block truncate text-xs text-slate-500 md:hidden">
           {card.club ?? '—'} · {positionAbbr(card.position) ?? '—'}
-        </span>
-        <span className="hidden truncate text-xs text-slate-500 lg:block">
-          {card.full_name ?? ''}
         </span>
       </td>
       <td className="hidden font-mono text-xs text-slate-500 lg:table-cell">{card.id}</td>

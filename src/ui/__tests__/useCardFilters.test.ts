@@ -5,8 +5,7 @@ import { cardMatchesQuery } from '../useCardFilters'
 function card(over: Partial<Card>): Card {
   return {
     id: 'x',
-    name: 'X',
-    full_name: null,
+    full_name: 'X',
     club: null,
     club_slug: null,
     nationality: null,
@@ -27,7 +26,6 @@ function card(over: Partial<Card>): Card {
 // reason searchId has to be opt-in — the season suffix is a substring of every id.
 const militao = card({
   id: '401530-2526',
-  name: 'Militão',
   full_name: 'Éder Gabriel Militão',
   club: 'Real Madrid',
 })
@@ -41,7 +39,7 @@ describe('cardMatchesQuery', () => {
     expect(cardMatchesQuery(militao, 'Militão')).toBe(true)
   })
 
-  it('matches name, full_name and club', () => {
+  it('matches full_name and club', () => {
     expect(cardMatchesQuery(militao, 'gabriel')).toBe(true)
     expect(cardMatchesQuery(militao, 'real madrid')).toBe(true)
   })

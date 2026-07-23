@@ -40,7 +40,7 @@ function Portrait({ card, quantity }: { card: Card; quantity?: number }) {
           style={{ fontSize: '42cqw' }}
           aria-hidden
         >
-          {card.name.slice(0, 1)}
+          {card.full_name.slice(0, 1)}
         </div>
       )}
       {/* Duplicates are a digital-only concern — the physical card has no such
@@ -146,7 +146,7 @@ export function Naipe({
 
   return (
     <Tag
-      {...(onClick ? { type: 'button' as const, onClick, 'aria-label': card.name } : {})}
+      {...(onClick ? { type: 'button' as const, onClick, 'aria-label': card.full_name } : {})}
       style={{ containerType: 'inline-size' }}
       className={`aspect-naipe w-full rounded-[3%] bg-naipe-white p-[4%] shadow-lg shadow-black/50 ${
         onClick
@@ -161,15 +161,14 @@ export function Naipe({
             positioned) so it overhangs this band into the photo; the name
             reserves room for it on the right via paddingRight. */}
         <div className="flex shrink-0 items-center bg-gradient-to-b from-naipe-band to-naipe-band-dark px-[4%] py-[3.5%]">
-          {/* The full name, not just the surname — at a reduced fixed cuerpo so
-              the long ones («Urko González de Zárate») shrink into the band, and
-              truncate past the widest. Falls back to the surname when a card has
-              no full_name. */}
+          {/* The full name — at a reduced fixed cuerpo so the long ones («Urko
+              González de Zárate») shrink into the band, and truncate past the
+              widest. */}
           <span
             className="truncate font-display font-bold uppercase leading-tight text-white"
             style={{ fontSize: '8.4cqw', paddingRight: hasCrest ? '21cqw' : undefined }}
           >
-            {card.full_name ?? card.name}
+            {card.full_name}
           </span>
         </div>
 
@@ -194,7 +193,7 @@ export function Naipe({
             className="min-w-0 flex-1 font-display leading-snug text-white"
             style={{ fontSize: '6.6cqw' }}
           >
-            {card.full_name && <span className="block truncate">{card.full_name}</span>}
+            <span className="block truncate">{card.full_name}</span>
             {physical && <span className="block truncate">{physical}</span>}
           </span>
 
