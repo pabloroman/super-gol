@@ -102,7 +102,7 @@ export async function fetchCollection(): Promise<CollectionEntry[]> {
     // UI re-sorts on top of this (see useCardFilters); this just pins a stable
     // baseline.
     .order('cost', { referencedTable: 'cards', ascending: false })
-    .order('name', { referencedTable: 'cards', ascending: true })
+    .order('full_name', { referencedTable: 'cards', ascending: true })
   if (error) throw new Error(error.message)
   // Supabase returns the joined card as an object under `card`.
   return (data as unknown as { quantity: number; card: Card }[]).map((row) => ({

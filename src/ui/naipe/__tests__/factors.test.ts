@@ -5,8 +5,7 @@ import { naipeFactors } from '../factors'
 function card(over: Partial<Card>): Card {
   return {
     id: 'x',
-    name: 'X',
-    full_name: null,
+    full_name: 'X',
     club: null,
     club_slug: null,
     nationality: null,

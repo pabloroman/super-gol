@@ -12,8 +12,7 @@ import type { EngineSquad, GameMode } from '../types'
 function card(id: string, position: string, cost: number): Card {
   return {
     id,
-    name: id,
-    full_name: null,
+    full_name: id,
     club: null,
     club_slug: null,
     nationality: null,

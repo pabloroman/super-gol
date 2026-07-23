@@ -10,7 +10,7 @@ import { chooseAction, successProb } from '@/game/board/ai'
 // match's only asymmetry is the AI skill driving each side — that is what isolates the
 // mode-skill gap the last test asserts.
 function card(id: string, position: string, ab: EngineCard['abilities']): EngineCard {
-  return { id, name: id, full_name: null, position, abilities: ab }
+  return { id, full_name: id, position, abilities: ab }
 }
 
 function squad(prefix: string): EngineSquad {

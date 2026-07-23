@@ -16,7 +16,6 @@ export function buildEngineSquad(name: string, squad: Squad, catalog: Card[]): E
     .filter((c): c is Card => Boolean(c))
     .map((c) => ({
       id: c.id,
-      name: c.name,
       full_name: c.full_name,
       position: c.position,
       abilities: c.abilities,

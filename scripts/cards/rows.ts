@@ -24,7 +24,6 @@ const DATA_DIR = join(dirname(fileURLToPath(import.meta.url)), 'data')
 export interface CardOverride {
   label?: string
   abilities?: Abilities
-  name?: string
   full_name?: string
   club?: string
   club_slug?: string
@@ -73,7 +72,6 @@ export interface TmLeague {
 
 export interface CardRow {
   id: string
-  name: string
   full_name: string
   club: string
   club_slug: string
@@ -86,12 +84,6 @@ export interface CardRow {
   abilities: Abilities
   zone_grid: boolean[][]
   image_url: string | null
-}
-
-/** Display surname: last whitespace-separated token, uppercased. */
-function surname(fullName: string): string {
-  const parts = fullName.trim().split(/\s+/)
-  return (parts[parts.length - 1] || fullName).toUpperCase()
 }
 
 function parseHeightCm(height: string | undefined): number | null {
@@ -145,7 +137,6 @@ export function buildRows(
 
       const row: CardRow = {
         id,
-        name: surname(p.name),
         full_name: p.name,
         club: club.name,
         club_slug: slug,

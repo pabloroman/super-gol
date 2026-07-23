@@ -16,7 +16,7 @@ import {
 
 /** A card carrying only the ratings a test needs; the rest default to 0 (page 6). */
 function card(id: string, position: string, abilities: EngineCard['abilities'] = {}): EngineCard {
-  return { id, name: id, full_name: null, position, abilities }
+  return { id, full_name: id, position, abilities }
 }
 
 /** A full 11-card squad: one keeper + ten outfielders across DF/MF/FW. */

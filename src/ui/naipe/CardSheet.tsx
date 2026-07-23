@@ -47,7 +47,7 @@ export function CardSheet({
   const position = card.position ? (POSITION_LABEL[card.position] ?? card.position) : null
 
   return (
-    <Sheet open onClose={onClose} title={card.full_name ?? card.name}>
+    <Sheet open onClose={onClose} title={card.full_name}>
       <div className="flex min-h-0 flex-col gap-4 overflow-y-auto">
         <div className="mx-auto w-full max-w-[260px] shrink-0">
           <Naipe card={card} variant="full" />

@@ -29,7 +29,6 @@ const overrides = loadOverrides()
 const starters = new Set(STARTER_IDS)
 const cards: Card[] = buildRows(league, Object.keys(overrides).length ? overrides : undefined).map((r) => ({
   id: r.id,
-  name: r.name,
   full_name: r.full_name,
   club: r.club,
   club_slug: r.club_slug,
