@@ -19,6 +19,7 @@ export function buildEngineSquad(name: string, squad: Squad, catalog: Card[]): E
       full_name: c.full_name,
       position: c.position,
       abilities: c.abilities,
+      image_url: c.image_url,
     }))
 
   if (starters.length === 0) throw new Error('your squad has no starters')

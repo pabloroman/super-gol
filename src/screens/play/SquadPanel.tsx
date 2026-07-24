@@ -5,17 +5,18 @@ import { ABILITY_META } from '@/game/abilities'
 import { abilityValue } from '@/game/ratings'
 import { naipeFactors } from '@/ui/naipe/factors'
 import { Sheet } from '@/ui/Sheet'
+import { PlayerFace } from './PlayerFace'
 
 /**
  * The "Plantilla" panel: your on-pitch XI with each player's defining factors, so two
  * strikers' RM (or any rating) can be compared before you decide where to send the ball —
  * the match board itself shows only shirt numbers.
  *
- * It reads the slim `EngineCard` embedded in each `MatchPlayer` (id/name/position/abilities),
- * which lacks the photo/club/cost/zone_grid a full `Naipe` needs, so it renders compact
- * factor chips instead. Factor selection reuses `naipeFactors` — the same keeper-vs-outfield
- * split and top-N density workaround the card face uses. Only your side is listed; the rival's
- * ratings stay hidden.
+ * It reads the slim `EngineCard` embedded in each `MatchPlayer` (id/name/position/photo/
+ * abilities), which still lacks the club/cost/zone_grid a full `Naipe` needs, so it pairs
+ * the portrait with compact factor chips instead of the card face. Factor selection reuses
+ * `naipeFactors` — the same keeper-vs-outfield split and top-N density workaround the card
+ * face uses. Only your side is listed; the rival's ratings stay hidden.
  */
 
 const POSITION_ES: Record<string, string> = {
@@ -52,8 +53,14 @@ export function SquadPanel({
                 hasBall ? 'ring-1 ring-amber-300/70' : ''
               }`}
             >
-              <span className="grid h-8 w-8 shrink-0 place-items-center rounded-lg bg-white font-bold tabular-nums text-pitch-950">
-                {dorsal(p.id)}
+              {/* Face plus dorsal, stacked in one block: the number still leads (it is what
+                  the board and the action menu both address a player by) and the photo
+                  makes the row scannable without reading eleven names. */}
+              <span className="relative block h-11 w-11 shrink-0">
+                <PlayerFace card={p.card} className="h-full w-full rounded-lg text-lg" />
+                <span className="absolute -bottom-1 -right-1 grid h-5 min-w-[1.25rem] place-items-center rounded bg-white px-1 text-xs font-bold leading-none tabular-nums text-pitch-950 ring-2 ring-pitch-800">
+                  {dorsal(p.id)}
+                </span>
               </span>
               <div className="flex min-w-0 flex-1 flex-col gap-1">
                 <div className="flex items-baseline gap-2">

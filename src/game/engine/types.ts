@@ -17,12 +17,20 @@ import type { Abilities } from '@/lib/types'
  */
 export type GameMode = 'friendly' | 'competitive'
 
-/** A player as the engine sees it: a name and its ratings. */
+/**
+ * A player as the engine sees it: a name and its ratings.
+ *
+ * `image_url` is the one field here the rules never read — it is carried so the match
+ * UI can put a face on a board ficha without a catalog lookup, exactly as `full_name`
+ * is carried for the chronicle. It is optional because a persisted session started
+ * before it existed deserializes without it; every reader falls back to the initial.
+ */
 export interface EngineCard {
   id: string
   full_name: string
   position: string | null
   abilities: Abilities
+  image_url?: string | null
 }
 
 /**

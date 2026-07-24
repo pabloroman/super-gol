@@ -54,6 +54,7 @@ const toEngineCard = (c: Card): EngineCard => ({
   full_name: c.full_name,
   position: c.position,
   abilities: c.abilities,
+  image_url: c.image_url,
 })
 
 /** Cheapest cost to fill `rest` slots from untaken cards (each line is cost-sorted asc). */

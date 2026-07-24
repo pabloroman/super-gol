@@ -13,6 +13,7 @@ import { useInteractiveMatch, type Roll } from './useInteractiveMatch'
 import { InteractivePitchBoard } from './InteractivePitchBoard'
 import { HowToPlay } from './HowToPlay'
 import { SquadPanel } from './SquadPanel'
+import { PlayerFace } from './PlayerFace'
 import { GoalCelebration } from './GoalCelebration'
 
 /** A "pase/saque al hueco" of one pass type: tap one of its empty target cells to commit. */
@@ -371,11 +372,18 @@ function huecoAbility(
   return null
 }
 
-/** The action's target player: a white dorsal chip mirroring the pitch pip, plus the name,
- *  so the number reads at a glance against the board (menu targets are always home/white). */
+/** The action's target player: the same face the board ficha shows, a white dorsal chip
+ *  mirroring the pitch pip, and the name — so «Pase corto a 9» and the pip labelled 9 are
+ *  recognisably the same man (menu targets are always home/white). */
 function PlayerToken({ target }: { target: ActionTarget }) {
   return (
     <span className="inline-flex min-w-0 items-center gap-1.5 font-normal text-slate-400">
+      {target.card && (
+        <PlayerFace
+          card={target.card}
+          className="h-6 w-6 shrink-0 rounded-full text-[0.6rem] ring-1 ring-white/20"
+        />
+      )}
       <span className="inline-flex h-5 min-w-[1.25rem] items-center justify-center rounded bg-white px-1 text-xs font-bold leading-none tabular-nums text-pitch-950">
         {target.dorsal}
       </span>
