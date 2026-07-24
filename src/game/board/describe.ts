@@ -10,7 +10,7 @@ import { abilityValue } from '@/game/ratings'
 import type { Action } from './actions'
 import type { MatchState, PlayerId } from './state'
 import { dorsal } from './state'
-import { displayName } from '../engine/types'
+import { displayName, type EngineCard } from '../engine/types'
 import { occupants } from './derive'
 
 const PASS_LABEL: Record<string, string> = { PD: 'Pase directo', PC: 'Pase corto', PL: 'Pase largo' }
@@ -19,10 +19,13 @@ const PASS_LABEL: Record<string, string> = { PD: 'Pase directo', PC: 'Pase corto
 export type ActionGroup = 'remate' | 'pase' | 'regate' | 'mover' | 'defensa' | 'saque'
 
 /** A referenced player, split so the UI can render the board number as a chip (matching
- *  the pitch pip) instead of a parenthesised «(NOMBRE (7))» string. */
+ *  the pitch pip) instead of a parenthesised «(NOMBRE (7))» string. `card` rides along so
+ *  the chip can also show the same face the ficha does; it is the state's own embedded
+ *  snapshot, not a catalog lookup. */
 export interface ActionTarget {
   name: string
   dorsal: number
+  card: EngineCard | null
 }
 
 export interface ActionLabel {
@@ -35,7 +38,7 @@ export interface ActionLabel {
 /** Name plus board number, split so the number can print as a chip that mirrors the pip. */
 function target(state: MatchState, id: string): ActionTarget {
   const p = state.players[id]
-  return { name: p ? displayName(p.card) : id, dorsal: dorsal(id) }
+  return { name: p ? displayName(p.card) : id, dorsal: dorsal(id), card: p?.card ?? null }
 }
 
 export function describeAction(state: MatchState, action: Action): ActionLabel {

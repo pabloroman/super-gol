@@ -2,12 +2,14 @@ import type { MatchState, MatchPlayer, Cell } from '@/game/board'
 import { dorsal } from '@/game/board'
 import { occupants, cellKey, keeperCell, sameCell } from '@/game/board'
 import { ZONE_MAP, COLS, ROWS, type Zone } from '@/game/engine/pitch'
+import { PlayerFace } from './PlayerFace'
 
 /**
  * The interactive board: the real 5×6 grid plus the two portería cells, with all 22
- * players shown as pips. Away attacks from the top, home from the bottom (so the human
- * plays "up" the screen). Stacking is drawn as two half-height pips — the upper one is
- * "encima" (marking al hombre), which IS the marcaje, so it has to read at a glance.
+ * players shown as pips — each the player's own photo under a dorsal badge in the team
+ * colour. Away attacks from the top, home from the bottom (so the human plays "up" the
+ * screen). Stacking is drawn as two half-height pips — the upper one is "encima" (marking
+ * al hombre), which IS the marcaje, so it has to read at a glance.
  *
  * The board is a container: pips are sized in `cqw`, so it fills whatever width it is
  * given (unlike the fixed-px replay board, which caps at 22rem).
@@ -48,6 +50,20 @@ function Ball({ className }: { className?: string }) {
   )
 }
 
+/**
+ * A ficha: the player's face beside a solid number plate in the team colour — the same two
+ * parts however the pip is sized, stacked vertically at full height and side by side at
+ * half.
+ *
+ * The plate is why the colour is a filled block and not a rim: the side has to read at a
+ * glance on a board of 22, and a coloured ring around every away ficha would be the same
+ * amber the selection ring uses. It also protects the dorsal, which the photo cannot be
+ * allowed to cost — the number is the one token the board and the action menu share, so
+ * «Pase corto a 9» has to find the 9 on the pitch.
+ *
+ * A stacked pair is drawn half-height (that offset IS the marcaje), which leaves the face
+ * a square to the left of the plate; at full height it gets the portrait box above it.
+ */
 function Pip({
   player,
   hasBall,
@@ -60,14 +76,29 @@ function Pip({
   half: 'top' | 'bottom' | 'full'
 }) {
   const home = player.side === 'home'
-  const height = half === 'full' ? 'h-[16cqw]' : 'h-[8cqw]'
+  const full = half === 'full'
   return (
-    <span
-      className={`relative flex ${height} w-[16cqw] items-center justify-center rounded-[3cqw] text-[7cqw] font-bold leading-none ${
-        home ? 'bg-white text-pitch-950' : 'bg-rare text-white'
-      } ${selected ? 'z-10 ring-[1.5cqw] ring-amber-300' : 'ring-1 ring-black/30'}`}
-    >
-      {shirtNumber(player)}
+    // The ball hangs outside the ficha, so it can't sit inside the clipped box that crops
+    // the photo — hence the plain wrapper around both.
+    <span className={`relative block ${full ? 'h-[16cqw]' : 'h-[8cqw]'} w-[16cqw]`}>
+      <span
+        className={`flex h-full w-full overflow-hidden rounded-[3cqw] ${full ? 'flex-col' : 'flex-row'} ${
+          home ? 'bg-white text-pitch-950' : 'bg-rare text-white'
+        } ${selected ? 'z-10 ring-[1.5cqw] ring-amber-300' : 'ring-1 ring-black/30'}`}
+      >
+        <PlayerFace
+          card={player.card}
+          objectPosition="center 15%"
+          className={`shrink-0 ${full ? 'h-[10cqw] w-full text-[6cqw]' : 'h-full w-[8cqw] text-[4cqw]'}`}
+        />
+        <span
+          className={`flex flex-1 items-center justify-center font-bold leading-none tabular-nums ${
+            full ? 'text-[5cqw]' : 'text-[5.5cqw]'
+          }`}
+        >
+          {shirtNumber(player)}
+        </span>
+      </span>
       {hasBall && (
         <Ball className="absolute -right-[3cqw] -top-[3cqw] text-[9cqw] drop-shadow-[0_0.5cqw_0.5cqw_rgba(0,0,0,0.5)]" />
       )}

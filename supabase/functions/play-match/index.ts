@@ -23,7 +23,8 @@ function buildEngineSquad(name, squad, catalog) {
     id: c.id,
     full_name: c.full_name,
     position: c.position,
-    abilities: c.abilities
+    abilities: c.abilities,
+    image_url: c.image_url
   }));
   if (starters.length === 0) throw new Error("your squad has no starters");
   let keeperIdx = starters.findIndex(isGoalkeeper);
@@ -63,7 +64,8 @@ var toEngineCard = (c) => ({
   id: c.id,
   full_name: c.full_name,
   position: c.position,
-  abilities: c.abilities
+  abilities: c.abilities,
+  image_url: c.image_url
 });
 function minCompletion(rest, byLine, taken) {
   const count = { GK: 0, DF: 0, MF: 0, FW: 0 };
